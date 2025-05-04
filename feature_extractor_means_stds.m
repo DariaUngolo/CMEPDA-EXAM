@@ -70,12 +70,6 @@ function feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix
         % Load the current image as a double precision array
         img = double(niftiread(image_filepaths(i)));
 
-        % If the image size does not match the atlas size, resample it
-        if ~isequal(size(img), atlas_size)
-            fprintf('Resampling image %s...\n', image_filepaths(i));
-            img = imresize3(img, atlas_size, 'linear');
-        end
-
         % Loop through all ROIs and compute the mean and std for each ROI
         for j = 1:num_rois
             % Extract the voxel intensities corresponding to the current ROI
