@@ -1,4 +1,4 @@
-function [ Means, Stds] = feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -88,7 +88,8 @@ function [ Means, Stds] = feature_extractor(folder_path, atlas_file, atlas_txt, 
 
     % === 7. Create separate tables for means and standard deviations ===
     % Prepare table column names for the means and stds for each ROI
-    img_names = "AD-" + (1:num_images)';
+    [~, base_names, ~] = cellfun(@fileparts, cellstr(image_filepaths), 'UniformOutput', false);
+    img_names = string(base_names)';
     mean_colnames = strcat("Mean_", roi_names');
     std_colnames = strcat("Std_", roi_names');
 
