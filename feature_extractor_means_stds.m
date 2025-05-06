@@ -1,4 +1,5 @@
-function feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+
+function feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -121,9 +122,10 @@ function feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix
     end
 end
 
-folder_path = "C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\AD_s3\AD_s3";
-atlas_file = "C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\lpba40.spm5.avg152T1.gm.label.nii.gz";
-atlas_txt  = "C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\lpba40_labelID.txt";
-output_csv_prefix = 'AD_results';
+% Esegui la funzione con i parametri specificati
+%folder_path = "C:\Users\daria\OneDrive\Desktop\ESAME\AD_s3\AD_s3";
+%atlas_file = "C:\Users\daria\OneDrive\Desktop\ESAME\lpba40.spm5.avg152T1.gm.label.nii.gz";
+%atlas_txt  = "C:\Users\daria\OneDrive\Desktop\ESAME\lpba40_labelID.txt";
+%output_csv_prefix = 'AD_risultati_nuovi';
 
-feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix);
+%feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix);
