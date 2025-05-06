@@ -88,7 +88,10 @@ function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file
 
     % === 7. Create separate tables for means and standard deviations ===
     % Prepare table column names for the means and stds for each ROI
-    [~, base_names, ~] = cellfun(@fileparts, cellstr(image_filepaths), 'UniformOutput', false);
+    modified_filepaths = cellfun(@(x) erase(erase(x, 'smwc1'), '.nii'), image_filepaths, 'UniformOutput', false);
+
+
+    [~, base_names, ~] = cellfun(@fileparts, cellstr(modified_filepaths), 'UniformOutput', false);
     img_names = string(base_names)';
     mean_colnames = strcat("Mean_", roi_names');
     std_colnames = strcat("Std_", roi_names');
