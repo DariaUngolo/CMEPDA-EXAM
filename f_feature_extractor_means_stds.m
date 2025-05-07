@@ -1,5 +1,9 @@
-function f_feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
-%unction [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix
+
+function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+%function f_feature_extractor(folder_path, atlas_file, atlas_txt,
+%output_csv_prefix)    RIGA DA USARE PER ESEGUIRE
+
+
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -125,7 +129,11 @@ function f_feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_pref
     end
 end
 
-% Esegui la funzione con i parametri specificati
+
+
+
+% Esegui la funzione con i parametri specificati  PARTE DA USARE PER
+% ESEGUIRE
 %folder_path = "C:\Users\daria\OneDrive\Desktop\ESAME\tutti_i_dati";
 %atlas_file = "C:\Users\daria\OneDrive\Desktop\ESAME\lpba40.spm5.avg152T1.gm.label.nii.gz";
 %atlas_txt  = "C:\Users\daria\OneDrive\Desktop\ESAME\lpba40_labelID.txt";
