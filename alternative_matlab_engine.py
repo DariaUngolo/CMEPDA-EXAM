@@ -29,7 +29,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix):
 # Start MATLAB engine
     eng = matlab.engine.start_matlab()
 
-    eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)  # Add the current directory to MATLAB path
+    eng.addpath(r"C:\Users\daria\OneDrive\Desktop\NUOVO_GIT\CMEPDA-EXAM", nargout=0)  # Add the current directory to MATLAB path
 # Get the current MATLAB working directory
     current_folder=(eng.pwd())
 
@@ -55,12 +55,26 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix):
 
 # Read the metadata CSV file that contains group information (e.g., diagnosis)
 
-    df_group = pd.read_csv(r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\AD_CTRL_metadata_AD.csv")
-    df_group.sort_values(by=["ID"], inplace=True)   # Sort the dataframe by the "ID" column
-    # Extract the diagnosis group labels (e.g., AD or CTRL) into a pandas Series
-    group = df_group["DXGROUP"]
 
-    return df_mean, df_std, group
+
+
+
+    df_mean = df_mean.sort_values(by=df_mean.columns[0])
+
+    df_std= df_std.sort_values(by=df_std.columns[0])
+
+
+
+    #df_group = pd.read_csv(r"C:\Users\daria\OneDrive\Desktop\ESAME\AD_CTRL_metadata.csv", sep='\t')
+    #df_group.sort_values(by=["ID"], inplace=True)   # Sort the dataframe by the "ID" column
+    # Extract the diagnosis group labels (e.g., AD or CTRL) into a pandas Series
+    #group_selected = df_group[["ID", "DXGROUP"]]
+
+    #group = df_group["DXGROUP"]
+
+
+
+    return df_mean, df_std
 
 if __name__ == "__main__":
 
@@ -69,20 +83,49 @@ if __name__ == "__main__":
     """
 
      # Define the file paths for input data and output files
-    folder_path = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\AD_s3\AD_s3"
-    atlas_file = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\lpba40.spm5.avg152T1.gm.label.nii.gz"
-    atlas_txt = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\lpba40_labelID.txt"
-    output_csv_prefix = r"C:\Users\brand\OneDrive\Desktop\output"
-    metadata_csv = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\AD_CTRL_metadata_AD.csv"
+    folder_path = r"C:\Users\daria\OneDrive\Desktop\ESAME\tutti_i_dati"
+    atlas_file = r"C:\Users\daria\OneDrive\Desktop\ESAME\lpba40.spm5.avg152T1.gm.label.nii.gz"
+    atlas_txt = r"C:\Users\daria\OneDrive\Desktop\ESAME\lpba40_labelID.txt"
+    output_csv_prefix = r"C:\Users\daria\OneDrive\Desktop\ESAME\outputpython"
+    metadata_csv = r"C:\Users\daria\OneDrive\Desktop\ESAME\AD_CTRL_metadata.csv"
+
+    df_group = pd.read_csv(metadata_csv, sep='\t')
+
+
+    print("Colonne disponibili nel DataFrame:")
+    print(df_group.columns)
+
+    df_group_selected = df_group[["ID", "DXGROUP"]]
+
+    print(" ID e GRUPPO")
+    df_group_selected = df_group_selected.sort_values(by="ID")
+
+    print(df_group_selected)
+
+
+    group = df_group_selected[["DXGROUP"]]
+    #group = group.sort_values(by=df_group.columns[0])
+
+    print("Gruppo ")
+    print(group)
+
+
 
     # Call the feature extraction function and obtain the results
-    df_mean, df_std, group = feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+    df_mean, df_std = feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
 
-    # Print the resulting dataframes and the group labels
+
+
+
+
+
+    #Print the resulting dataframes and the group labels
     print("=== DataFrame Mean ===")
     print(df_mean)
     print("\n=== DataFrame Std ===")
     print(df_std)
-    print("\n=== Group ===")
-    print(group)
+    #print("\n===ID, Group ===")
+    #print(group_selected)
+    #print("\n===Group ===")
+    #print(group)
 
