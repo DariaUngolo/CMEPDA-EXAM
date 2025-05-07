@@ -1,4 +1,5 @@
-function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+function f_feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+%unction [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -88,10 +89,9 @@ function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file
 
     % === 7. Create separate tables for means and standard deviations ===
     % Prepare table column names for the means and stds for each ROI
-    modified_filepaths = cellfun(@(x) erase(erase(x, 'smwc1'), '.nii'), image_filepaths, 'UniformOutput', false);
+    image_filepaths = regexprep(image_filepaths, 'smwc1', '');
 
-
-    [~, base_names, ~] = cellfun(@fileparts, cellstr(modified_filepaths), 'UniformOutput', false);
+    [~, base_names, ~] = cellfun(@fileparts, cellstr(image_filepaths), 'UniformOutput', false);
     img_names = string(base_names)';
     mean_colnames = strcat("Mean_", roi_names');
     std_colnames = strcat("Std_", roi_names');
@@ -124,3 +124,11 @@ function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file
         fprintf('Tables saved:\n  - %s\n  - %s\n', mean_file, std_file);
     end
 end
+
+% Esegui la funzione con i parametri specificati
+%folder_path = "C:\Users\daria\OneDrive\Desktop\ESAME\tutti_i_dati";
+%atlas_file = "C:\Users\daria\OneDrive\Desktop\ESAME\lpba40.spm5.avg152T1.gm.label.nii.gz";
+%atlas_txt  = "C:\Users\daria\OneDrive\Desktop\ESAME\lpba40_labelID.txt";
+%output_csv_prefix = 'TUTTI_risultati_nuovi';
+
+%f_feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix);
