@@ -29,7 +29,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix):
 # Start MATLAB engine
     eng = matlab.engine.start_matlab()
 
-    eng.addpath(r"C:\Users\daria\OneDrive\Desktop\NUOVO_GIT\CMEPDA-EXAM\OK", nargout=0)  # Add the current directory to MATLAB path
+    eng.addpath(r"C:\Users\daria\OneDrive\Desktop\NUOVO_GIT\CMEPDA-EXAM", nargout=0)  # Add the current directory to MATLAB path
 # Get the current MATLAB working directory
     current_folder=(eng.pwd())
 
@@ -41,65 +41,80 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix):
 # Convert the result arrays (mean and std) to numpy arrays for easier manipulation
     n_regxsub = np.shape(mean[:][1])
     mean_t = np.asarray(mean)
-    std_t = np.asarray(std)
+    std_t =np.asarray(std)
+
+
+
+
+    # Correggi se necessario
+    if mean_t[1:, 1:].shape != (len(mean_t[1:, 0]), len(mean_t[0, 1:])):
+        mean_t = mean_t.T  # Trasponi se necessario
+
+    if std_t[1:, 1:].shape != (len(std_t[1:, 0]), len(std_t[0, 1:])):
+        std_t = std_t.T  # Trasponi se necessario
+
+
+
 
 # Create a pandas DataFrame for mean values, skipping the first row and column for proper indexing
-    df_mean = pd.DataFrame(mean_t[1:, 1:],
-                           index=mean_t[0, 1:],   # Set the row labels as the second column of mean_t
-                           columns=mean_t[1:, 0])  # Set the column labels as the first column of mean_t
+    df_mean = pd.DataFrame(mean_t[1:, 1:],      #HO INVERITO PER VEDERE SE VA VIA ERRORE
+                           index=mean_t[ 1:,0],   # Set the row labels as the second column of mean_t
+                           columns=mean_t[ 0,1:])  # Set the column labels as the first column of mean_t
 
 # Create a pandas DataFrame for standard deviation values, similarly processing the std array
     df_std = pd.DataFrame(std_t[1:, 1:],
-                           index=std_t[0, 1:],    # Set the row labels as the second column of std_t
-                           columns=std_t[1:, 0])   # Set the column labels as the first column of std_t
+                           index=std_t[1:,0],    # Set the row labels as the second column of std_t
+                           columns=std_t[0,1:])   # Set the column labels as the first column of std_t
 
 # Read the metadata CSV file that contains group information (e.g., diagnosis)
 
-    df_group = pd.read_csv(r"C:\Users\daria\OneDrive\Desktop\ESAME\AD_CTRL_metadata.csv")
-    df_group.sort_values(by=["ID"], inplace=True)   # Sort the dataframe by the "ID" column
+    df_group = pd.read_csv(r"C:\Users\daria\OneDrive\Desktop\ESAME\AD_CTRL_metadata.csv", sep='\t')
+    df_group.sort_values(by=[df_group.columns[0]], inplace=True)   # Sort the dataframe by the "ID" column, non specifico i nomi veri
     # Extract the diagnosis group labels (e.g., AD or CTRL) into a pandas Series
-    group = df_group["DXGROUP"]
+    group2 = df_group.iloc[:, [0, 1]] #take ID e GROUP ma non specifico i nomi veri sennò mi da errore
+    group1= df_group.iloc[:, 1]
 
-    return df_mean, df_std, group
+    return df_mean, df_std, group1
 
+    #return df_mean, df_std, group2 , group1, mean_t
 
-"""
-if __name__ == "__main__":
+#MAIN PER FARLO FUNZIONARE, GROUP2 è IL DATAFRAME CON LA COLONNA ID E COLONNA CON AD/Normal
+#GROUP1 HA SOLO LABEL AD/NORMAL
+#SE VUOI FAR FUNZIONARE IL CODICE SOTTO DEVI METTERE
+#
+#if __name__ == "__main__":
 
-    QUESTO PROGRAMMA NON FA LA COLONNA GROUP
+    #    QUESTO PROGRAMMA NON FA LA COLONNA GROUP
 
-    Main script to run the feature extraction process and display the results.
-
-
-    # Define the file paths for input data and output files
-
-    folder_path = r"C:\Users\daria\OneDrive\Desktop\ESAME\tutti_i_dati"
-    atlas_file = r"C:\Users\daria\OneDrive\Desktop\ESAME\lpba40.spm5.avg152T1.gm.label.nii.gz"
-    atlas_txt = r"C:\Users\daria\OneDrive\Desktop\ESAME\lpba40_labelID.txt"
-    output_csv_prefix = r"C:\Users\daria\OneDrive\Desktop\ESAME\outputpython"
-    metadata_csv = r"C:\Users\daria\OneDrive\Desktop\ESAME\AD_CTRL_metadata.csv"
+     #   Main script to run the feature extraction process and display the results.
 
 
+        # Define the file paths for input data and output files
+
+#    folder_path = r"C:\Users\daria\OneDrive\Desktop\ESAME\tutti_i_dati"
+#    atlas_file = r"C:\Users\daria\OneDrive\Desktop\ESAME\lpba40.spm5.avg152T1.gm.label.nii.gz"
+#    atlas_txt = r"C:\Users\daria\OneDrive\Desktop\ESAME\lpba40_labelID.txt"
+#    output_csv_prefix = r"C:\Users\daria\OneDrive\Desktop\ESAME\outputpythonTRASPOSTO"
+#    metadata_csv = r"C:\Users\daria\OneDrive\Desktop\ESAME\AD_CTRL_metadata.csv"
 
 
+        # Call the feature extraction function and obtain the results
 
-    # Call the feature extraction function and obtain the results
+#    df_mean, df_std, group2, group, mean_t= feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
 
-    df_mean, df_std= feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+ #   print("Shape of mean_t[1:, 1:]:", mean_t[1:, 1:].shape)
+ #   print("Length of mean_t[1:, 0]:", len(mean_t[1:, 0]))
+ #   print("Length of mean_t[0, 1:]:", len(mean_t[0, 1:]))
 
+ #   print(group)
+        #Print the resulting dataframes and the group labels
 
+  #  print("=== DataFrame Mean ===")
+  #  print(df_mean)
+  #  print("\n=== DataFrame Std ===")
+  #  print(df_std)
 
-    #Print the resulting dataframes and the group labels
-
-    print("=== DataFrame Mean ===")
-    print(df_mean)
-    print("\n=== DataFrame Std ===")
-    print(df_std)
-
-    #print("\n===ID, Group ===")
-    #print(group_selected)
-    #print("\n===Group ===")
-    #print(group)
-
- """
-
+        #print("\n===ID, Group ===")
+        #print(group_selected)
+        #print("\n===Group ===")
+        #print(group)
