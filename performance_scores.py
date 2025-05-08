@@ -120,24 +120,6 @@ def performance_scores(y_test, y_predicted, y_probability, confidence_int=0.683)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #SPIEGAZIONI
 
 #---- y_probability è una matrice a due dimensioni (ad esempio, se ci sono probabilità per entrambe le classi 0 e 1), seleziona le probabilità della classe positiva (classe 1
