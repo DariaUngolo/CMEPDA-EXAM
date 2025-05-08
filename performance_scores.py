@@ -1,122 +1,155 @@
-import scipy
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import norm
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_curve, auc
 
 
-def performance_scores(y_test, y_predicted, y_probability, confidence_int=0.683):
+def compute_binomial_error(metric_value, n_samples, confidence_level):
     """
-    Calculate various performance metrics for a binary classification model along with their associated errors.
+    Estimate the error of a binomial metric (accuracy, precision, recall)
+    using normal approximation.
 
     Parameters:
     -----------
-    y_test : array-like
-        The true labels of the test set (a binary label array).
+    metric_value : float
+        The metric value (between 0 and 1), such as accuracy, precision, or recall.
 
-    y_predicted : array-like
-        The predicted labels by the model (same shape as y_test).
+    n_samples : int
+        Number of independent observations (e.g., test set size).
 
-    y_probability : array-like
-        The predicted probabilities for each class (model's prediction confidence).
+    confidence_level : float
+        Confidence level (e.g., 0.683 for 68.3% CI, 0.95 for 95% CI).
 
-    confidence_int : float, optional, default=0.683
-        The confidence interval for calculating the metric errors (default corresponds to approximately one standard deviation, i.e., 68.3%).
+    Returns:
+    --------
+    float
+        Estimated error based on the z-score and binomial variance.
+    
+    Notes:
+    ------
+    The error is computed using the normal approximation of the binomial distribution:
+        error ≈ z * sqrt(p * (1 - p) / n)
+    where:
+        - z is the z-score for the specified confidence level,
+        - p is the metric value,
+        - n is the number of samples.
+
+    This approximation assumes sufficiently large n (n * p and n * (1 - p) ≥ ~5).
+    """
+    z = norm.ppf((1 + confidence_level) / 2.0)
+    return z * np.sqrt((metric_value * (1 - metric_value)) / n_samples)
+
+
+def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
+    """
+    Evaluate binary classification performance with metric errors and ROC visualization.
+
+    Parameters:
+    -----------
+    y_true : array-like of shape (n_samples,)
+        Ground truth binary labels (0 or 1).
+
+    y_pred : array-like of shape (n_samples,)
+        Predicted labels by the classifier.
+
+    y_proba : array-like of shape (n_samples,) or (n_samples, 2)
+        Predicted class probabilities. If 2D, second column should correspond to class 1.
+
+    confidence_level : float, optional (default=0.683)
+        Desired confidence level for error estimation (e.g., 0.683 ≈ ±1σ, 0.95 ≈ ±2σ).
 
     Returns:
     --------
     dict
-        A dictionary containing the calculated metrics and their errors:
-        'Accuracy', 'Precision', 'Recall', 'AUC' along with their respective errors.
+        Dictionary with performance metrics and their estimated errors:
+        {
+            'Accuracy': value, 'Accuracy_error': err,
+            'Precision': value, 'Precision_error': err,
+            'Recall': value, 'Recall_error': err,
+            'AUC': value, 'AUC_error': err
+        }
     """
 
-    # If y_probability is a 2D matrix (e.g., probabilities for both classes 0 and 1), select the probability for the positive class (class 1)
-    if y_probability.ndim == 2:
-        y_prob = y_probability[:, 1]  # Selecting the probability for class 1 (positive class) #CAMBIATO
-    else:
-        y_prob = y_probability  # Otherwise, y_probability is already a 1D array for the positive class
+    # Ensure probabilities are 1D for the positive class
+    if y_proba.ndim == 2:
+        y_proba = y_proba[:, 1]
 
-    # Calculate the z-score based on the desired confidence interval
-    z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)  # z-score for confidence interval
+    # Compute core metrics
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
 
-    # Calculate the performance metrics
-    precision = precision_score(y_test, y_predicted)  # Precision: True Positives / (True Positives + False Positives)
-    accuracy = accuracy_score(y_test, y_predicted)  # Accuracy: Correct Predictions / Total Predictions
-    recall = recall_score(y_test, y_predicted)  # Recall: True Positives / (True Positives + False Negatives)
+    # Estimate errors
+    n = len(y_true)
+    acc_err = compute_binomial_error(accuracy, n, confidence_level)
+    prec_err = compute_binomial_error(precision, n, confidence_level)
+    rec_err = compute_binomial_error(recall, n, confidence_level)
 
-    # Function to calculate the error associated with a metric
-    def metric_error(metric, n):
-        """
-        Calculate the error for a given performance metric using the z-score and sample size.
+    # ROC and AUC computation
+    fpr, tpr, _ = roc_curve(y_true, y_proba, pos_label=1)
+    roc_auc = auc(fpr, tpr)
 
-        Parameters:
-        -----------
-        metric : float
-            The value of the metric (accuracy, precision, recall).
+    # AUC error estimation based on classical Hanley & McNeil (1982) approach
+    n1 = np.sum(y_true == 1)
+    n0 = np.sum(y_true == 0)
 
-        n : int
-            The number of samples in the test set.
+    q1 = roc_auc / (2 - roc_auc)
+    q2 = 2 * roc_auc ** 2 / (1 + roc_auc)
 
-        Returns:
-        --------
-        float
-            The error associated with the metric.
-        """
-        return z_score * np.sqrt((metric * (1 - metric)) /  sample_size)  # Error calculation formula
+    z = norm.ppf((1 + confidence_level) / 2.0)
+    auc_err = z * np.sqrt(
+        (roc_auc * (1 - roc_auc) +
+         (n1 - 1) * (q1 - roc_auc ** 2) +
+         (n0 - 1) * (q2 - roc_auc ** 2)) / (n1 * n0)
+    )
 
-    # Calculate the errors for each metric
+    # Plot ROC Curve (aesthetically improved)
+    plt.style.use('seaborn-v0_8-darkgrid')
+    plt.figure(figsize=(8, 6))
+    plt.plot(fpr, tpr, color='darkorange', lw=2.5,
+             label=f'ROC curve (AUC = {roc_auc:.2f} ± {auc_err:.2f})')
+    plt.plot([0, 1], [0, 1], color='navy', linestyle='--', lw=2)
 
-    accuracy_err = compute_error(accuracy, len(y_test))  # Error in accuracy
-    precision_err = compute_error(precision, len(y_test))   # Error in precision
-    recall_err = compute_error(recall, len(y_test))  # Error in recall
+    plt.xlim([-0.02, 1.02])
+    plt.ylim([-0.02, 1.05])
+    plt.xlabel('False Positive Rate', fontsize=12)
+    plt.ylabel('True Positive Rate', fontsize=12)
+    plt.title('Receiver Operating Characteristic (ROC) Curve', fontsize=14)
+    plt.legend(loc="lower right", fontsize=11)
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.show()
 
+    # --- Bar Plot with Error Bars ---
+    metrics = ['Accuracy', 'Precision', 'Recall', 'AUC']
+    values = [accuracy, precision, recall, roc_auc]
+    errors = [acc_err, prec_err, rec_err, auc_err]
 
-    # Compute the false positive rate (fpr) and true positive rate (tpr) for the ROC curve
-    fpr, tpr, _ = roc_curve(y_test, y_prob, pos_label=1)  # Compute ROC curve
+    fig, ax = plt.subplots(figsize=(8, 5))
+    bars = ax.bar(metrics, values, yerr=errors, capsize=8, color=['#4C72B0', '#55A868', '#C44E52', '#8172B2'],
+                  edgecolor='black', linewidth=1.2)
 
-    # Calculate the Area Under the Curve (AUC) for the ROC curve
-    roc_auc = auc(fpr, tpr)  # AUC is the area under the ROC curve
+    ax.set_ylim(0, 1.1)
+    ax.set_ylabel("Score", fontsize=12)
+    ax.set_title("Classification Metrics with Confidence Errors", fontsize=14)
+    ax.grid(axis='y', linestyle='--', alpha=0.6)
+    ax.bar_label(bars, fmt="%.2f", padding=3)
+    plt.tight_layout()
+    plt.show()
 
-    # Calculate the number of samples in the positive and negative classes
-    n1 = sum(y_test == 1)  # Number of positive samples
-    n2 = sum(y_test == 0)  # Number of negative samples
+    # Print results
+    print(f"Accuracy:  {accuracy:.2f} ± {acc_err:.2f}")
+    print(f"Precision: {precision:.2f} ± {prec_err:.2f}")
+    print(f"Recall:    {recall:.2f} ± {rec_err:.2f}")
+    print(f"AUC:       {roc_auc:.2f} ± {auc_err:.2f}")
 
-    # Compute the variance for the positive and negative classes
-    q1 = roc_auc / (2 - roc_auc)  # Variance for the positive class
-    q2 = 2 * roc_auc ** 2 / (1 + roc_auc)  # Variance for the negative class
-
-    # Calculate the error in the AUC
-    auc_err = z_score * np.sqrt(
-        (roc_auc * (1 - roc_auc) + (n1 - 1) * (q1 - roc_auc ** 2) + (n2 - 1) * (q2 - roc_auc ** 2)) / (n1 * n2)
-    )  # APPROCCIO CLASSICO CALCOLO ERRORE auc_err = z_score * np.sqrt(roc_auc * (1 - roc_auc) / n)
-
-    # Plot the ROC curve
-    plt.figure()
-    lw = 2
-    plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
-    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')  # Diagonal line
-    plt.xlim([0.0, 1.0])  # Set x-axis limits
-    plt.ylim([0.0, 1.05])  # Set y-axis limits
-    plt.xlabel('False Positive Rate')  # Label for x-axis
-    plt.ylabel('True Positive Rate')  # Label for y-axis
-    plt.title('Receiver Operating Characteristic Curve')  # Title of the plot
-    plt.legend(loc="lower right")  # Display the legend
-    plt.show()  # Show the plot
-
-    # Print the calculated metrics along with their errors
-    print("Accuracy:", round(accuracy, 2), "+/-", round(accuracy_err, 2))  # Accuracy and its error
-    print("Precision:", round(precision, 2), "+/-", round(precision_err, 2))  # Precision and its error
-    print("Recall:", round(recall, 2), "+/-", round(recall_err, 2))  # Recall and its error
-    print("AUC:", round(roc_auc, 2), "+/-", round(auc_err, 2))  # AUC and its error
-
-    # Create a dictionary with all the metrics and their errors for easy access
-    scores = {
-        "Accuracy": accuracy, "Accuracy_error": accuracy_err,
-        "Precision": precision, "Precision_error": precision_err,
-        "Recall": recall, "Recall_error": recall_err,
-        "AUC": roc_auc, "AUC_error": auc_err
+    return {
+        'Accuracy': accuracy, 'Accuracy_error': acc_err,
+        'Precision': precision, 'Precision_error': prec_err,
+        'Recall': recall, 'Recall_error': rec_err,
+        'AUC': roc_auc, 'AUC_error': auc_err
     }
 
-    return scores  # Return the dictionary of scores and errors
 
 
 
