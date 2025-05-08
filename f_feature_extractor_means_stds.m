@@ -1,9 +1,4 @@
-
-function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
-%function f_feature_extractor(folder_path, atlas_file, atlas_txt,
-%output_csv_prefix)    %per convertire in script
-
-
+function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -25,31 +20,25 @@ function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file
     %
     % Example:
     %   feature_extractor('path/to/folder', 'path/to/atlas.nii', 'path/to/atlas_labels.txt', 'results_prefix');
-    %
-    % This function will:
-    %   - Load the images and atlas.
-    %   - Extract voxel intensities for each ROI.
-    %   - Compute the mean and std for each ROI across all images.
-    %   - Save results as CSV files if requested.
-    
+
     % Intensity threshold to ignore very small voxel values (e.g., background)
     INTENSITY_THRESHOLD = 1e-6;
 
-    % === 1. Load images from the folder ===
+    %% 1. Load images from the folder
     nifti_files = dir(fullfile(folder_path, '*.nii*'));
     image_filepaths = string(fullfile({nifti_files.folder}, {nifti_files.name}));
     num_images = numel(image_filepaths);
-    
+
     % Check if any NIfTI files were found
     if num_images == 0
         error('No NIfTI files found in the folder: %s', folder_path);
     end
 
-    % === 2. Load the atlas ===
+    %% 2. Load the atlas
     atlas_data = double(niftiread(atlas_file));
     atlas_size = size(atlas_data);
 
-    % === 3. Load ROI data ===
+    %% 3. Load ROI data
     fid = fopen(atlas_txt, 'r');
     roi_data = textscan(fid, '%d%s', 'Delimiter', '\t');
     fclose(fid);
@@ -57,19 +46,19 @@ function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file
     roi_names = roi_data{2}; % ROI names (strings)
     num_rois = numel(roi_ids);
 
-    % === 4. Pre-calculate ROI masks ===
+    %% 4. Pre-calculate ROI masks
     % Create logical masks for each ROI, which will later be used to extract voxel values
     roi_masks = false([atlas_size, num_rois]);
     for j = 1:num_rois
         roi_masks(:,:,:,j) = (atlas_data == roi_ids(j));
     end
 
-    % === 5. Pre-allocate results ===
+    %% 5. Pre-allocate results
     % Initialize matrices to store the mean and standard deviation values for each image and ROI
     Means = NaN(num_images, num_rois);
     Stds = NaN(num_images, num_rois);
 
-    % === 6. Feature extraction ===
+    %% 6. Feature extraction
     % Loop through all images and calculate the mean and std for each ROI
     for i = 1:num_images
         % Load the current image as a double precision array
@@ -79,10 +68,10 @@ function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file
         for j = 1:num_rois
             % Extract the voxel intensities corresponding to the current ROI
             voxels = img(roi_masks(:,:,:,j));
-            
+
             % Remove very small values (background) by applying the intensity threshold
             voxels = voxels(voxels > INTENSITY_THRESHOLD);
-            
+
             % If there are valid voxels, calculate the mean and std
             if ~isempty(voxels)
                 Means(i,j) = mean(voxels);
@@ -91,10 +80,9 @@ function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file
         end
     end
 
-    % === 7. Create separate tables for means and standard deviations ===
+    %% 7. Create separate tables for means and standard deviations
     % Prepare table column names for the means and stds for each ROI
     image_filepaths = regexprep(image_filepaths, 'smwc1', '');
-
     [~, base_names, ~] = cellfun(@fileparts, cellstr(image_filepaths), 'UniformOutput', false);
     img_names = string(base_names)';
     mean_colnames = strcat("Mean_", roi_names');
@@ -107,36 +95,24 @@ function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file
     StdTable = array2table(Stds, 'VariableNames', std_colnames);
     StdTable = addvars(StdTable, img_names, 'Before', 1, 'NewVariableNames', 'Image');
 
-    % === 8. Display summary ===
+    %% 8. Display summary
     % Print out the tables to the MATLAB command window
     disp('--- Mean Table ---');
     disp(MeanTable);
     disp('--- Standard Deviation Table ---');
     disp(StdTable);
 
-    % === 9. Save to CSV ===
+    %% 9. Save to CSV
     % If an output prefix is provided, save the tables as CSV files
     if nargin == 4 && ~isempty(output_csv_prefix)
         mean_file = strcat(output_csv_prefix, '_mean.csv');
         std_file = strcat(output_csv_prefix, '_std.csv');
-        
+
         % Write the tables to CSV files
         writetable(MeanTable, mean_file);
         writetable(StdTable, std_file);
-        
+
         % Print the file names to confirm
         fprintf('Tables saved:\n  - %s\n  - %s\n', mean_file, std_file);
     end
 end
-
-
-
-
-% Esegui la funzione con i parametri specificati  PARTE DA USARE PER
-% ESEGUIRE
-%folder_path = "C:\Users\daria\OneDrive\Desktop\ESAME\tutti_i_dati";
-%atlas_file = "C:\Users\daria\OneDrive\Desktop\ESAME\lpba40.spm5.avg152T1.gm.label.nii.gz";
-%atlas_txt  = "C:\Users\daria\OneDrive\Desktop\ESAME\lpba40_labelID.txt";
-%output_csv_prefix = 'TUTTI_risultati_nuovi';
-
-%f_feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix);
