@@ -1,7 +1,7 @@
 
 function [ Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
 %function f_feature_extractor(folder_path, atlas_file, atlas_txt,
-%output_csv_prefix)    RIGA DA USARE PER ESEGUIRE
+%output_csv_prefix)    %per convertire in script
 
 
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
