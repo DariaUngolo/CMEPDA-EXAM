@@ -1,0 +1,40 @@
+import pandas as pd
+from pathlib import Path
+import sys
+import random_forest
+import matlab.engine
+from f_alternative_matlab_engine import feature_extractor
+
+# Import necessary modules
+import argparse
+
+if __name__ == '__main__':
+
+    # Start MATLAB engine
+    eng = matlab.engine.start_matlab()
+
+    # Add the current directory to the MATLAB path
+    eng.addpath(r'C:\Users\daria\OneDrive\Desktop\NUOVO_GIT\CMEPDA-EXAM', nargout=0)
+
+    # Define file paths for input data and output files
+    folder_path = r"C:\Users\daria\OneDrive\Desktop\ESAME\tutti_i_dati"
+    atlas_file = r"C:\Users\daria\OneDrive\Desktop\ESAME\lpba40.spm5.avg152T1.gm.label.nii.gz"
+    atlas_txt = r"C:\Users\daria\OneDrive\Desktop\ESAME\lpba40_labelID.txt"
+    output_csv_prefix = r"C:\Users\daria\OneDrive\Desktop\ESAME\outputpython"
+    metadata_csv = r"C:\Users\daria\OneDrive\Desktop\ESAME\AD_CTRL_metadata.csv"
+
+    # Load metadata and sort by ID
+    df_group = pd.read_csv(metadata_csv, sep='\t')
+    df_group_selected = df_group[["ID", "DXGROUP"]].sort_values(by="ID")
+    group_1= df_group_selected[["DXGROUP"]]
+    print(df_group.columns)
+    print(df_group_selected)
+    print(group_1)
+
+    # Call feature extraction function
+    df_mean, df_std, group = feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+
+    print(group)
+
+    # Evaluate the Random Forest classifier
+    random_forest.RFPipeline_noPCA(df_mean, group, 10, 5)
