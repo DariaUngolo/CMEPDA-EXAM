@@ -36,6 +36,12 @@ if __name__ == '__main__':
 
 
 
+    print("dimensione di df_mean")
+    print(df_mean.shape)
+
+    print("dimensione di group")
+    print(group.shape)
+
     print("Indice di mean:")
     print(df_mean.index)
     print("Indice di group:")
