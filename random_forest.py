@@ -121,7 +121,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     # nell'attributo classes_ del modello
 
     # Compute performance scores based on predictions
-    scores = performance_scores(y_tst, y_pred, y_prob)
+    scores = evaluate_model_performance(y_tst, y_pred, y_prob)
     #Calcola metriche di valutazione personalizzate tramite il modulo performance_scores
     #otteniamo il dizionario
     # return {

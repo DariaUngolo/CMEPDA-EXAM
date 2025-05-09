@@ -36,7 +36,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     eng = matlab.engine.start_matlab()
 
     # Add the MATLAB path (modify as needed)
-    #eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
+    #eng.addpath(r"C:\Users\daria\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
     eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
 
     # Get the current MATLAB working directory
@@ -67,13 +67,13 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
         data_start = 1  # First row contains headers
 
     # === 6. Create pandas DataFrames for mean and standard deviation values ===
-    df_mean = pd.DataFrame(mean_array[data_start:, 1:],
+    df_mean = pd.DataFrame(mean_array[data_start:, :],
                            index=mean_array[data_start:, 0],
-                           columns=mean_array[0, 1:])
+                           columns=mean_array[0, :])
 
-    df_std = pd.DataFrame(std_array[data_start:, 1:],
+    df_std = pd.DataFrame(std_array[data_start:, :],
                           index=std_array[data_start:, 0],
-                          columns=std_array[0, 1:])
+                          columns=std_array[0, :])
 
     # === 7. Load metadata from CSV file ===
     df_group = pd.read_csv(metadata_csv, sep='\t')

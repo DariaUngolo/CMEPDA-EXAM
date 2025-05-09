@@ -78,4 +78,4 @@ if __name__ == '__main__':
     print(df_mean)
 
     # Evaluate the Random Forest classifier
-    #random_forest.RFPipeline_noPCA(df_mean, group, 10, 5)
+    random_forest.RFPipeline_noPCA(df_mean, group, 10, 5)
