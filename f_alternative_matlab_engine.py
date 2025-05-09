@@ -30,7 +30,8 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     eng = matlab.engine.start_matlab()
 
     # Add the MATLAB path (modify as needed)
-    eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
+    #eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
+    eng.addpath(r"C:\Users\daria\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
 
     # Get the current MATLAB working directory
     current_folder = eng.pwd()
@@ -56,12 +57,12 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
 
     # === 5. Create a DataFrame for the mean values ===
     # Exclude the first row and first column (header and ID) to get the numeric data
-    df_mean = pd.DataFrame(mean_t[1:, 1:], 
+    df_mean = pd.DataFrame(mean_t[1:, 1:],
                            index=mean_t[1:, 0],  # Use the IDs or image names as the index
                            columns=mean_t[0, 1:])  # Use ROI names as the columns
 
     # === 6. Create a DataFrame for the standard deviation values ===
-    df_std = pd.DataFrame(std_t[1:, 1:], 
+    df_std = pd.DataFrame(std_t[1:, 1:],
                           index=std_t[1:, 0],  # Use the IDs or image names as the index
                           columns=std_t[0, 1:])  # Use ROI names as the columns
 
@@ -78,7 +79,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
 
     # === 9. Return the results ===
     # Return the DataFrames for the mean and standard deviation, and the group labels
-    return df_mean, df_std, group1
+    return df_mean, df_std, group2
 
 
     #return df_mean, df_std, group2 , group1, mean_t
