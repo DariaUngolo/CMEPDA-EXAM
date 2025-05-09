@@ -27,10 +27,11 @@ from sklearn.tree import export_graphviz
 from sklearn.feature_selection import RFECV
 
 # Adding a specific path to the system for importing custom modules
-sys.path.append(r"C:\Users\daria\OneDrive\Desktop\NUOVO_GIT\CMEPDA-EXAM")  # #MODIFIED
+#sys.path.append(r"C:\Users\daria\OneDrive\Desktop\NUOVO_GIT\CMEPDA-EXAM")  # #MODIFIED
+sys.path.append(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM")
 
 # Importing a custom module for performance evaluation
-import performance_scores
+from performance_scores import compute_binomial_error, evaluate_model_performance
 
 # Importing a custom module to interact with MATLAB Engine
 import f_alternative_matlab_engine as feature_extractor  # #MODIFIED
