@@ -14,7 +14,7 @@ if __name__ == '__main__':
     eng = matlab.engine.start_matlab()
 
     # Add the current directory to the MATLAB path
-    eng.addpath(r'C:\Users\daria\OneDrive\Desktop\NUOVO_GIT\CMEPDA-EXAM', nargout=0)
+    eng.addpath(r'C:\Users\daria\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
 
     # Define file paths for input data and output files
     folder_path = r"C:\Users\daria\OneDrive\Desktop\ESAME\tutti_i_dati"
@@ -32,9 +32,19 @@ if __name__ == '__main__':
     print(group_1)
 
     # Call feature extraction function
-    df_mean, df_std, group = feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+    df_mean, df_std, group = feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_csv_prefix)
 
+
+
+    print("Indice di mean:")
+    print(df_mean.index)
+    print("Indice di group:")
+    print(group.index)
+
+    print("stampa group")
     print(group)
+    print("stampa df_mean")
+    print(df_mean)
 
     # Evaluate the Random Forest classifier
-    random_forest.RFPipeline_noPCA(df_mean, group, 10, 5)
+    #random_forest.RFPipeline_noPCA(df_mean, group, 10, 5)
