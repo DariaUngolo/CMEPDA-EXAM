@@ -36,50 +36,51 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     # Get the current MATLAB working directory
     current_folder = eng.pwd()
 
-    # === 2. Extract mean and standard deviation from the images using the MATLAB function ===
-    # Call the MATLAB function to extract features (mean and std)
-    [mean, std] = eng.f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix, nargout=2)
+    # === 2. Call the MATLAB function to extract features ===
+    mean, std = eng.f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix, nargout=2)
 
-    # After extraction, close the MATLAB engine
+    # Quit MATLAB engine after the operation is complete
     eng.quit()
 
-    # === 3. Convert the results into numpy arrays for easier manipulation ===
-    mean_t = np.asarray(mean)
-    std_t = np.asarray(std)
+    # === 3. Convert MATLAB arrays to NumPy arrays ===
+    mean_array = np.asarray(mean)
+    std_array = np.asarray(std)
 
-    # === 4. Transpose if necessary to maintain the correct shape of the data ===
-    # Check if the shape of the data is incorrect; if so, transpose the matrices
-    if mean_t[1:, 1:].shape != (len(mean_t[1:, 0]), len(mean_t[0, 1:])):
-        mean_t = mean_t.T  # Transpose the mean matrix
+    # === 4. Transpose arrays if necessary (maintaining correct shape) ===
+    if mean_array.shape[0] < mean_array.shape[1]:
+        mean_array = mean_array.T
+    if std_array.shape[0] < std_array.shape[1]:
+        std_array = std_array.T
 
-    if std_t[1:, 1:].shape != (len(std_t[1:, 0]), len(std_t[0, 1:])):
-        std_t = std_t.T  # Transpose the std matrix
+    # === 5. Check if the first row contains headers or data ===
+    data_start = 0
+    if isinstance(mean_array[0, 0], str) and mean_array[0, 0].lower() in ["image", "id", ""]:
+        data_start = 1  # First row contains headers
 
-    # === 5. Create a DataFrame for the mean values ===
-    # Exclude the first row and first column (header and ID) to get the numeric data
-    df_mean = pd.DataFrame(mean_t[1:, 1:],
-                           index=mean_t[1:, 0],  # Use the IDs or image names as the index
-                           columns=mean_t[0, 1:])  # Use ROI names as the columns
+    if isinstance(std_array[0, 0], str) and std_array[0, 0].lower() in ["image", "id", ""]:
+        data_start = 1  # First row contains headers
 
-    # === 6. Create a DataFrame for the standard deviation values ===
-    df_std = pd.DataFrame(std_t[1:, 1:],
-                          index=std_t[1:, 0],  # Use the IDs or image names as the index
-                          columns=std_t[0, 1:])  # Use ROI names as the columns
+    # === 6. Create pandas DataFrames for mean and standard deviation values ===
+    df_mean = pd.DataFrame(mean_array[data_start:, 1:],
+                           index=mean_array[data_start:, 0],
+                           columns=mean_array[0, 1:])
 
-    # === 7. Read the metadata CSV file containing group information (e.g., diagnosis) ===
+    df_std = pd.DataFrame(std_array[data_start:, 1:],
+                          index=std_array[data_start:, 0],
+                          columns=std_array[0, 1:])
+
+    # === 7. Load metadata from CSV file ===
     df_group = pd.read_csv(metadata_csv, sep='\t')
-
-    # Sort the data by the first column (ID or image name)
     df_group.sort_values(by=[df_group.columns[0]], inplace=True)
 
-    # === 8. Extract the group labels (e.g., diagnosis: AD, CTRL, etc.) ===
-    # Select only the first two columns (ID and Group)
-    group2 = df_group.iloc[:, [0, 1]]  # Columns with ID and Group
-    group1 = df_group.iloc[:, 1]  # Group labels (e.g., AD, CTRL)
+    # === 8. Extract group labels (metadata) ===
+    group = df_group.iloc[:, 1]
+    #    # Select only the first two columns (ID and Group)
+    #group2 = df_group.iloc[:, [0, 1]]  # Columns with ID and Group
 
-    # === 9. Return the results ===
-    # Return the DataFrames for the mean and standard deviation, and the group labels
-    return df_mean, df_std, group2
+    # === 9. Return results ===
+    return df_mean, df_std, group
+
 
 
     #return df_mean, df_std, group2 , group1, mean_t
