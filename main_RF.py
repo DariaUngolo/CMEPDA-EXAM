@@ -59,7 +59,23 @@ if __name__ == '__main__':
     group = df_group_selected.set_index("ID")["DXGROUP"]
 
 
+
+
+    print("dimensione di df_mean")
+    print(df_mean.shape)
+
+    print("dimensione di group")
+    print(group.shape)
+
+    print("Indice di mean:")
+    print(df_mean.index)
+    print("Indice di group:")
+    print(group.index)
+
+    print("stampa group")
     print(group)
+    print("stampa df_mean")
+    print(df_mean)
 
     # Evaluate the Random Forest classifier
-    random_forest.RFPipeline_noPCA(df_mean, group, 10, 5)
+    #random_forest.RFPipeline_noPCA(df_mean, group, 10, 5)
