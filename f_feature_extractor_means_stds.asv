@@ -1,4 +1,4 @@
-function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+function [Means, Stds] = feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -102,20 +102,6 @@ function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file,
     disp('--- Standard Deviation Table ---');
     disp(StdTable);
 
-    fprintf('\n--- Prima riga e prima colonna di MeanTable ---\n');
-    disp(MeanTable(1, 1));
-    fprintf('\n--- Prima riga e prima colonna di StdTable ---\n');
-    disp(StdTable(1, 1));
-
-    % Calcola dimensioni della MeanTable
-    [num_rows, num_cols] = size(MeanTable);
-    [num_rows_std, num_cols_std] = size(MeanTable);
-
-    % Mostra il numero di righe e colonne
-    fprintf('MeanTable contiene %d righe e %d colonne.\n', num_rows, num_cols);
-    fprintf('StdTable contiene %d righe e %d colonne.\n', num_rows_std, num_cols_std);
-
-
     %% 9. Save to CSV
     % If an output prefix is provided, save the tables as CSV files
     if nargin == 4 && ~isempty(output_csv_prefix)
@@ -131,12 +117,14 @@ function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file,
     end
 end
 
-    %folder_path = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL";
-    %atlas_file = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\lpba40.spm5.avg152T1.gm.label.nii.gz";
-    %atlas_txt = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\lpba40_labelID.txt";
-    %output_csv_prefix = "C:\\Users\\brand\\OneDrive\\Desktop\\outputpython";
-    %metadata_csv = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL_metadata.csv";
+    folder_path = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL";
+    atlas_file = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\lpba40.spm5.avg152T1.gm.label.nii.gz";
+    atlas_txt = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\lpba40_labelID.txt";
+    output_csv_prefix = "C:\\Users\\brand\\OneDrive\\Desktop\\outputpython";
+    metadata_csv = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL_metadata.csv";
 
-    %feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix);
+    feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix);
+    fprintf('\n--- Prima riga e prima colonna di MeanTable ---\n');
+    disp(MeanTable(1, 1));
 
 

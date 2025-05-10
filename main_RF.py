@@ -14,6 +14,7 @@ if __name__ == '__main__':
     eng = matlab.engine.start_matlab()
 
     # Add the current directory to the MATLAB path
+    #eng.addpath(r'C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
     eng.addpath(r'C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
 
     # Define file paths for input data and output files

@@ -67,13 +67,23 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
         data_start = 1  # First row contains headers
 
     # === 6. Create pandas DataFrames for mean and standard deviation values ===
-    df_mean = pd.DataFrame(mean_array[data_start:, :],
-                           index=mean_array[data_start:, 0],
-                           columns=mean_array[0, :])
 
-    df_std = pd.DataFrame(std_array[data_start:, :],
-                          index=std_array[data_start:, 0],
-                          columns=std_array[0, :])
+    #colonna con indici delle ROI
+    index_ROI = []
+    with open(atlas_txt, 'r') as file:
+        for line in file:
+            columns = line.split('\t')  # Divide la riga in colonne basandosi sulle tabulazioni
+            if len(columns) > 1:  # Assicurati che la riga abbia almeno 2 colonne
+                index_ROI.append(columns[1].strip())  # Aggiungi la seconda colonna alla lista e rimuovi gli spazi bianchi e gli a capo
+             
+    # Create DataFrames for mean and std values
+    df_mean = pd.DataFrame(mean_array[:, data_start :],
+                           index=mean_array[:, 0],
+                           columns=index_ROI)
+
+    df_std = pd.DataFrame(std_array[:, data_start :],
+                          index=std_array[:, 0],
+                          columns=index_ROI)
 
     # === 7. Load metadata from CSV file ===
     df_group = pd.read_csv(metadata_csv, sep='\t')

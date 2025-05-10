@@ -86,7 +86,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     rec_err = compute_binomial_error(recall, n, confidence_level)
 
     # ROC and AUC computation
-    fpr, tpr, _ = roc_curve(y_true, y_proba, pos_label=1)
+    fpr, tpr, _ = roc_curve(y_true, y_proba, pos_label= 1)
     roc_auc = auc(fpr, tpr)
 
     # AUC error estimation based on classical Hanley & McNeil (1982) approach
@@ -104,7 +104,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     )
 
     # Plot ROC Curve (aesthetically improved)
-    plt.style.use('seaborn-v0_8-darkgrid')
+    #plt.style.use('seaborn-v0_8-darkgrid')
     plt.figure(figsize=(8, 6))
     plt.plot(fpr, tpr, color='darkorange', lw=2.5,
              label=f'ROC curve (AUC = {roc_auc:.2f} ± {auc_err:.2f})')

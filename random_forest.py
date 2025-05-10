@@ -78,7 +78,8 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
 
     # Extract feature and target data as NumPy arrays
     X = df1.values
-    y = df2.loc[df1.index].values  # Align labels with features
+    y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values #converti le etichette in numeri
+
 
     # Get column names to be used as feature names for visualization
     region = list(df1.columns.values)
