@@ -17,6 +17,14 @@ sys.path.insert(0, str(Path(os.getcwd()).parent))
 # Import essential libraries for Machine Learning
 import numpy as np
 import graphviz
+import shutil
+
+# 🔧 Aggiunge il percorso di Graphviz manualmente al PATH di sistema per Python
+os.environ["PATH"] += os.pathsep + r"C:\Program Files\Graphviz\bin"
+
+# 🧪 (Opzionale) Debug: stampa dove si trova 'dot'
+print("DOT trovato in:", shutil.which("dot"))
+
 from scipy import stats
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
@@ -27,7 +35,7 @@ from sklearn.tree import export_graphviz
 from sklearn.feature_selection import RFECV
 
 # Adding a specific path to the system for importing custom modules
-sys.path.append(r"C:\Users\daria\OneDrive\Desktop\CMEPDA-EXAM")
+sys.path.append(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM")
 
 # Importing a custom module for performance evaluation
 from performance_scores import compute_binomial_error, evaluate_model_performance

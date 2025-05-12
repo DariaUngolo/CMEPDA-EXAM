@@ -44,9 +44,16 @@ if __name__ == '__main__':
     # Call feature extraction function
     df_mean, df_std, group = feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_csv_prefix)
 
+    #combina il DataFrame df_mean e df_std
+    df_mean.columns = [col + "_mean" for col in df_mean.columns]
+    df_std.columns = [col + "_std" for col in df_std.columns]
+    df_features_combined = pd.concat([df_mean, df_std], axis=1)
+
+
     # Verifica dimensioni dei DataFrame
     print("Numero soggetti (feature):", df_mean.shape[0])
     print("Numero soggetti (etichette):", df_group_selected.shape[0])
+    print("df_features_combined shape:", df_features_combined.shape)  # dovrebbe essere (333, 2N)
 
     # Se non coincidono, stampa le differenze
     if df_mean.shape[0] != df_group_selected.shape[0]:
@@ -54,9 +61,11 @@ if __name__ == '__main__':
 
     # Supponiamo che df_mean abbia le righe nello stesso ordine degli ID
     subject_ids = df_group_selected["ID"].values  # array degli ID ordinati
+    print(subject_ids)
 
     df_mean.index = subject_ids
     df_std.index = subject_ids
+    df_features_combined.index = subject_ids
     group = df_group_selected.set_index("ID")["DXGROUP"]
 
 
@@ -68,15 +77,15 @@ if __name__ == '__main__':
     print("dimensione di group")
     print(group.shape)
 
-    print("Indice di mean:")
-    print(df_mean.index)
+    print("Indice di features combined:")
+    print(df_features_combined.index)
     print("Indice di group:")
     print(group.index)
 
     print("stampa group")
-    print(group)
+    #print(group)
     print("stampa df_mean")
-    print(df_mean)
+    #print(df_mean)
 
     # Evaluate the Random Forest classifier
-    random_forest.RFPipeline_noPCA(df_mean, group, 10, 5)
+    #random_forest.RFPipeline_noPCA(df_features_combined, group, 10, 5)
