@@ -12,10 +12,10 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     """
     Extracts feature means and standard deviations from brain image data using a MATLAB function.
 
-    This function communicates with MATLAB to extract the mean and standard deviation values 
-    from the image data in a given folder, based on a specified atlas. It then processes the 
-    output from MATLAB, converts it to NumPy arrays, and organizes it into pandas DataFrames. 
-    Additionally, it loads metadata about the image groups and returns the processed features 
+    This function communicates with MATLAB to extract the mean and standard deviation values
+    from the image data in a given folder, based on a specified atlas. It then processes the
+    output from MATLAB, converts it to NumPy arrays, and organizes it into pandas DataFrames.
+    Additionally, it loads metadata about the image groups and returns the processed features
     and group labels.
 
     Args:
@@ -31,7 +31,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
             - df_std (pandas.DataFrame): DataFrame containing the standard deviation values of features.
             - group (pandas.Series): Series containing the group labels from the metadata.
     """
-    
+
     # === 1. Start the MATLAB engine ===
     eng = matlab.engine.start_matlab()
 
@@ -60,10 +60,10 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
 
     # === 5. Check if the first row contains headers or data ===
     data_start = 0
-    if isinstance(mean_array[0, 0], str) and mean_array[0, 0].lower() in ["image", "id", ""]:
+    if isinstance(mean_array[0, 0], str) :
         data_start = 1  # First row contains headers
 
-    if isinstance(std_array[0, 0], str) and std_array[0, 0].lower() in ["image", "id", ""]:
+    if isinstance(std_array[0, 0], str) :
         data_start = 1  # First row contains headers
 
     # === 6. Create pandas DataFrames for mean and standard deviation values ===
@@ -72,10 +72,15 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     index_ROI = []
     with open(atlas_txt, 'r') as file:
         for line in file:
-            columns = line.split('\t')  # Divide la riga in colonne basandosi sulle tabulazioni
+            columns = line.split(' ')  # Divide la riga in colonne basandosi sulle tabulazioni
             if len(columns) > 1:  # Assicurati che la riga abbia almeno 2 colonne
                 index_ROI.append(columns[1].strip())  # Aggiungi la seconda colonna alla lista e rimuovi gli spazi bianchi e gli a capo
-             
+
+    index_ROI_mean = [roi + '_mean' for roi in index_ROI]
+    index_ROI_std = [roi + '_std' for roi in index_ROI]
+
+    index_ROI_mean_std= index_ROI_mean + index_ROI_std
+
     # Create DataFrames for mean and std values
     df_mean = pd.DataFrame(mean_array[:, data_start :],
                            index=mean_array[:, 0],
@@ -84,6 +89,10 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     df_std = pd.DataFrame(std_array[:, data_start :],
                           index=std_array[:, 0],
                           columns=index_ROI)
+
+    df_unita= pd.DataFrame(matrice_unita[:, data_start :],
+                          index=mean_array[:, 0],
+                          columns=index_ROI_mean_std)
 
     # === 7. Load metadata from CSV file ===
     df_group = pd.read_csv(metadata_csv, sep='\t')
@@ -95,4 +104,4 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     #group2 = df_group.iloc[:, [0, 1]]  # Columns with ID and Group
 
     # === 9. Return results ===
-    return df_mean, df_std, group
+    return df_mean, df_std, group, df_unita
