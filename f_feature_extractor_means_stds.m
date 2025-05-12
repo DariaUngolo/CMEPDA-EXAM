@@ -1,4 +1,4 @@
-function [Means, Stds] = feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -40,7 +40,7 @@ function [Means, Stds] = feature_extractor_means_stds(folder_path, atlas_file, a
 
     %% 3. Load ROI data
     fid = fopen(atlas_txt, 'r');
-    roi_data = textscan(fid, '%d%s', 'Delimiter', ' ');
+    roi_data = textscan(fid, '%d%s', 'Delimiter', '\t');
     fclose(fid);
     roi_ids = roi_data{1};   % ROI IDs (numeric)
     roi_names = roi_data{2}; % ROI names (strings)
@@ -131,15 +131,15 @@ function [Means, Stds] = feature_extractor_means_stds(folder_path, atlas_file, a
     end
 end
 
-    folder_path = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL";
+    %folder_path = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL";
     %atlas_file = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\lpba40.spm5.avg152T1.gm.label.nii.gz";
     %atlas_txt = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\lpba40_labelID.txt";
-    output_csv_prefix = "C:\\Users\\brand\\OneDrive\\Desktop\\outputpython";
-    metadata_csv = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL_metadata.csv";
+    %output_csv_prefix = "C:\\Users\\brand\\OneDrive\\Desktop\\outputpython";
+    %metadata_csv = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL_metadata.csv";
 
-    atlas_file = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\BN_Atlas_246_2mm.nii.gz";
-    atlas_txt = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\BN_Atlas_246_LUT.txt";
+    %atlas_file = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\BN_Atlas_246_2mm.nii.gz";
+    %atlas_txt = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\BN_Atlas_246_LUT.txt";
 
-    feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix);
+    %feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix);
 
 

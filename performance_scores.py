@@ -14,6 +14,7 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     metric_value : float
         The metric value (between 0 and 1), such as accuracy, precision, or recall.
 
+def evaluate_model_performance
     n_samples : int
         Number of independent observations (e.g., test set size).
 
@@ -24,7 +25,7 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     --------
     float
         Estimated error based on the z-score and binomial variance.
-    
+
     Notes:
     ------
     The error is computed using the normal approximation of the binomial distribution:
@@ -38,7 +39,6 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     """
     z = norm.ppf((1 + confidence_level) / 2.0)
     return z * np.sqrt((metric_value * (1 - metric_value)) / n_samples)
-
 
 def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     """

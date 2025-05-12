@@ -1,7 +1,8 @@
 import pandas as pd
 from pathlib import Path
 import sys
-import random_forest
+#import random_forest
+import random_forest_PCA
 import matlab.engine
 from f_alternative_matlab_engine_NUOVOATLANTE import feature_extractor
 
@@ -15,7 +16,7 @@ if __name__ == '__main__':
 
     # Add the current directory to the MATLAB path
     #eng.addpath(r'C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
-    eng.addpath(r'C:\Users\daria\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
+    eng.addpath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM', nargout=0)
 
 
     #Define file paths for input data and output files
@@ -52,16 +53,13 @@ if __name__ == '__main__':
     # Call feature extraction function
     df_mean, df_std, group, df_unita  = feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_csv_prefix)
 
-    #combina il DataFrame df_mean e df_std
-    df_mean.columns = [col + "_mean" for col in df_mean.columns]
-    df_std.columns = [col + "_std" for col in df_std.columns]
-    df_features_combined = pd.concat([df_mean, df_std], axis=1)
+
 
 
     # Verifica dimensioni dei DataFrame
     print("Numero soggetti (feature):", df_mean.shape[0])
     print("Numero soggetti (etichette):", df_group_selected.shape[0])
-    print("df_features_combined shape:", df_features_combined.shape)  # dovrebbe essere (333, 2N)
+
 
     # Se non coincidono, stampa le differenze
     if df_mean.shape[0] != df_group_selected.shape[0]:
@@ -88,7 +86,7 @@ if __name__ == '__main__':
     print(group.shape)
 
     print("Indice di features combined:")
-    print(df_features_combined.index)
+    print(df_unita.index)
     print("Indice di group:")
     print(group.index)
 
@@ -102,4 +100,5 @@ if __name__ == '__main__':
     print( df_unita)
 
     # Evaluate the Random Forest classifier
-    #random_forest.RFPipeline_noPCA(df_features_combined, group, 10, 5)
+    #random_forest.RFPipeline_noPCA(df_unita, group, 10, 5)
+    random_forest_PCA.RFPipeline_PCA(df_unita, group, 10, 5)

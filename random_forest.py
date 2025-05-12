@@ -33,9 +33,12 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV, train_test_split
 from sklearn.tree import export_graphviz
 from sklearn.feature_selection import RFECV
+from scipy.stats import randint
 
 # Adding a specific path to the system for importing custom modules
-sys.path.append(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM")
+sys.path.append(r"C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM")
+#sys.path.append(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM")
+
 
 # Importing a custom module for performance evaluation
 from performance_scores import compute_binomial_error, evaluate_model_performance
@@ -129,7 +132,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     # delle osservazioni nel set di test X_tst, sono etichette discrete
     #Etichette di classe (es. [0, 1])
     y_prob = pipeline_simple.predict_proba(X_tst)#Questo comando restituisce le
-     #probabilità associate a ciascuna classe per ogni osservazione nel set di test X_tst. Probabilità delle classi (es. [[0.8, 0.2], [0.3, 0.7]])
+     #probabilità associate a ciascuna classe per ogni osservazione nel set di test X_tst.                  Probabilità delle classi (es. [[0.8, 0.2], [0.3, 0.7]])
     # L'ordine delle colonne corrisponde all'ordine delle classi
     # nell'attributo classes_ del modello
 
