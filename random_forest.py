@@ -33,12 +33,16 @@ sys.path.append(r"C:\Users\daria\OneDrive\Desktop\CMEPDA-EXAM")
 from performance_scores import compute_binomial_error, evaluate_model_performance
 
 # Importing a custom module to interact with MATLAB Engine
-import f_alternative_matlab_engine as feature_extractor
+import f_alternative_matlab_engine_NUOVOATLANTE as feature_extractor
 
-# Define parameter distributions for RandomizedSearchCV
+
 param_dist = {
-    'n_estimators': stats.randint(50, 500),  # Number of trees in the forest
-    'max_depth': stats.randint(1, 20)       # Maximum depth of the trees
+    'n_estimators': randint(50, 500),  # Numero di alberi
+    'max_depth': randint(1, 20),        # Profondità massima dell'albero
+    #'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
+    #'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
+    #'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
+    #'bootstrap': [True, False]           # Attiva o disattiva il campionamento bootstrap
 }
 
 # Function to create and train a Random Forest pipeline
@@ -95,7 +99,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
 
                 "hyper_opt",                           #"hyper_opt" è il nome dato a questo passaggio della pipeline.
                 RandomizedSearchCV(                    # Algoritmo di ricerca per la selezione dei parametri
-                    RandomForestClassifier(),          # Random Forest Classifier. Questo è il nostro modello di Random Forest, che verrà ottimizzato.
+                    RandomForestClassifier(class_weight='balanced'),          # Random Forest Classifier. Questo è il nostro modello di Random Forest, che verrà ottimizzato.
                     param_distributions=param_dist,    # Parameter distributions for sampling, lo abbiamo definito fuori
                     n_iter=n_iter,                     # Number of parameter settings to sample  # Numero di combinazioni di parametri da testare, mmagina che tu abbia i seguenti parametri da ottimizzare per un Random Forest: Questo vuol dire che ci sono molte possibili combinazioni di valori.
                     #se imposti n_iter = 10, la ricerca esplorerà 10 combinazioni casuali di questi parametri.
