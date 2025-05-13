@@ -1,4 +1,4 @@
-function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+function [Means, Volumes] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -53,10 +53,16 @@ function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file,
         roi_masks(:,:,:,j) = (atlas_data == roi_ids(j));
     end
 
+    %% 4.extra Load image header to get voxel size
+    img_header = niftiinfo(image_filepaths(1));  % Get the header of the first image to get voxel size  #modifica
+    voxel_size = img_header.PixelDimensions;  % Voxel size (in mm) for x, y, z  #modifica
+    voxel_volume = prod(voxel_size);  % Volume of a voxel in mm^3  #modifica
+
     %% 5. Pre-allocate results
     % Initialize matrices to store the mean and standard deviation values for each image and ROI
     Means = NaN(num_images, num_rois);
     Stds = NaN(num_images, num_rois);
+    Volumes = NaN(num_images, num_rois);
 
     %% 6. Feature extraction
     % Loop through all images and calculate the mean and std for each ROI
@@ -76,6 +82,10 @@ function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file,
             if ~isempty(voxels)
                 Means(i,j) = mean(voxels);
                 Stds(i,j) = std(voxels);
+
+                % Calculate volume (number of voxels * voxel volume)  #modifica
+                num_voxels = numel(voxels);  % Count number of voxels in the ROI  #modifica
+                Volumes(i,j) = num_voxels * voxel_volume;  % Calculate volume in mm^3  #modifica
             end
         end
     end
@@ -87,6 +97,7 @@ function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file,
     img_names = string(base_names)';
     mean_colnames = strcat("Mean_", roi_names');
     std_colnames = strcat("Std_", roi_names');
+    vol_colnames = strcat("Volume_", roi_names');  % New column names for volume  #modifica
 
     % Create tables for the means and standard deviations
     MeanTable = array2table(Means, 'VariableNames', mean_colnames);
@@ -94,6 +105,9 @@ function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file,
 
     StdTable = array2table(Stds, 'VariableNames', std_colnames);
     StdTable = addvars(StdTable, img_names, 'Before', 1, 'NewVariableNames', 'Image');
+
+    VolTable = array2table(Volumes, 'VariableNames', vol_colnames);  % New table for volumes  #modifica
+    VolTable = addvars(VolTable, img_names, 'Before', 1, 'NewVariableNames', 'Image');  % Add image names  #modifica
 
     %% 8. Display summary
     % Print out the tables to the MATLAB command window
@@ -106,14 +120,17 @@ function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file,
     disp(MeanTable(1, 1));
     fprintf('\n--- Prima riga e prima colonna di StdTable ---\n');
     disp(StdTable(1, 1));
+    
 
     % Calcola dimensioni della MeanTable
     [num_rows, num_cols] = size(MeanTable);
     [num_rows_std, num_cols_std] = size(MeanTable);
+    [num_rows_vol, num_cols_vol] = size(VolTable);  % Size of volume table  #modifica
 
     % Mostra il numero di righe e colonne
     fprintf('MeanTable contiene %d righe e %d colonne.\n', num_rows, num_cols);
     fprintf('StdTable contiene %d righe e %d colonne.\n', num_rows_std, num_cols_std);
+    fprintf('VolTable contiene %d righe e %d colonne.\n', num_rows_vol, num_cols_vol);  % Display volume table size  #modifica
 
 
     %% 9. Save to CSV
@@ -121,13 +138,15 @@ function [Means, Stds] = f_feature_extractor_means_stds(folder_path, atlas_file,
     if nargin == 4 && ~isempty(output_csv_prefix)
         mean_file = strcat(output_csv_prefix, '_mean.csv');
         std_file = strcat(output_csv_prefix, '_std.csv');
+        vol_file = strcat(output_csv_prefix, '_volume.csv');  % New volume file  #modifica
 
         % Write the tables to CSV files
         writetable(MeanTable, mean_file);
         writetable(StdTable, std_file);
+        writetable(VolTable, vol_file);  % Save volume table  #modifica
 
         % Print the file names to confirm
-        fprintf('Tables saved:\n  - %s\n  - %s\n', mean_file, std_file);
+        fprintf('Tables saved:\n  - %s\n  - %s\n- %s\n', mean_file, std_file, vol_file);
     end
 end
 
