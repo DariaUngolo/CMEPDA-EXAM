@@ -26,6 +26,7 @@ os.environ["PATH"] += os.pathsep + r"C:\Program Files\Graphviz\bin"
 print("DOT trovato in:", shutil.which("dot"))
 
 from scipy import stats
+from scipy.stats import randint
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline

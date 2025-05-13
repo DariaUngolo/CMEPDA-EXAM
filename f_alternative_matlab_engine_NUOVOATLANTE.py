@@ -36,8 +36,8 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     eng = matlab.engine.start_matlab()
 
     # Add the MATLAB path (modify as needed)
-    eng.addpath(r"C:\Users\daria\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
-    #eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
+    # eng.addpath(r"C:\Users\daria\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
+    eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
 
     # Get the current MATLAB working directory
     current_folder = eng.pwd()
