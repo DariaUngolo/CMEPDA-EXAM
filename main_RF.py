@@ -1,8 +1,9 @@
 import pandas as pd
 from pathlib import Path
 import sys
-#import random_forest
+import random_forest
 import random_forest_PCA
+import random_forest_RFECV
 import matlab.engine
 from f_alternative_matlab_engine_NUOVOATLANTE import feature_extractor
 
@@ -15,8 +16,8 @@ if __name__ == '__main__':
     eng = matlab.engine.start_matlab()
 
     # Add the current directory to the MATLAB path
-    #eng.addpath(r'C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
-    eng.addpath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM', nargout=0)
+    eng.addpath(r'C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
+    #eng.addpath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM', nargout=0)
 
 
     #Define file paths for input data and output files
@@ -104,4 +105,5 @@ if __name__ == '__main__':
 
     # Evaluate the Random Forest classifier
     #random_forest.RFPipeline_noPCA(df_unita, group, 10, 5)
-    random_forest_PCA.RFPipeline_PCA(df_unita, group, 10, 5)
+    #random_forest_PCA.RFPipeline_PCA(df_unita, group, 10, 5)
+    random_forest_RFECV.RFPipeline_RFECV_Top10ROI(df_unita, group, 20, 5)
