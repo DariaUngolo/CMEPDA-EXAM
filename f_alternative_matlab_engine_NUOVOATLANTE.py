@@ -36,8 +36,8 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     eng = matlab.engine.start_matlab()
 
     # Add the MATLAB path (modify as needed)
-    #eng.addpath(r"C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM", nargout=0)
-    eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
+    eng.addpath(r"C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM", nargout=0)
+    #eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
 
     # Get the current MATLAB working directory
     current_folder = eng.pwd()
@@ -128,17 +128,17 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
                         columns=index_ROI)
 
 
-    #df_std = pd.DataFrame(std_array[:, data_start :],
-    #                      index=std_array[:, 0],
-    #                      columns=index_ROI)
+    df_std = pd.DataFrame(std_array[:, data_start :],
+                          index=std_array[:, 0],
+                          columns=index_ROI)
 
     df_volume = pd.DataFrame(volume_array[:, data_start :],
                           index=volume_array[:, 0],
                           columns=index_ROI)
 
-    #df_unita= pd.DataFrame(matrice_unita[:, data_start :],
-    #                      index=mean_array[:, 0],
-    #                      columns=index_ROI_mean_std)
+    df_unita= pd.DataFrame(matrice_unita[:, data_start :],
+                          index=mean_array[:, 0],
+                          columns=index_ROI_mean_std)
 
 
 

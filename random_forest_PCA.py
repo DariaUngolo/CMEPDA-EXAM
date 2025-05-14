@@ -53,10 +53,10 @@ import f_alternative_matlab_engine_NUOVOATLANTE as feature_extractor
 param_dist = {
     'n_estimators': randint(50, 500),  # Numero di alberi
     'max_depth': randint(1, 20),        # Profondità massima dell'albero
-    'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
-    'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
-    'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
-    'bootstrap': [True, False]  }         # Attiva o disattiva il campionamento bootstrap
+    #'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
+    #'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
+    #'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
+    #'bootstrap': [True, False]  }         # Attiva o disattiva il campionamento bootstrap
 #}
 #param_dist = {
 #    "hyper_opt__n_estimators": randint(100, 600),    # Più alberi per stabilità

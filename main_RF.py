@@ -6,6 +6,7 @@ import random_forest_PCA
 import random_forest_RFECV
 import matlab.engine
 from f_alternative_matlab_engine_NUOVOATLANTE import feature_extractor
+import SVM_simple
 
 # Import necessary modules
 import argparse
@@ -75,7 +76,7 @@ if __name__ == '__main__':
     df_mean.index = subject_ids
 
     df_std.index = subject_ids
-    #df_unita.index = subject_ids
+    df_unita.index = subject_ids
     #df_media_std_volume.index = subject_ids
     df_std_volume.index = subject_ids
 
@@ -105,7 +106,7 @@ if __name__ == '__main__':
 
     #print("stampa  df_unita")
     #print( df_unita)
-<<<<<<< HEAD
+
 
 
     print("stampa df_media_volume")
@@ -114,5 +115,6 @@ if __name__ == '__main__':
     # Evaluate the Random Forest classifier
     #random_forest.RFPipeline_noPCA(df_std_volume, group, 10, 5)
     #random_forest_PCA.RFPipeline_PCA(df_unita, group, 10, 5)
-    random_forest_RFECV.RFPipeline_RFECV_Top10ROI(df_std_volume, group, 10, 5)
+    #random_forest_RFECV.RFPipeline_RFECV_Top10ROI(df_std_volume, group, 10, 5)
+    SVM_simple.SVM_simple(df_unita, group, "rbf")
 
