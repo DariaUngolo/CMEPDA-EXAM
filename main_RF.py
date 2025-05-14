@@ -16,8 +16,8 @@ if __name__ == '__main__':
     eng = matlab.engine.start_matlab()
 
     # Add the current directory to the MATLAB path
-    eng.addpath(r'C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
-    #eng.addpath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM', nargout=0)
+    #eng.addpath(r'C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM', nargout=0)
+    eng.addpath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM', nargout=0)
 
 
     #Define file paths for input data and output files
@@ -28,21 +28,21 @@ if __name__ == '__main__':
     #output_csv_prefix = r"C:\Users\daria\OneDrive\Desktop\ESAME\outputpython"
     #metadata_csv = r"C:\Users\daria\OneDrive\Desktop\ESAME\AD_CTRL_metadata.csv"
 
-    folder_path = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\AD_CTRL"
-    atlas_file = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\BN_Atlas_246_2mm.nii.gz"
-    atlas_txt = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\BN_Atlas_246_LUT.txt"
-    output_csv_prefix = r"C:\Users\brand\OneDrive\Desktop\OutputValues"
-    metadata_csv = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\AD_CTRL_metadata.csv"
+    #folder_path = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\AD_CTRL"
+    #atlas_file = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\BN_Atlas_246_2mm.nii.gz"
+    #atlas_txt = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\BN_Atlas_246_LUT.txt"
+   # output_csv_prefix = r"C:\Users\brand\OneDrive\Desktop\OutputValues"
+    #metadata_csv = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\AD_CTRL_metadata.csv"
 
 
-    #folder_path = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\tutti_i_dati"
-    #atlas_file = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\BN_Atlas_246_2mm.nii.gz"
-    #atlas_txt = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\BN_Atlas_246_LUT.txt"
-    #output_csv_prefix = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\outputpythonNUOVOATLANTE"
-    #metadata_csv = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\AD_CTRL_metadata.csv"
+    folder_path = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\tutti_i_dati"
+    atlas_file = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\BN_Atlas_246_2mm.nii.gz"
+    atlas_txt = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\BN_Atlas_246_LUT.txt"
+    output_csv_prefix = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\outputpythonNUOVOATLANTE"
+    metadata_csv = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\AD_CTRL_metadata.csv"
 
 
-    
+
 
 
     # Load metadata and sort by ID
@@ -72,6 +72,7 @@ if __name__ == '__main__':
     print(subject_ids)
 
     df_mean.index = subject_ids
+
     df_std.index = subject_ids
     df_unita.index = subject_ids
     df_media_std_volume.index = subject_ids
@@ -81,8 +82,8 @@ if __name__ == '__main__':
 
 
 
-    print("dimensione di matrice unita")
-    print(df_unita.shape)
+   # print("dimensione di matrice unita")
+   # print(df_unita.shape)
 
     print("dimensione di df_mean")
     print(df_mean.shape)
@@ -90,8 +91,8 @@ if __name__ == '__main__':
     print("dimensione di group")
     print(group.shape)
 
-    print("Indice di features combined:")
-    print(df_unita.index)
+    #print("Indice di features combined:")
+    #print(df_unita.index)
     print("Indice di group:")
     print(group.index)
 
@@ -109,5 +110,6 @@ if __name__ == '__main__':
 
     # Evaluate the Random Forest classifier
     #random_forest.RFPipeline_noPCA(df_std_volume, group, 10, 5)
+
     #random_forest_PCA.RFPipeline_PCA(df_media_std_volume, group, 10, 5)
     random_forest_RFECV.RFPipeline_RFECV_Top10ROI(df_media_std_volume, group, 10, 5)

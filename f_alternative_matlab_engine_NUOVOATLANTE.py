@@ -43,21 +43,27 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     current_folder = eng.pwd()
 
     # === 2. Call the MATLAB function to extract features ===
+
     mean, std, volume = eng.f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix, nargout=3)
+
 
     # Quit MATLAB engine after the operation is complete
     eng.quit()
 
     # === 3. Convert MATLAB arrays to NumPy arrays ===
     mean_array = np.asarray(mean)
+
+
     std_array = np.asarray(std)
     volume_array = np.asarray(volume)
 
     # === 4. Transpose arrays if necessary (maintaining correct shape) ===
     if mean_array.shape[0] < mean_array.shape[1]:
         mean_array = mean_array.T
+
     if std_array.shape[0] < std_array.shape[1]:
         std_array = std_array.T
+
     if volume_array.shape[0] < volume_array.shape[1]:
         volume_array = volume_array.T
 
@@ -66,8 +72,12 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     if isinstance(mean_array[0, 0], str) :
         data_start = 1  # First row contains headers
 
-    if isinstance(std_array[0, 0], str) :
+   # if isinstance(std_array[0, 0], str) :
+   #     data_start = 1  # First row contains headers
+
+    if isinstance(volume_array[0, 0], str) :
         data_start = 1  # First row contains headers
+
 
     if isinstance(volume_array[0, 0], str) :
         data_start = 1 # First row contains headers
@@ -76,6 +86,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     matrice_media_volume = np.hstack((mean_array, volume_array))
     matrice_media_std_volume = np.hstack((mean_array, std_array, volume_array))
     matrice_std_volume = np.hstack((std_array, volume_array))
+
 
 
     # === 6. Create pandas DataFrames for mean and standard deviation values ===
@@ -90,6 +101,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
                 index_ROI.append(columns[1].strip())
 
     index_ROI_mean = [roi + '_mean' for roi in index_ROI]
+
     index_ROI_std = [roi + '_std' for roi in index_ROI]
     index_ROI_volume = [roi + '_volume' for roi in index_ROI]
 
@@ -100,9 +112,10 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     index_ROI_std_volume = index_ROI_std + index_ROI_volume
 
 
+
     # Verifica le dimensioni
     print("mean_array.shape:", mean_array.shape)
-    print("data_start:", data_start)
+   # print("data_start:", data_start)
     print("Array slice shape:", mean_array[:, data_start:].shape)
     print("Length of index_ROI:", len(index_ROI))
 
@@ -115,13 +128,19 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
                         columns=index_ROI)
 
 
-    df_std = pd.DataFrame(std_array[:, data_start :],
-                          index=std_array[:, 0],
+    #df_std = pd.DataFrame(std_array[:, data_start :],
+    #                      index=std_array[:, 0],
+    #                      columns=index_ROI)
+
+    df_volume = pd.DataFrame(volume_array[:, data_start :],
+                          index=volume_array[:, 0],
                           columns=index_ROI)
 
-    df_unita= pd.DataFrame(matrice_unita[:, data_start :],
-                          index=mean_array[:, 0],
-                          columns=index_ROI_mean_std)
+    #df_unita= pd.DataFrame(matrice_unita[:, data_start :],
+    #                      index=mean_array[:, 0],
+    #                      columns=index_ROI_mean_std)
+
+
 
     df_media_volume = pd.DataFrame(matrice_media_volume[:, data_start :],
                           index=mean_array[:, 0],
@@ -135,8 +154,8 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
                             index=std_array[:, 0],
                             columns=index_ROI_std_volume)
 
-    
-                        
+
+
 
     # === 7. Load metadata from CSV file ===
     df_group = pd.read_csv(metadata_csv, sep='\t')

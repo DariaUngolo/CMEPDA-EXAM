@@ -52,11 +52,11 @@ import f_alternative_matlab_engine_NUOVOATLANTE as feature_extractor
 
 param_dist = {
     'n_estimators': randint(50, 500),  # Numero di alberi
-    'max_depth': randint(1, 20),        # Profondità massima dell'albero
-    'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
-    'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
-    'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
-    'bootstrap': [True, False]  }         # Attiva o disattiva il campionamento bootstrap
+    'max_depth': randint(1, 20) }      # Profondità massima dell'albero
+   # 'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
+   # 'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
+   # 'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
+   # 'bootstrap': [True, False]  }         # Attiva o disattiva il campionamento bootstrap
 #}
 #param_dist = {
 #    "hyper_opt__n_estimators": randint(100, 600),    # Più alberi per stabilità
@@ -67,11 +67,13 @@ param_dist = {
 #    "hyper_opt__bootstrap": [True, False]
 #}
 
-def RFPipeline_PCA(df1, df2, n_iter, cv):
+
+
+def SVM_simple(df1, df2, ker: str):
     """
-    Creates pipeline that perform Random Forest classification on the data with Principal Component Analysis. The
-    input data is split into training and test sets, then a Randomized Search (with cross-validation) is performed to
-    find the best hyperparameters for the model.
+    Performs SVM classification on the data. The input data is split into training and test sets, then a Grid Search
+    (with cross-validation) is performed to find the best hyperparameters for the model. Feature reduction is not
+    implemented in this function.
 
     Parameters
     ----------
@@ -79,63 +81,51 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
         Dataframe containing the features.
     df2 : pandas.DataFrame
         Dataframe containing the labels.
-    n_iter : int
-        Number of parameter settings that are sampled.
-    cv : int
-        Number of cross-validation folds to use.
+    ker : str
+        Kernel type.
 
     Returns
     -------
-    pipeline_PCA : sklearn.pipeline.Pipeline
-        A fitted pipeline (includes PCA, hyperparameter optimization using RandomizedSearchCV and a Random Forest
-        Classifier model).
+    grid : sklearn.model_selection.GridSearchCV
+        A fitted grid search object with the best parameters for the SVM model.
 
     See Also
     --------
-    PCA : https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
-    RandomizedSearchCV : https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+    GridSearchCV : https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
     """
-
+    # Extract feature and target data as NumPy arrays
     X = df1.values
-    y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values
-    region = list(df1.columns.values)
+    y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values #converti le etichette in numeri
+
+
+    if ker == 'linear':
+        param_grid = {
+                'C': np.logspace(-3, 3, 10),
+                'gamma': np.logspace(-4, 2, 10),
+                'kernel': [ker],
+                'class_weight': ['balanced', None]
+            }
+    else:
+        param_grid = {
+                'C': np.logspace(-3, 3, 10),
+                'gamma': np.logspace(-4, 2, 10),
+                'kernel': [ker],
+                'class_weight': ['balanced', None]
+            }
 
     X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1, random_state=6)
 
-    #pipeline_PCA = Pipeline(steps=[
-    #    ("smote", SMOTE(random_state=42)),                # Gestione dello sbilanciamento
-     #   ("scaler", StandardScaler()),                     # Standardizzazione
-     #   ("feature_selection", RFECV(
-    #        estimator=RandomForestClassifier(),
-     #       step=1,
-     #       cv=3,
-     #       scoring="accuracy"  # Cambia metrica se necessario, es. "roc_auc"
-     #   )),
-     #   ("hyper_opt", RandomizedSearchCV(
-     #       RandomForestClassifier(),
-     #       param_distributions=param_dist,
-     #       n_iter=n_iter,
-     #       cv=cv,
-     #       random_state=9
-     #   ))
-    #])
+    clf = svm.SVC(kernel=ker)
 
-    pipeline_PCA = Pipeline(steps=[("dim_reduction", PCA()),
-                                   ("hyper_opt", RandomizedSearchCV(RandomForestClassifier(),
-                                                                    param_distributions=param_dist,
-                                                                    n_iter=n_iter,
-                                                                    cv=cv,
-                                                                    random_state=9))
-                                   ]
-                            )
-    pipeline_PCA.fit(X_tr, y_tr)
+    grid = GridSearchCV(clf, param_grid, refit=True, scoring='roc_auc', cv=5)
 
-    y_pred = pipeline_PCA.predict(X_tst)
-    y_prob = pipeline_PCA.predict_proba(X_tst)
+    # fitting the model for grid search
+    grid.fit(X_tr, y_tr)
+
+    y_pred = grid.predict(X_tst)
+    y_prob = grid.decision_function(X_tst)
 
     # SCORES WITH 95% CONFIDENCE INTERVAL
     scores = evaluate_model_performance(y_tst, y_pred, y_prob)
 
-    print("Components shape is:", np.shape(pipeline_PCA["dim_reduction"].components_)[0])
-
-    return pipeline_PCA.pip
+    return grid.pip
