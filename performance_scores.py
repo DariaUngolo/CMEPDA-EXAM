@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_curve, auc
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score,
+    roc_curve, auc, f1_score, confusion_matrix
+)
 
 
 def compute_binomial_error(metric_value, n_samples, confidence_level):
@@ -14,7 +17,7 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     metric_value : float
         The metric value (between 0 and 1), such as accuracy, precision, or recall.
 
-def evaluate_model_performance
+    def evaluate_model_performance
     n_samples : int
         Number of independent observations (e.g., test set size).
 
@@ -75,15 +78,23 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
         y_proba = y_proba[:, 1]
 
     # Compute core metrics
-    accuracy = accuracy_score(y_true, y_pred)
-    precision = precision_score(y_true, y_pred)
-    recall = recall_score(y_true, y_pred)
+    accuracy = accuracy_score(y_true, y_pred,)
+    precision = precision_score(y_true, y_pred, zero_division='warn')
+    recall = recall_score(y_true, y_pred, zero_division='warn')
+    f1 = f1_score(y_true, y_pred, zero_division='warn')
+
+    # Confusion matrix for specificity
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
 
     # Estimate errors
     n = len(y_true)
     acc_err = compute_binomial_error(accuracy, n, confidence_level)
     prec_err = compute_binomial_error(precision, n, confidence_level)
     rec_err = compute_binomial_error(recall, n, confidence_level)
+    f1_err = compute_binomial_error(f1, n, confidence_level)
+    spec_err = compute_binomial_error(specificity, n, confidence_level)
+
 
     # ROC and AUC computation
     fpr, tpr, _ = roc_curve(y_true, y_proba, pos_label= 1)
@@ -106,34 +117,37 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     # Plot ROC Curve (aesthetically improved)
     #plt.style.use('seaborn-v0_8-darkgrid')
     plt.figure(figsize=(8, 6))
-    plt.plot(fpr, tpr, color='darkorange', lw=2.5,
+    plt.plot(fpr, tpr, color='#FF6F61', lw=3,
              label=f'ROC curve (AUC = {roc_auc:.2f} ± {auc_err:.2f})')
-    plt.plot([0, 1], [0, 1], color='navy', linestyle='--', lw=2)
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--', lw=2)
 
-    plt.xlim([-0.02, 1.02])
-    plt.ylim([-0.02, 1.05])
-    plt.xlabel('False Positive Rate', fontsize=12)
-    plt.ylabel('True Positive Rate', fontsize=12)
-    plt.title('Receiver Operating Characteristic (ROC) Curve', fontsize=14)
+    plt.xlim([-0.01, 1.01])
+    plt.ylim([-0.01, 1.05])
+    plt.xlabel('False Positive Rate', fontsize=13)
+    plt.ylabel('True Positive Rate', fontsize=13)
+    plt.title('ROC Curve', fontsize=15, fontweight='bold')
     plt.legend(loc="lower right", fontsize=11)
-    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.grid(True, linestyle='--', alpha=0.5)
     plt.tight_layout()
     plt.show()
 
     # --- Bar Plot with Error Bars ---
-    metrics = ['Accuracy', 'Precision', 'Recall', 'AUC']
-    values = [accuracy, precision, recall, roc_auc]
-    errors = [acc_err, prec_err, rec_err, auc_err]
+    metrics = ['Accuracy', 'Precision', 'Recall', 'F1-score', 'Specificity', 'AUC']
+    values = [accuracy, precision, recall, f1, specificity, roc_auc]
+    errors = [acc_err, prec_err, rec_err, f1_err, spec_err, auc_err]
+    colors = ['#4C72B0', '#55A868', '#C44E52', '#8172B2', '#CCB974', '#64B5CD']
 
-    fig, ax = plt.subplots(figsize=(8, 5))
-    bars = ax.bar(metrics, values, yerr=errors, capsize=8, color=['#4C72B0', '#55A868', '#C44E52', '#8172B2'],
-                  edgecolor='black', linewidth=1.2)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bars = ax.bar(metrics, values, yerr=errors, capsize=10,
+                  color=colors, edgecolor='black', linewidth=1.5)
 
     ax.set_ylim(0, 1.1)
-    ax.set_ylabel("Score", fontsize=12)
-    ax.set_title("Classification Metrics with Confidence Errors", fontsize=14)
+    ax.set_ylabel("Score", fontsize=13)
+    ax.set_title("Classification Metrics with Confidence Errors", fontsize=15, fontweight='bold')
     ax.grid(axis='y', linestyle='--', alpha=0.6)
-    ax.bar_label(bars, fmt="%.2f", padding=3)
+    ax.bar_label(bars, fmt="%.2f", padding=4, fontsize=11)
+    plt.xticks(fontsize=11)
+    plt.yticks(fontsize=11)
     plt.tight_layout()
     plt.show()
 
@@ -141,12 +155,16 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     print(f"Accuracy:  {accuracy:.2f} ± {acc_err:.2f}")
     print(f"Precision: {precision:.2f} ± {prec_err:.2f}")
     print(f"Recall:    {recall:.2f} ± {rec_err:.2f}")
+    print(f"F1-score:    {f1:.2f} ± {f1_err:.2f}")
+    print(f"Specificity: {specificity:.2f} ± {spec_err:.2f}")
     print(f"AUC:       {roc_auc:.2f} ± {auc_err:.2f}")
 
     return {
         'Accuracy': accuracy, 'Accuracy_error': acc_err,
         'Precision': precision, 'Precision_error': prec_err,
         'Recall': recall, 'Recall_error': rec_err,
+        'F1-score': f1, 'F1-score_error': f1_err,
+        'Specificity': specificity, 'Specificity_error': spec_err,
         'AUC': roc_auc, 'AUC_error': auc_err
     }
 
