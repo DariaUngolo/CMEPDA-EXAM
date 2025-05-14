@@ -26,8 +26,10 @@ os.environ["PATH"] += os.pathsep + r"C:\Program Files\Graphviz\bin"
 # 🧪 (Opzionale) Debug: stampa dove si trova 'dot'
 print("DOT trovato in:", shutil.which("dot"))
 
+from imblearn.over_sampling import SMOTE
 from scipy import stats
 from sklearn import svm
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
@@ -51,11 +53,19 @@ import f_alternative_matlab_engine_NUOVOATLANTE as feature_extractor
 param_dist = {
     'n_estimators': randint(50, 500),  # Numero di alberi
     'max_depth': randint(1, 20),        # Profondità massima dell'albero
-    #'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
-    #'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
-    #'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
-    #'bootstrap': [True, False]           # Attiva o disattiva il campionamento bootstrap
-}
+    'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
+    'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
+    'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
+    'bootstrap': [True, False]  }         # Attiva o disattiva il campionamento bootstrap
+#}
+#param_dist = {
+#    "hyper_opt__n_estimators": randint(100, 600),    # Più alberi per stabilità
+#    "hyper_opt__max_depth": randint(5, 40),         # Estendi la profondità massima
+#    "hyper_opt__min_samples_split": randint(2, 20),
+#    "hyper_opt__min_samples_leaf": randint(1, 10),
+#    "hyper_opt__max_features": ['sqrt', 'log2', None],
+#    "hyper_opt__bootstrap": [True, False]
+#}
 
 def RFPipeline_PCA(df1, df2, n_iter, cv):
     """
@@ -92,6 +102,24 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
 
     X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1, random_state=6)
 
+    #pipeline_PCA = Pipeline(steps=[
+    #    ("smote", SMOTE(random_state=42)),                # Gestione dello sbilanciamento
+     #   ("scaler", StandardScaler()),                     # Standardizzazione
+     #   ("feature_selection", RFECV(
+    #        estimator=RandomForestClassifier(),
+     #       step=1,
+     #       cv=3,
+     #       scoring="accuracy"  # Cambia metrica se necessario, es. "roc_auc"
+     #   )),
+     #   ("hyper_opt", RandomizedSearchCV(
+     #       RandomForestClassifier(),
+     #       param_distributions=param_dist,
+     #       n_iter=n_iter,
+     #       cv=cv,
+     #       random_state=9
+     #   ))
+    #])
+
     pipeline_PCA = Pipeline(steps=[("dim_reduction", PCA()),
                                    ("hyper_opt", RandomizedSearchCV(RandomForestClassifier(),
                                                                     param_distributions=param_dist,
@@ -100,7 +128,6 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
                                                                     random_state=9))
                                    ]
                             )
-
     pipeline_PCA.fit(X_tr, y_tr)
 
     y_pred = pipeline_PCA.predict(X_tst)
