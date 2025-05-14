@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
 
     # Call feature extraction function
-    df_mean, df_std, group, df_unita, df_std_volume = feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_csv_prefix)
+    df_mean, df_std, group, df_unita, df_media_volume, df_media_std_volume, df_std_volume = feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_csv_prefix)
 
 
     # Verifica dimensioni dei DataFrame
@@ -73,9 +73,10 @@ if __name__ == '__main__':
 
     df_mean.index = subject_ids
     df_std.index = subject_ids
-    #df_unita.index = subject_ids
-    #df_media_std_volume.index = subject_ids
+    df_unita.index = subject_ids
+    df_media_std_volume.index = subject_ids
     df_std_volume.index = subject_ids
+    df_media_volume.index = subject_ids
     group = df_group_selected.set_index("ID")["DXGROUP"]
 
 
@@ -103,10 +104,10 @@ if __name__ == '__main__':
     #print("stampa  df_unita")
     #print( df_unita)
 
-    print("stampa df_media_volume")
-    print(df_std_volume)
+    #print("stampa df_media_volume")
+    #print(df_std_volume)
 
     # Evaluate the Random Forest classifier
     #random_forest.RFPipeline_noPCA(df_std_volume, group, 10, 5)
-    #random_forest_PCA.RFPipeline_PCA(df_unita, group, 10, 5)
-    random_forest_RFECV.RFPipeline_RFECV_Top10ROI(df_std_volume, group, 10, 5)
+    #random_forest_PCA.RFPipeline_PCA(df_media_std_volume, group, 10, 5)
+    random_forest_RFECV.RFPipeline_RFECV_Top10ROI(df_media_std_volume, group, 10, 5)

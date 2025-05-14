@@ -148,4 +148,4 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     #group2 = df_group.iloc[:, [0, 1]]  # Columns with ID and Group
 
     # === 9. Return results ===
-    return df_mean, df_std, group, df_unita, df_std_volume
+    return df_mean, df_std, group, df_unita, df_media_volume, df_media_std_volume, df_std_volume
