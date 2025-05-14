@@ -36,28 +36,34 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     eng = matlab.engine.start_matlab()
 
     # Add the MATLAB path (modify as needed)
-    eng.addpath(r"C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM", nargout=0)
-    #eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
+    #eng.addpath(r"C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM", nargout=0)
+    eng.addpath(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM", nargout=0)
 
     # Get the current MATLAB working directory
     current_folder = eng.pwd()
 
     # === 2. Call the MATLAB function to extract features ===
-    mean, volume = eng.f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix, nargout=2)
+
+    mean, std, volume = eng.f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix, nargout=3)
+
 
     # Quit MATLAB engine after the operation is complete
     eng.quit()
 
     # === 3. Convert MATLAB arrays to NumPy arrays ===
     mean_array = np.asarray(mean)
-    volume_array = np.asarray(mean)
-    #std_array = np.asarray(std)
+
+
+    std_array = np.asarray(std)
+    volume_array = np.asarray(volume)
 
     # === 4. Transpose arrays if necessary (maintaining correct shape) ===
     if mean_array.shape[0] < mean_array.shape[1]:
         mean_array = mean_array.T
-   # if std_array.shape[0] < std_array.shape[1]:
-   #     std_array = std_array.T
+
+    if std_array.shape[0] < std_array.shape[1]:
+        std_array = std_array.T
+
     if volume_array.shape[0] < volume_array.shape[1]:
         volume_array = volume_array.T
 
@@ -72,9 +78,15 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     if isinstance(volume_array[0, 0], str) :
         data_start = 1  # First row contains headers
 
-    #matrice_unita = np.hstack((mean_array, std_array))
 
-    matrice_VM = np.hstack((mean_array, volume_array))
+    if isinstance(volume_array[0, 0], str) :
+        data_start = 1 # First row contains headers
+
+    matrice_unita = np.hstack((mean_array, std_array))
+    matrice_media_volume = np.hstack((mean_array, volume_array))
+    matrice_media_std_volume = np.hstack((mean_array, std_array, volume_array))
+    matrice_std_volume = np.hstack((std_array, volume_array))
+
 
 
     # === 6. Create pandas DataFrames for mean and standard deviation values ===
@@ -89,12 +101,17 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
                 index_ROI.append(columns[1].strip())
 
     index_ROI_mean = [roi + '_mean' for roi in index_ROI]
-    #index_ROI_std = [roi + '_std' for roi in index_ROI]
+
+    index_ROI_std = [roi + '_std' for roi in index_ROI]
     index_ROI_volume = [roi + '_volume' for roi in index_ROI]
 
     # Combina mean e std
-    #index_ROI_mean_std = index_ROI_mean + index_ROI_std
+    index_ROI_mean_std = index_ROI_mean + index_ROI_std
     index_ROI_mean_volume = index_ROI_mean + index_ROI_volume
+    index_ROI_mean_std_volume = index_ROI_mean + index_ROI_std + index_ROI_volume
+    index_ROI_std_volume = index_ROI_std + index_ROI_volume
+
+
 
     # Verifica le dimensioni
     print("mean_array.shape:", mean_array.shape)
@@ -124,9 +141,21 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     #                      columns=index_ROI_mean_std)
 
 
-    df_VM= pd.DataFrame(matrice_VM[:, data_start :],
+
+    df_media_volume = pd.DataFrame(matrice_media_volume[:, data_start :],
                           index=mean_array[:, 0],
                           columns=index_ROI_mean_volume)
+
+    df_media_std_volume = pd.DataFrame(matrice_media_std_volume[:, data_start :],
+                            index=mean_array[:, 0],
+                            columns=index_ROI_mean_std_volume)
+
+    df_std_volume = pd.DataFrame(matrice_std_volume[:, data_start :],
+                            index=std_array[:, 0],
+                            columns=index_ROI_std_volume)
+
+
+
 
     # === 7. Load metadata from CSV file ===
     df_group = pd.read_csv(metadata_csv, sep='\t')
@@ -138,4 +167,6 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     #group2 = df_group.iloc[:, [0, 1]]  # Columns with ID and Group
 
     # === 9. Return results ===
-    return df_mean, group, df_volume,  df_VM
+
+    return df_mean, df_std, group, df_unita, df_std_volume
+

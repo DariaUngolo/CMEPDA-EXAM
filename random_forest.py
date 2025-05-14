@@ -37,8 +37,8 @@ from sklearn.feature_selection import RFECV
 from scipy.stats import randint
 
 # Adding a specific path to the system for importing custom modules
-sys.path.append(r"C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM")
-#sys.path.append(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM")
+#sys.path.append(r"C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM")
+sys.path.append(r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM")
 
 
 # Importing a custom module for performance evaluation
@@ -50,7 +50,7 @@ import f_alternative_matlab_engine_NUOVOATLANTE as feature_extractor
 
 param_dist = {
     'n_estimators': randint(50, 500),  # Numero di alberi
-    'max_depth': randint(1, 20),        # Profondità massima dell'albero
+    'max_depth': randint(5, 50),        # Profondità massima dell'albero
     #'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
     #'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
     #'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
