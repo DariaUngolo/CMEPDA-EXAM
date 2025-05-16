@@ -59,13 +59,13 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     
     # === 4. Check if the first row contains headers or data ===
     data_start = 0
-    if isinstance(mean_array[0, 0], str) :
+    if isinstance(mean_matrix[0, 0], str) :
         data_start = 1  # First row contains headers
 
-    if isinstance(std_array[0, 0], str) :
+    if isinstance(std_matrix[0, 0], str) :
         data_start = 1  # First row contains headers
 
-    if isinstance(volume_array[0, 0], str) :
+    if isinstance(volume_matrix[0, 0], str) :
         data_start = 1  # First row contains headers
 
     # === 5. Create matrices for different combinations of features ===
@@ -96,7 +96,18 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     index_ROI_mean_volume = index_ROI_mean + index_ROI_volume
     index_ROI_mean_std_volume = index_ROI_mean + index_ROI_std + index_ROI_volume
     index_ROI_std_volume = index_ROI_std + index_ROI_volume
-    label_row = mean_matrix[:, 0]  # First column is the subject ID
+
+
+    
+    # === 7. Load metadata from CSV file ===
+    df_dxgroup = pd.read_csv(metadata_csv, sep='\t')
+    df_dxgroup.sort_values(by=[df_dxgroup.columns[0]], inplace=True)
+
+    # === 8. Extract group labels (metadata) ===
+    diagnostic_group_labels = df_dxgroup.iloc[:, 1]
+    diagnostic_group_labels.index = df_dxgroup.iloc[:, 0]  # Set the index to the subject ID
+
+    label_id_row =  df_dxgroup.iloc[:, 0].values # First column is the subject ID
 
 
     # Create DataFrames for the mean, std, and volume arrays
@@ -104,40 +115,35 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
         raise ValueError("Mismatch between index_ROI and number of columns in mean_array slice.")
 
     df_mean = pd.DataFrame(mean_matrix[:, data_start:],
-                        index=label_row,  # First column is the subject ID
+                        index=label_id_row,  # First column is the subject ID
                         columns=index_ROI)
 
 
     df_std = pd.DataFrame(std_matrix[:, data_start :],
-                        index=label_row,
+                        index=label_id_row,
                         columns=index_ROI)
 
     df_volume = pd.DataFrame(volume_matrix[:, data_start :],
-                        index=label_row,
+                        index=label_id_row,
                         columns=index_ROI)
 
     df_mean_std= pd.DataFrame(mean_std_matrix[:, data_start :],
-                        index=label_row,
+                        index=label_id_row,
                         columns=index_ROI_mean_std)
 
     df_mean_volume = pd.DataFrame(mean_volume_matrix[:, data_start :],
-                        index=label_row,
+                        index=label_id_row,
                         columns=index_ROI_mean_volume)
 
     df_mean_std_volume = pd.DataFrame(mean_std_volume_matrix[:, data_start :],
-                            index=label_row,
+                            index=label_id_row,
                             columns=index_ROI_mean_std_volume)
 
-    df_std_volume = pd.DataFrame(matrice_std_volume[:, data_start :],
-                            index=label_row,
+    df_std_volume = pd.DataFrame(std_volume_matrix[:, data_start :],
+                            index=label_id_row,
                             columns=index_ROI_std_volume)
 
-    # === 7. Load metadata from CSV file ===
-    df_dxgroup = pd.read_csv(metadata_csv, sep='\t')
-    df_dxgroup.sort_values(by=[df_dxgroup.columns[0]], inplace=True)
-
-    # === 8. Extract group labels (metadata) ===
-    diagnostic_group_labels = df_dxgroup.iloc[:, 1]
+    
    
     # === 9. Return results ===
     return df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume, diagnostic_group_labels

@@ -59,8 +59,7 @@ function [Means, Stds, Volumes] = feature_extractor(folder_path, atlas_file, atl
     voxel_size = img_header.PixelDimensions;  % Voxel size (in mm) for each of axis x, y, z  
     voxel_volume = prod(voxel_size);  % Volume of a voxel in mm^3
 
-    fprintf('voxel size is: [%.2f, %.2f, %.2f]', voxel_size);
-
+   
     %% 5. Pre-allocate results
     % Initialize matrices to store the mean and standard deviation values for each image and ROI
     Means = NaN(num_images, num_rois);
