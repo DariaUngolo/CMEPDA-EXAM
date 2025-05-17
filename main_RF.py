@@ -37,8 +37,11 @@ if __name__ == '__main__':
 
 
     folder_path = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\tutti_i_dati"
-    atlas_file = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\BN_Atlas_246_2mm.nii.gz"
+    #atlas_file = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\BN_Atlas_246_2mm.nii.gz"
+    atlas_file ="C:\\Users\\daria\\OneDrive\\Desktop\\BN_Atlas_246_1.5mm.nii.gz"
+    #atlas_file ="C:\\Users\\daria\\OneDrive\\Desktop\\atlanteVECCHIO_ricampionato_1_5.nii.gz"
     atlas_txt = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\BN_Atlas_246_LUT.txt"
+    #atlas_txt = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\lpba40_labelID.txt"
     output_csv_prefix = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\outputpythonNUOVOATLANTE"
     metadata_csv = "C:\\Users\\daria\\OneDrive\\Desktop\\ESAME\\AD_CTRL_metadata.csv"
 
@@ -57,7 +60,7 @@ if __name__ == '__main__':
 
     # Call feature extraction function
 
-    df_mean, df_std, group, df_unita, df_std_volume = feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_csv_prefix)
+    df_mean, df_std, group, df_unita, df_media_volume, df_media_std_volume, df_std_volume = feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_csv_prefix)
 
 
     # Verifica dimensioni dei DataFrame
@@ -77,7 +80,7 @@ if __name__ == '__main__':
 
     df_std.index = subject_ids
     df_unita.index = subject_ids
-    #df_media_std_volume.index = subject_ids
+    df_media_std_volume.index = subject_ids
     df_std_volume.index = subject_ids
 
     group = df_group_selected.set_index("ID")["DXGROUP"]
@@ -113,8 +116,8 @@ if __name__ == '__main__':
     print(df_std_volume)
 
     # Evaluate the Random Forest classifier
-    #random_forest.RFPipeline_noPCA(df_std_volume, group, 10, 5)
+    random_forest.RFPipeline_noPCA(df_media_std_volume, group, 10, 5)
     #random_forest_PCA.RFPipeline_PCA(df_unita, group, 10, 5)
-    #random_forest_RFECV.RFPipeline_RFECV_Top10ROI(df_std_volume, group, 10, 5)
-    SVM_simple.SVM_simple(df_unita, group, "rbf")
+    #random_forest_RFECV.RFPipeline_RFECV_Top10ROI(df_media_std_volume, group, 50, 5)
+    #SVM_simple.SVM_simple(df_unita, group, "rbf")
 

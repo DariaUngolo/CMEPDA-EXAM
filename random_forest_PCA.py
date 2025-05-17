@@ -49,23 +49,11 @@ from performance_scores import compute_binomial_error, evaluate_model_performanc
 # Importing a custom module to interact with MATLAB Engine
 import f_alternative_matlab_engine_NUOVOATLANTE as feature_extractor
 
-
 param_dist = {
-    'n_estimators': randint(50, 500),  # Numero di alberi
-    'max_depth': randint(1, 20),        # Profondità massima dell'albero
-    #'min_samples_split': randint(5, 15),  # Numero minimo di campioni per fare una divisione
-    #'min_samples_leaf': randint(1, 5),   # Numero minimo di campioni per foglia
-    #'max_features': ['sqrt', 'log2'],    # Tipo di features da considerare in ogni albero
-    #'bootstrap': [True, False]  }         # Attiva o disattiva il campionamento bootstrap
-#}
-#param_dist = {
-#    "hyper_opt__n_estimators": randint(100, 600),    # Più alberi per stabilità
-#    "hyper_opt__max_depth": randint(5, 40),         # Estendi la profondità massima
-#    "hyper_opt__min_samples_split": randint(2, 20),
-#    "hyper_opt__min_samples_leaf": randint(1, 10),
-#    "hyper_opt__max_features": ['sqrt', 'log2', None],
-#    "hyper_opt__bootstrap": [True, False]
-#}
+    'n_estimators': randint(50, 500),
+    'max_depth': randint(5, 50),
+
+}
 
 def RFPipeline_PCA(df1, df2, n_iter, cv):
     """

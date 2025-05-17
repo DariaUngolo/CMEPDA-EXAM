@@ -1,4 +1,4 @@
-function [Means, Stds, Volumes] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+function [Means, Stds, Entropies] = f_feature_extractor_means_stds(folder_path, atlas_file, atlas_txt, output_csv_prefix)
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -62,7 +62,7 @@ function [Means, Stds, Volumes] = f_feature_extractor_means_stds(folder_path, at
     % Initialize matrices to store the mean and standard deviation values for each image and ROI
     Means = NaN(num_images, num_rois);
     Stds = NaN(num_images, num_rois);
-    Volumes = NaN(num_images, num_rois);
+    Entropies = NaN(num_images, num_rois);
 
     %% 6. Feature extraction
     % Loop through all images and calculate the mean and std for each ROI
@@ -83,9 +83,10 @@ function [Means, Stds, Volumes] = f_feature_extractor_means_stds(folder_path, at
                 Means(i,j) = mean(voxels);
                 Stds(i,j) = std(voxels);
 
-                % Calculate volume (number of voxels * voxel volume)  #modifica
-                num_voxels = numel(voxels);  % Count number of voxels in the ROI  #modifica
-                Volumes(i,j) = num_voxels * voxel_volume;  % Calculate volume in mm^3  #modifica
+                % Calculate entropy
+                [counts, ~] = histcounts(voxels, 'Normalization', 'probability');
+                counts = counts(counts > 0); % Remove zero probabilities
+                Entropies(i,j) = -sum(counts .* log2(counts));
             end
         end
     end
@@ -97,8 +98,8 @@ function [Means, Stds, Volumes] = f_feature_extractor_means_stds(folder_path, at
     img_names = string(base_names)';
     mean_colnames = strcat("Mean_", roi_names');
     std_colnames = strcat("Std_", roi_names');
-    vol_colnames = strcat("Volume_", roi_names');  % New column names for volume  #modifica
-
+    entropy_colnames = strcat("Entropy_", roi_names')
+    
     % Create tables for the means and standard deviations
     MeanTable = array2table(Means, 'VariableNames', mean_colnames);
     MeanTable = addvars(MeanTable, img_names, 'Before', 1, 'NewVariableNames', 'Image');
@@ -106,8 +107,8 @@ function [Means, Stds, Volumes] = f_feature_extractor_means_stds(folder_path, at
     StdTable = array2table(Stds, 'VariableNames', std_colnames);
     StdTable = addvars(StdTable, img_names, 'Before', 1, 'NewVariableNames', 'Image');
 
-    VolTable = array2table(Volumes, 'VariableNames', vol_colnames);  % New table for volumes  #modifica
-    VolTable = addvars(VolTable, img_names, 'Before', 1, 'NewVariableNames', 'Image');  % Add image names  #modifica
+    EntropyTable = array2table(Entropies, 'VariableNames', entropy_colnames);
+    EntropyTable = addvars(EntropyTable, img_names, 'Before', 1, 'NewVariableNames', 'Image');
 
     %% 8. Display summary
     % Print out the tables to the MATLAB command window
@@ -125,12 +126,12 @@ function [Means, Stds, Volumes] = f_feature_extractor_means_stds(folder_path, at
     % Calcola dimensioni della MeanTable
     [num_rows, num_cols] = size(MeanTable);
     [num_rows_std, num_cols_std] = size(MeanTable);
-    [num_rows_vol, num_cols_vol] = size(VolTable);  % Size of volume table  #modifica
+    [num_rows_entro, num_cols_entro] = size(EntropyTable);  % Size of volume table  #modifica
 
     % Mostra il numero di righe e colonne
     fprintf('MeanTable contiene %d righe e %d colonne.\n', num_rows, num_cols);
     fprintf('StdTable contiene %d righe e %d colonne.\n', num_rows_std, num_cols_std);
-    fprintf('VolTable contiene %d righe e %d colonne.\n', num_rows_vol, num_cols_vol);  % Display volume table size  #modifica
+    fprintf('EntropyTable contiene %d righe e %d colonne.\n', num_rows_entro, num_cols_entro);
 
 
     %% 9. Save to CSV
@@ -138,15 +139,15 @@ function [Means, Stds, Volumes] = f_feature_extractor_means_stds(folder_path, at
     if nargin == 4 && ~isempty(output_csv_prefix)
         mean_file = strcat(output_csv_prefix, '_mean.csv');
         std_file = strcat(output_csv_prefix, '_std.csv');
-        vol_file = strcat(output_csv_prefix, '_volume.csv');  % New volume file  #modifica
+        entropy_file = strcat(output_csv_prefix, '_entropy.csv'); % New entropy file
 
         % Write the tables to CSV files
         writetable(MeanTable, mean_file);
         writetable(StdTable, std_file);
-        writetable(VolTable, vol_file);  % Save volume table  #modifica
+        writetable(EntropyTable, entropy_file); % Save entropy table
 
         % Print the file names to confirm
-        fprintf('Tables saved:\n  - %s\n  - %s\n- %s\n', mean_file, std_file, vol_file);
+        fprintf('Tables saved:\n  - %s\n  - %s\n  - %s\n', mean_file, std_file, entropy_file);
     end
 end
 

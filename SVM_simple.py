@@ -3,6 +3,8 @@
 import sys
 from pathlib import Path
 import os
+from imblearn.over_sampling import SMOTE
+from sklearn.model_selection import train_test_split
 
 # Add the parent directory of the current working directory to the system path.
 # This ensures that Python can locate modules stored in the parent directory. #MODIFIED
@@ -100,26 +102,30 @@ def SVM_simple(df1, df2, ker: str):
 
     if ker == 'linear':
         param_grid = {
-                'C': np.logspace(-3, 3, 10),
-                'gamma': np.logspace(-4, 2, 10),
-                'kernel': [ker],
-                'class_weight': ['balanced', None]
-            }
+            'C': np.logspace(-3, 3, 10),  # Espandi il range per regolare meglio la penalizzazione degli errori
+            'kernel': [ker],              # Kernel lineare
+            'class_weight': ['balanced',None]  # Pesa automaticamente le classi per dare più importanza ai malati
+        }
     else:
         param_grid = {
-                'C': np.logspace(-3, 3, 10),
-                'gamma': np.logspace(-4, 2, 10),
-                'kernel': [ker],
-                'class_weight': ['balanced', None]
-            }
+            'C': np.logspace(-3, 3, 10),    # Range espanso per il parametro di regolarizzazione
+            'gamma': np.logspace(-4, 2, 10), # Range più ampio per il parametro del kernel RBF
+            'kernel': [ker],               # Specifica il kernel RBF
+            'class_weight': ['balanced',None]     # Pesa automaticamente le classi
+        }
 
     X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1, random_state=6)
 
     clf = svm.SVC(kernel=ker)
 
-    grid = GridSearchCV(clf, param_grid, refit=True, scoring='roc_auc', cv=5)
+    grid = GridSearchCV(
+        clf,
+        param_grid,
+        refit=True,
+        scoring='roc_auc',  # Ottimizza la recall  AGGIUNTO
+        cv=5  # Cross-validation stratificata
+    )
 
-    # fitting the model for grid search
     grid.fit(X_tr, y_tr)
 
     y_pred = grid.predict(X_tst)

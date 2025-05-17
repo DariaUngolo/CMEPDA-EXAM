@@ -144,7 +144,7 @@ def main():
     logger.info(f"🚀 Running classifier: {args.classifier}")
 
     if args.classifier == "rf_no_pca":
-        RFPipeline_noPCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
+        RFPipeline_noPCA(df_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
 
     elif args.classifier == "rf_pca":
         RFPipeline_PCA(df_mean_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
@@ -153,7 +153,7 @@ def main():
         RFPipeline_RFECV(df_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
 
     elif args.classifier == "svm":
-        SVM_simple(df_std, diagnostic_group_labels, ker=args.kernel)
+        SVM_simple(df_mean_std, diagnostic_group_labels, ker=args.kernel)
 
     logger.success("🎯 Classification pipeline completed successfully.")
 
