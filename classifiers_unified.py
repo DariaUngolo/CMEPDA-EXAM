@@ -215,7 +215,9 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     
 
 def RFPipeline_RFECV(df1, df2, n_iter, cv):
-    
+    """
+        manca la documentazione
+    """
     X = df1.values
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values
     roi_names = np.array(df1.columns.values)
