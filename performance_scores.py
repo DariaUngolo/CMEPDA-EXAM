@@ -84,7 +84,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     f1 = f1_score(y_true, y_pred, zero_division='warn')
 
     # Confusion matrix for specificity
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel() # ravel() flattens the matrix into a 1D array
     specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
 
     # Estimate errors
@@ -101,6 +101,8 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     roc_auc = auc(fpr, tpr)
 
     # AUC error estimation based on classical Hanley & McNeil (1982) approach
+    # which is a normal approximation
+    # for the variance of the AUC statistic.
     n1 = np.sum(y_true == 1)
     n0 = np.sum(y_true == 0)
 
@@ -114,13 +116,12 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
          (n0 - 1) * (q2 - roc_auc ** 2)) / (n1 * n0)
     )
 
-    # Plot ROC Curve (aesthetically improved)
+    # Plot ROC Curve
     #plt.style.use('seaborn-v0_8-darkgrid')
     plt.figure(figsize=(8, 6))
     plt.plot(fpr, tpr, color='#FF6F61', lw=3,
              label=f'ROC curve (AUC = {roc_auc:.2f} ± {auc_err:.2f})')
     plt.plot([0, 1], [0, 1], color='gray', linestyle='--', lw=2)
-
     plt.xlim([-0.01, 1.01])
     plt.ylim([-0.01, 1.05])
     plt.xlabel('False Positive Rate', fontsize=13)
@@ -235,33 +236,6 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     confidence_int=(default è 0.683, corrispondente a un intervallo di confidenza
     di circa un sigma, ovvero il 68.3%)
 
-    IL CODICE SE LO RUNNO NON MI DA PROBLEMI
-
-    """
-
-    """
-
-    DOC STRING  VECCHIA
-
-    Computes and displays various performance scores (including accuracy, precision, recall and AUC) with related errors
-    for binary classification models.
-
-    Parameters
-    ----------
-    y_test : numpy.ndarray
-        True labels of test set.
-    y_predicted : numpy.ndarray
-        Predicted labels of test set.
-    y_probability : numpy.ndarray
-        Predicted label probabilities of test set.
-    confidence_int : float, optional
-        Confidence interval for error estimation. Default value is 0.683 (approximately 1 sigma).
-
-    Returns
-    -------
-    scores : dict
-        Dictionary containing various performance scores (and relative errors) including: Accuracy, Precision, Recall
-        and AUC.
 
     See Also
     --------
