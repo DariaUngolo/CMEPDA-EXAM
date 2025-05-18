@@ -5,11 +5,12 @@ from loguru import logger
 
 
 def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
+
     """
     Resample a NIfTI image to a specified voxel size.
 
-    This function loads a NIfTI file, rescales the image to a target voxel resolution,
-    updates the affine transformation matrix accordingly, and saves the resampled image.
+    This function adjusts the spatial resolution of a NIfTI image by rescaling it to the target voxel size,
+    modifying the affine transformation matrix, and saving the resulting image.
 
     Parameters
     ----------
@@ -17,28 +18,32 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
         Path to the input NIfTI file (.nii or .nii.gz).
 
     output_path : str
-        Path where the resampled NIfTI file will be saved.
+        Path to save the resampled NIfTI file.
 
     target_voxel_size : tuple of float
-        Desired voxel size in millimeters (sx, sy, sz), for example (1.0, 1.0, 1.0).
+        Desired voxel size in millimeters (e.g., (1.0, 1.0, 1.0)).
 
-    order : int, optional (default=0)
-        Interpolation order used during resampling:
-        - 0: Nearest neighbor (use this for labeled images like brain atlases)
-        - 1: Trilinear interpolation
-        - 3: Cubic interpolation
+    order : int, optional, default=0
+        Interpolation order for resampling:
+        - 0: Nearest neighbor (recommended for labeled atlases or segmentation masks).
+        - 1: Trilinear interpolation.
+        - 3: Cubic interpolation.
 
     Returns
     -------
     None
-        The function saves the resampled NIfTI image to the specified output path and logs the process.
+        The resampled NIfTI file is saved to the specified `output_path`.
 
     Notes
     -----
-    - This function is particularly useful when standardizing voxel sizes across subjects
-      or aligning anatomical and functional images.
-    - The affine matrix is adjusted to reflect the new voxel spacing without rotation.
-    - For atlas or segmentation masks, it is strongly recommended to use order=0 to preserve label integrity.
+    - The function is useful for standardizing voxel dimensions or aligning anatomical and functional images.
+    - Updates the affine matrix to reflect the new voxel dimensions while preserving the image origin.
+    - For labeled data (e.g., atlases), use `order=0` to maintain label integrity.
+
+    References
+    ----------
+    - NiBabel Documentation: https://nipy.org/nibabel/
+    - SciPy Zoom Documentation: https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.zoom.html
     """
 
     # Step 1: Load the original NIfTI image
