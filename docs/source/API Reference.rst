@@ -5,7 +5,7 @@ API Reference
    :maxdepth: 2
    :caption: Modules
 
-   altas_resampling
+   
 
 
 Feature Extraction
