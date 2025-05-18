@@ -46,30 +46,42 @@ param_dist = {
 def RFPipeline_noPCA(df1, df2, n_iter, cv):
 
     """
-    Creates and trains a Random Forest model pipeline without using PCA.
-
-    This function splits the provided data into training and test sets, then performs hyperparameter optimization
-    using RandomizedSearchCV to find the best Random Forest model configuration.
-    The resulting pipeline is returned after training.
-
-    Parameters:
-        df1 (pandas.DataFrame): DataFrame containing the feature data (independent variables).
-        df2 (pandas.DataFrame): DataFrame containing the target labels (dependent variable).
-        n_iter (int): Number of parameter settings sampled during RandomizedSearchCV.
-        cv (int): Number of cross-validation folds used during hyperparameter optimization.
-
-    Returns:
-        sklearn.pipeline.Pipeline: A fitted pipeline with a trained Random Forest classifier and optimized hyperparameters.
-
-    Notes:
-        - PCA is not used in this function.
-        - The function optimizes the Random Forest classifier's parameters (number of trees, depth, etc.) using cross-validation.
-        - This method is suitable for scenarios where dimensionality reduction is not required.
-
-    --------
-    RandomizedSearchCV : https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
-
+    Train a Random Forest model pipeline without PCA.
+    
+    This function splits the dataset into training and test sets, performs hyperparameter optimization 
+    using RandomizedSearchCV, and trains a Random Forest model. The trained pipeline is returned for 
+    further evaluation or use.
+    
+    Parameters
+    ----------
+    df1 : pandas.DataFrame
+        Feature dataset containing independent variables.
+    
+    df2 : pandas.DataFrame
+        Target dataset containing dependent variables (labels).
+    
+    n_iter : int
+        Number of parameter combinations sampled during RandomizedSearchCV.
+    
+    cv : int
+        Number of cross-validation folds used for hyperparameter tuning.
+    
+    Returns
+    -------
+    sklearn.pipeline.Pipeline
+        A fitted pipeline with a trained Random Forest model and optimized hyperparameters.
+    
+    Notes
+    -----
+    - PCA is not applied in this pipeline.
+    - The pipeline optimizes key parameters of the Random Forest classifier (e.g., number of trees, depth).
+    - This method is suitable when dimensionality reduction is not required.
+    
+    References
+    ----------
+    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
     """
+
     
     # Extract feature and target data as NumPy arrays
     X = df1.values
@@ -136,33 +148,44 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
 
 
 def RFPipeline_PCA(df1, df2, n_iter, cv):
+    
     """
-    Creates pipeline that perform Random Forest classification on the data with Principal Component Analysis. The
-    input data is split into training and test sets, then a Randomized Search (with cross-validation) is performed to
-    find the best hyperparameters for the model.
-
+    Train a Random Forest model pipeline with PCA.
+    
+    This function incorporates Principal Component Analysis (PCA) for dimensionality reduction 
+    before training a Random Forest classifier. Hyperparameter optimization is performed using 
+    RandomizedSearchCV.
+    
     Parameters
     ----------
     df1 : pandas.DataFrame
-        Dataframe containing the features.
+        Feature dataset containing independent variables.
+    
     df2 : pandas.DataFrame
-        Dataframe containing the labels.
+        Target dataset containing dependent variables (labels).
+    
     n_iter : int
-        Number of parameter settings that are sampled.
+        Number of parameter combinations sampled during RandomizedSearchCV.
+    
     cv : int
-        Number of cross-validation folds to use.
-
+        Number of cross-validation folds used for hyperparameter tuning.
+    
     Returns
     -------
-    pipeline_PCA : sklearn.pipeline.Pipeline
-        A fitted pipeline (includes PCA, hyperparameter optimization using RandomizedSearchCV and a Random Forest
-        Classifier model).
-
-    See Also
-    --------
-    PCA : https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
-    RandomizedSearchCV : https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+    sklearn.pipeline.Pipeline
+        A fitted pipeline that includes PCA and a trained Random Forest model.
+    
+    Notes
+    -----
+    - PCA reduces the feature space, which can improve model performance for high-dimensional datasets.
+    - Optimal hyperparameters for the Random Forest are identified using RandomizedSearchCV.
+    
+    References
+    ----------
+    - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
+    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
     """
+
 
     X = df1.values
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values
@@ -215,6 +238,44 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     
 
 def RFPipeline_RFECV(df1, df2, n_iter, cv):
+    
+    """
+    Train a Random Forest model with recursive feature elimination and hyperparameter tuning.
+    
+    This function performs Recursive Feature Elimination with Cross-Validation (RFECV) to select the most important features.
+    It then trains a Random Forest classifier using RandomizedSearchCV for hyperparameter optimization.
+    
+    Parameters
+    ----------
+    df1 : pandas.DataFrame
+        Feature dataset containing independent variables.
+    
+    df2 : pandas.DataFrame
+        Target dataset containing dependent variables (labels).
+    
+    n_iter : int
+        Number of hyperparameter combinations sampled during RandomizedSearchCV.
+    
+    cv : int
+        Number of cross-validation folds for RFECV and hyperparameter search.
+    
+    Returns
+    -------
+    sklearn.ensemble.RandomForestClassifier
+        Trained Random Forest model with optimized hyperparameters and selected features.
+    
+    Notes
+    -----
+    - RFECV recursively eliminates less important features to improve model performance.
+    - Feature selection is done only on the training set to avoid data leakage.
+    - The function ranks and prints feature importance, and saves a visualization of the best decision tree.
+    
+    References
+    ----------
+    - https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html
+    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+    """
+
     
     X = df1.values
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values
@@ -286,29 +347,39 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 
 
 def SVM_simple(df1, df2, ker: str):
+    
     """
-    Performs SVM classification on the data. The input data is split into training and test sets, then a Grid Search
-    (with cross-validation) is performed to find the best hyperparameters for the model. Feature reduction is not
-    implemented in this function.
-
+    Train an SVM model pipeline with hyperparameter optimization.
+    
+    This function splits the dataset into training and test sets, performs hyperparameter optimization 
+    using GridSearchCV, and trains a Support Vector Machine (SVM) model.
+    
     Parameters
     ----------
     df1 : pandas.DataFrame
-        Dataframe containing the features.
+        Feature dataset containing independent variables.
+        
     df2 : pandas.DataFrame
-        Dataframe containing the labels.
+        Target dataset containing dependent variables (labels).
+        
     ker : str
-        Kernel type.
-
+        Kernel type for the SVM (e.g., 'linear', 'rbf').
+    
     Returns
     -------
-    grid : sklearn.model_selection.GridSearchCV
-        A fitted grid search object with the best parameters for the SVM model.
-
-    See Also
-    --------
-    GridSearchCV : https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
+    sklearn.model_selection.GridSearchCV
+        A fitted GridSearchCV object containing the best SVM model.
+    
+    Notes
+    -----
+    - The kernel type (`ker`) determines the decision boundary; 'linear' and 'rbf' are common choices.
+    - GridSearchCV optimizes hyperparameters such as `C` (regularization) and `gamma` (for non-linear kernels).
+    
+    References
+    ----------
+    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
     """
+
     # Extract feature and target data as NumPy arrays
     X = df1.values
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values # convert labels to binary
