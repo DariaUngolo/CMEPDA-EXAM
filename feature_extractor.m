@@ -133,4 +133,3 @@ function [Means, Stds, Volumes] = feature_extractor(folder_path, atlas_file, atl
     end
 end
 
-    
