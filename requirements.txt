@@ -3,7 +3,6 @@ matplotlib
 scipy
 scikit-learn
 loguru
-matlabengineforpython
 graphviz
 nibabel
 pandas
