@@ -1,13 +1,9 @@
 numpy
 matplotlib
-pandas
 scipy
 scikit-learn
-tensorflow
-argparse
-h5py
-pathlib
+loguru
+matlabengineforpython
 graphviz
 nibabel
-nilearn
-sphinx-book-theme
+pandas
