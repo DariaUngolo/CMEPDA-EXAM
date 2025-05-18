@@ -99,7 +99,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
         steps=[ (  
                 "hyper_opt",                           #"hyper_opt" is the name of the step in the pipeline
                 RandomizedSearchCV(                    
-                    RandomForestClassifier(class_weight='balanced'),          
+                    RandomForestClassifier(class_weight='balanced', random_state=10),          
                     param_distributions=param_dist,    
                     n_iter=n_iter,                     # Number of hyperparameters combination sampled
                     cv=cv,                             # Cross-validation folds
@@ -195,7 +195,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
 
     
     pipeline_random_forest_PCA = Pipeline(steps=[("dim_reduction", PCA()),
-                                   ("hyper_opt", RandomizedSearchCV(RandomForestClassifier(),
+                                   ("hyper_opt", RandomizedSearchCV(RandomForestClassifier(class_weight='balanced', random_state=10),
                                                                     param_distributions=param_dist,
                                                                     n_iter=n_iter,
                                                                     cv=cv,
@@ -287,7 +287,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=0.1, random_state=7)
 
     # feature selection (RFECV) only on the training set to avoid data leakage
-    rf_base = RandomForestClassifier(n_estimators=200, random_state=42)
+    rf_base = RandomForestClassifier(n_estimators=200, random_state=10, class_weight='balanced')
     feature_selector = RFECV(estimator=rf_base, step=2, cv=cv, scoring='recall', n_jobs=-1, min_features_to_select=20) 
     feature_selector.fit(X_tr, y_tr)
 
@@ -303,7 +303,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 
     # Random Forest optimization on selected features
     rf_selected_features = RandomizedSearchCV(
-        RandomForestClassifier(class_weight='balanced'),
+        RandomForestClassifier(class_weight='balanced', random_state=10),
         param_distributions=param_dist,
         n_iter=n_iter,
         cv=cv,
