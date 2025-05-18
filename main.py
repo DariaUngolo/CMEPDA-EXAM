@@ -13,6 +13,43 @@ from classifiers_unified import (
 )
 from atlas_resampling import atlas_resampling
 
+def ask_yes_no_prompt(prompt_message, default="N"):
+    """
+    Prompt the user with a yes/no question and return their response as a boolean.
+
+    **Parameters**:
+    - **prompt_message** (`str`):
+        The message or question to display to the user.
+    - **default** (`str`, optional, default=`"N"`):
+        The default response if the user provides no input.
+        Must be either `"Y"` (yes) or `"N"` (no).
+
+    **Returns**:
+    - `bool`:
+        `True` if the user selects `"Y"` (yes), `False` if the user selects `"N"` (no).
+
+    **Notes**:
+    - The user can input `"Y"`/`"y"` for yes or `"N"`/`"n"` for no.
+    - If no input is given, the default value is used.
+    - Prompts repeatedly until a valid response is provided.
+    """
+    while True:
+        # Determine the displayed default option
+        default_display = "Y" if default.upper() == "Y" else "N"
+        # Ask the user for input
+        user_input = input(f"{prompt_message} [Y/N] (default: {default_display}): ").strip().lower()
+
+        # Use default if no input is provided
+        if not user_input:
+            user_input = default.lower()
+
+        # Return True for 'y' and False for 'n'
+        if user_input in ["y", "n"]:
+            return user_input == "y"
+
+        # Prompt again for invalid input
+        print("Invalid input. Please enter 'Y' or 'N'.")
+
 
 def parse_arguments():
     """
@@ -77,11 +114,9 @@ def parse_arguments():
     # === Classifier configuration ===
     parser.add_argument(
         "--classifier", required=True,
-        choices=["rf_no_pca", "rf_pca", "rf_rfecv", "svm"],
+        choices=["rf", "svm"],
         help="""Classifier to use:
-        - 'rf_no_pca': Random Forest without dimensionality reduction.
-        - 'rf_pca': Random Forest with Principal Component Analysis (PCA).
-        - 'rf_rfecv': Random Forest with recursive feature elimination (RFECV).
+        - 'rf': Random Forest .
         - 'svm': Support Vector Machine (linear or RBF kernel)."""
     )
 
@@ -105,10 +140,17 @@ def parse_arguments():
 
 def main():
     """
-    Main pipeline function:
-    1. Resample atlas to match MRI resolution.
-    2. Extract regional features via MATLAB.
-    3. Train and evaluate classification model.
+    Run the complete brain MRI classification pipeline.
+
+    This function orchestrates the entire workflow:
+    1. Resampling the brain atlas to match MRI resolution.
+    2. Extracting regional features using MATLAB.
+    3. Training and evaluating the selected classification model.
+
+    **Notes**:
+    - User inputs and parameters are parsed from command-line arguments.
+    - Supports Random Forest with optional PCA or RFECV, and SVM classifiers.
+    - Logs progress and handles basic sanity checks.
     """
     args = parse_arguments()
 
@@ -143,17 +185,38 @@ def main():
     # === Step 4: Classification ===
     logger.info(f"🚀 Running classifier: {args.classifier}")
 
-    if args.classifier == "rf_no_pca":
-        RFPipeline_noPCA(df_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
 
-    elif args.classifier == "rf_pca":
-        RFPipeline_PCA(df_mean_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
+    # Check which classifier is selected by the user
+    if args.classifier == "rf":
+        # Ask user if they want to apply PCA before Random Forest classification
+        use_pca = ask_yes_no_prompt("Principal component analysis (PCA)? Y or N:", default="N")
 
-    elif args.classifier == "rf_rfecv":
-        RFPipeline_RFECV(df_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
+        # If PCA is chosen, run the Random Forest pipeline with PCA
+        if use_pca:
+            logger.info(" Applying Random Forest with PCA...")
+            RFPipeline_PCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
 
+        else:
+            # If PCA is not chosen, ask if Recursive Feature Elimination (RFE) should be applied
+            use_rfe = ask_yes_no_prompt("Recursive Feature Elimination (RFE)? Y or N:", default="N")
+
+            if use_rfe:
+                # Run the Random Forest pipeline with RFE and cross-validation (RFECV)
+                logger.info(" Applying Random Forest with RFECV...")
+                RFPipeline_RFECV(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
+            else:
+                # Run the standard Random Forest pipeline without PCA or RFE
+                logger.info(" Applying Random Forest without PCA or RFE...")
+                RFPipeline_noPCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
+
+    # If SVM is selected as classifier
     elif args.classifier == "svm":
+        # Log the choice and run the SVM pipeline with specified kernel
+        logger.info(" Applying Support Vector Machine...")
         SVM_simple(df_mean_std, diagnostic_group_labels, ker=args.kernel)
+
+
+
 
     logger.success("🎯 Classification pipeline completed successfully.")
 

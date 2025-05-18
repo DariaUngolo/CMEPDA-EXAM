@@ -1,0 +1,649 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>main &#8212; CMEPDA-EXAM 0.0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/main';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">CMEPDA-EXAM 0.0.1 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../Introduction.html">
+    Introduction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../Installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../User%20Guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../API%20Reference.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../Contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../Introduction.html">
+    Introduction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../Installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../User%20Guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../API%20Reference.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../Contributing.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">main</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matlab.engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="c1"># Custom modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">feature_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">feature_extractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">classifiers_unified</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RFPipeline_noPCA</span><span class="p">,</span>
+    <span class="n">RFPipeline_PCA</span><span class="p">,</span>
+    <span class="n">RFPipeline_RFECV</span><span class="p">,</span>
+    <span class="n">SVM_simple</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atlas_resampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">atlas_resampling</span>
+
+<div class="viewcode-block" id="ask_yes_no_prompt">
+<a class="viewcode-back" href="../API%20Reference.html#main.ask_yes_no_prompt">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ask_yes_no_prompt</span><span class="p">(</span><span class="n">prompt_message</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prompt the user with a yes/no question and return their response as a boolean.</span>
+
+<span class="sd">    **Parameters**:</span>
+<span class="sd">    - **prompt_message** (`str`):</span>
+<span class="sd">        The message or question to display to the user.</span>
+<span class="sd">    - **default** (`str`, optional, default=`&quot;N&quot;`):</span>
+<span class="sd">        The default response if the user provides no input.</span>
+<span class="sd">        Must be either `&quot;Y&quot;` (yes) or `&quot;N&quot;` (no).</span>
+
+<span class="sd">    **Returns**:</span>
+<span class="sd">    - `bool`:</span>
+<span class="sd">        `True` if the user selects `&quot;Y&quot;` (yes), `False` if the user selects `&quot;N&quot;` (no).</span>
+
+<span class="sd">    **Notes**:</span>
+<span class="sd">    - The user can input `&quot;Y&quot;`/`&quot;y&quot;` for yes or `&quot;N&quot;`/`&quot;n&quot;` for no.</span>
+<span class="sd">    - If no input is given, the default value is used.</span>
+<span class="sd">    - Prompts repeatedly until a valid response is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Determine the displayed default option</span>
+        <span class="n">default_display</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span> <span class="k">if</span> <span class="n">default</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span> <span class="k">else</span> <span class="s2">&quot;N&quot;</span>
+        <span class="c1"># Ask the user for input</span>
+        <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prompt_message</span><span class="si">}</span><span class="s2"> [Y/N] (default: </span><span class="si">{</span><span class="n">default_display</span><span class="si">}</span><span class="s2">): &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># Use default if no input is provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_input</span><span class="p">:</span>
+            <span class="n">user_input</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># Return True for &#39;y&#39; and False for &#39;n&#39;</span>
+        <span class="k">if</span> <span class="n">user_input</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">user_input</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span>
+
+        <span class="c1"># Prompt again for invalid input</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid input. Please enter &#39;Y&#39; or &#39;N&#39;.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_arguments">
+<a class="viewcode-back" href="../API%20Reference.html#main.parse_arguments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_arguments</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses command-line arguments for the classification pipeline.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    argparse.Namespace</span>
+<span class="sd">        Parsed arguments for resampling, feature extraction, and classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        🧠 Brain MRI classification pipeline using region-based feature extraction.</span>
+<span class="s2">        The pipeline leverages MATLAB for extracting features from NIfTI images</span>
+<span class="s2">        based on a parcellation atlas, and uses machine learning models in Python</span>
+<span class="s2">        (Random Forest, SVM) to classify between Alzheimer (AD) and control (CN) subjects.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentDefaultsHelpFormatter</span>
+    <span class="p">)</span>
+
+    <span class="c1"># === Input paths ===</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--folder_path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Path to the folder containing subject NIfTI images to be analyzed.</span>
+<span class="s2">        Each file should represent one subject. Supported formats: .nii, .nii.gz&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--atlas_file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Path to the original brain atlas NIfTI file. Each voxel contains</span>
+<span class="s2">        a numeric label indicating the region-of-interest (ROI).&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--atlas_file_resized&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Path where the resampled atlas NIfTI file will be saved.</span>
+<span class="s2">        The atlas will be resampled to match the voxel resolution of the input images.&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--atlas_txt&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Text file containing the ROI labels corresponding to the atlas.</span>
+<span class="s2">        Each row should include an index and the corresponding region name.&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--metadata_csv&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;TSV file containing subject metadata and diagnostic labels.</span>
+<span class="s2">        It must include: subject ID and diagnosis label (e.g., &#39;Normal&#39;, &#39;AD&#39;).&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--output_prefix&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Prefix to use for intermediate output CSV files produced by the MATLAB feature extraction step.&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--matlab_path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Path to the folder containing the MATLAB script `feature_extractor.m`.</span>
+<span class="s2">        This path will be added to the MATLAB environment.&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># === Classifier configuration ===</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--classifier&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;rf&quot;</span><span class="p">,</span> <span class="s2">&quot;svm&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Classifier to use:</span>
+<span class="s2">        - &#39;rf&#39;: Random Forest .</span>
+<span class="s2">        - &#39;svm&#39;: Support Vector Machine (linear or RBF kernel).&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--n_iter&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of parameter combinations to sample in RandomizedSearchCV for Random Forest.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--cv&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of cross-validation folds to use.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--kernel&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;rbf&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Kernel type to use for SVM (only applicable if classifier is &#39;svm&#39;).&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../API%20Reference.html#main.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the complete brain MRI classification pipeline.</span>
+
+<span class="sd">    This function orchestrates the entire workflow:</span>
+<span class="sd">    1. Resampling the brain atlas to match MRI resolution.</span>
+<span class="sd">    2. Extracting regional features using MATLAB.</span>
+<span class="sd">    3. Training and evaluating the selected classification model.</span>
+
+<span class="sd">    **Notes**:</span>
+<span class="sd">    - User inputs and parameters are parsed from command-line arguments.</span>
+<span class="sd">    - Supports Random Forest with optional PCA or RFECV, and SVM classifiers.</span>
+<span class="sd">    - Logs progress and handles basic sanity checks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_arguments</span><span class="p">()</span>
+
+    <span class="c1"># === Step 1: Resample the atlas ===</span>
+    <span class="n">target_voxel</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📏 Resampling atlas to voxel size </span><span class="si">{</span><span class="n">target_voxel</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">atlas_resampling</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">atlas_file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">atlas_file_resized</span><span class="p">,</span> <span class="n">target_voxel</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># === Step 2: Start MATLAB engine for feature extraction ===</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;🔧 Starting MATLAB engine...&quot;</span><span class="p">)</span>
+    <span class="n">eng</span> <span class="o">=</span> <span class="n">matlab</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">start_matlab</span><span class="p">()</span>
+    <span class="n">eng</span><span class="o">.</span><span class="n">addpath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">matlab_path</span><span class="p">,</span> <span class="n">nargout</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;📊 Extracting features from NIfTI images using MATLAB...&quot;</span><span class="p">)</span>
+    <span class="n">df_mean</span><span class="p">,</span> <span class="n">df_std</span><span class="p">,</span> <span class="n">df_volume</span><span class="p">,</span> <span class="n">df_mean_std</span><span class="p">,</span> <span class="n">df_mean_volume</span><span class="p">,</span> <span class="n">df_std_volume</span><span class="p">,</span> <span class="n">df_mean_std_volume</span><span class="p">,</span> <span class="n">diagnostic_group_labels</span> <span class="o">=</span> <span class="n">feature_extractor</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">folder_path</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">atlas_file_resized</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">atlas_txt</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">metadata_csv</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">output_prefix</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">matlab_path</span>
+    <span class="p">)</span>
+
+    <span class="n">eng</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">&quot;✅ Feature extraction completed successfully.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># === Step 3: Sanity check ===</span>
+    <span class="k">if</span> <span class="n">df_mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">diagnostic_group_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;❌ Mismatch in number of subjects between features and metadata.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># === Step 4: Classification ===</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🚀 Running classifier: </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">classifier</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+    <span class="c1"># Check which classifier is selected by the user</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">classifier</span> <span class="o">==</span> <span class="s2">&quot;rf&quot;</span><span class="p">:</span>
+        <span class="c1"># Ask user if they want to apply PCA before Random Forest classification</span>
+        <span class="n">use_pca</span> <span class="o">=</span> <span class="n">ask_yes_no_prompt</span><span class="p">(</span><span class="s2">&quot;Principal component analysis (PCA)? Y or N:&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If PCA is chosen, run the Random Forest pipeline with PCA</span>
+        <span class="k">if</span> <span class="n">use_pca</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot; Applying Random Forest with PCA...&quot;</span><span class="p">)</span>
+            <span class="n">RFPipeline_PCA</span><span class="p">(</span><span class="n">df_mean_std</span><span class="p">,</span> <span class="n">diagnostic_group_labels</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">cv</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If PCA is not chosen, ask if Recursive Feature Elimination (RFE) should be applied</span>
+            <span class="n">use_rfe</span> <span class="o">=</span> <span class="n">ask_yes_no_prompt</span><span class="p">(</span><span class="s2">&quot;Recursive Feature Elimination (RFE)? Y or N:&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">use_rfe</span><span class="p">:</span>
+                <span class="c1"># Run the Random Forest pipeline with RFE and cross-validation (RFECV)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot; Applying Random Forest with RFECV...&quot;</span><span class="p">)</span>
+                <span class="n">RFPipeline_RFECV</span><span class="p">(</span><span class="n">df_mean_std</span><span class="p">,</span> <span class="n">diagnostic_group_labels</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">cv</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Run the standard Random Forest pipeline without PCA or RFE</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot; Applying Random Forest without PCA or RFE...&quot;</span><span class="p">)</span>
+                <span class="n">RFPipeline_noPCA</span><span class="p">(</span><span class="n">df_mean_std</span><span class="p">,</span> <span class="n">diagnostic_group_labels</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">cv</span><span class="p">)</span>
+
+    <span class="c1"># If SVM is selected as classifier</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">classifier</span> <span class="o">==</span> <span class="s2">&quot;svm&quot;</span><span class="p">:</span>
+        <span class="c1"># Log the choice and run the SVM pipeline with specified kernel</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot; Applying Support Vector Machine...&quot;</span><span class="p">)</span>
+        <span class="n">SVM_simple</span><span class="p">(</span><span class="n">df_mean_std</span><span class="p">,</span> <span class="n">diagnostic_group_labels</span><span class="p">,</span> <span class="n">ker</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
+
+
+
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">&quot;🎯 Classification pipeline completed successfully.&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Spinelli Brando, Ungolo Daria.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
