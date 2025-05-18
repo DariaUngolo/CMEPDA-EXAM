@@ -1,8 +1,9 @@
+sphinx
+sphinx-rtd-theme
 numpy
-matplotlib
-scipy
-scikit-learn
-loguru
-graphviz
-nibabel
 pandas
+nibabel
+scipy
+matplotlib
+loguru
+
