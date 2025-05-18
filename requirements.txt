@@ -2,8 +2,5 @@ sphinx
 sphinx-rtd-theme
 numpy
 pandas
-nibabel
-scipy
 matplotlib
-loguru
 
