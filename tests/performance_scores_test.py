@@ -1,81 +1,101 @@
 import unittest
 import numpy as np
-from performance_scores import evaluate_model_performance
+from sklearn.metrics import roc_auc_score
+from performance_scores import compute_binomial_error, evaluate_model_performance
+from loguru import logger
 
-class TestEvaluatePerformance(unittest.TestCase):
+# Patch matplotlib per bloccare la visualizzazione/salvataggio dei grafici durante i test
+from unittest.mock import patch
+import sys
 
-    def test_perfect_classification(self):
-        y_true = np.array([0, 1, 0, 1])
-        y_pred = np.array([0, 1, 0, 1])
-        y_proba = np.array([0.1, 0.9, 0.2, 0.8])
+patches = [
+    patch('matplotlib.pyplot.savefig', return_value=None),
+    patch('matplotlib.pyplot.show', return_value=None),
+    patch('matplotlib.figure.Figure.savefig', return_value=None),
+    patch('matplotlib.figure.Figure.show', return_value=None),
+]
+for p in patches:
+    p.start()
+    sys.modules[__name__].__dict__.setdefault('_patches', []).append(p)
 
-        result = evaluate_model_performance(y_true, y_pred, y_proba)
-        self.assertIn('accuracy', result)
-        self.assertAlmostEqual(result['accuracy'][0], 1.0)
-        self.assertAlmostEqual(result['precision'][0], 1.0)
-        self.assertAlmostEqual(result['recall'][0], 1.0)
-        self.assertAlmostEqual(result['f1_score'][0], 1.0)
-        self.assertAlmostEqual(result['auc'][0], 1.0)
-        # Specificity == 1 in this perfect case
-        self.assertAlmostEqual(result['specificity'][0], 1.0)
+class TestComputeBinomialError(unittest.TestCase):
 
-    def test_total_misclassification(self):
-        y_true = np.array([0, 1, 0, 1])
-        y_pred = np.array([1, 0, 1, 0])
-        y_proba = np.array([0.9, 0.1, 0.8, 0.2])
+    def test_error_mid_value(self):
+        logger.info("Eseguendo test_error_mid_value")
+        err = compute_binomial_error(0.5, 100, 0.683)
+        logger.debug(f"Errore calcolato: {err}")
+        self.assertAlmostEqual(err, 0.05, places=2)
 
-        result = evaluate_model_performance(y_true, y_pred, y_proba)
-        self.assertIn('accuracy', result)
-        self.assertAlmostEqual(result['accuracy'][0], 0.0)
-        # Precision, Recall, F1 score may be zero or undefined, test at least accuracy zero
-        self.assertAlmostEqual(result['auc'][0], 0.0)
+    def test_error_zero_probability(self):
+        logger.info("Eseguendo test_error_zero_probability")
+        err = compute_binomial_error(0.0, 100, 0.95)
+        logger.debug(f"Errore calcolato: {err}")
+        self.assertEqual(err, 0.0)
 
-    def test_only_negative_class(self):
-        y_true = np.array([0, 0, 0, 0])
-        y_pred = np.array([0, 0, 1, 0])
-        y_proba = np.array([0.1, 0.2, 0.8, 0.3])
+    def test_error_full_probability(self):
+        logger.info("Eseguendo test_error_full_probability")
+        err = compute_binomial_error(1.0, 100, 0.95)
+        logger.debug(f"Errore calcolato: {err}")
+        self.assertEqual(err, 0.0)
 
-        result = evaluate_model_performance(y_true, y_pred, y_proba)
-        self.assertIn('accuracy', result)
-        # Accuracy should be computed normally
-        self.assertGreaterEqual(result['accuracy'][0], 0.0)
-        # Check keys exist
-        for key in ['precision', 'recall', 'f1_score', 'specificity', 'auc']:
-            self.assertIn(key, result)
+    def test_error_invalid_n_samples(self):
+        logger.info("Eseguendo test_error_invalid_n_samples (valore non valido di n)")
+        with self.assertRaises(ZeroDivisionError):
+            compute_binomial_error(0.5, 0, 0.95)
 
-    def test_only_positive_class(self):
-        y_true = np.array([1, 1, 1, 1])
-        y_pred = np.array([1, 1, 0, 1])
-        y_proba = np.array([0.9, 0.8, 0.1, 0.95])
 
-        result = evaluate_model_performance(y_true, y_pred, y_proba)
-        self.assertIn('accuracy', result)
-        self.assertGreaterEqual(result['accuracy'][0], 0.0)
-        for key in ['precision', 'recall', 'f1_score', 'specificity', 'auc']:
-            self.assertIn(key, result)
+class TestEvaluateModelPerformance(unittest.TestCase):
 
-    def test_single_sample_input(self):
-        y_true = np.array([1])
-        y_pred = np.array([1])
-        y_proba = np.array([0.95])
+    def setUp(self):
+        logger.info("Setup dei dati di test")
+        self.y_true = np.array([0, 1, 1, 0, 1, 0, 1, 0, 1, 1])
+        self.y_pred = np.array([0, 1, 1, 0, 1, 0, 0, 0, 1, 1])
+        self.y_proba = np.array([0.1, 0.9, 0.8, 0.2, 0.85, 0.3, 0.4, 0.1, 0.95, 0.88])
 
-        result = evaluate_model_performance(y_true, y_pred, y_proba)
-        self.assertIn('accuracy', result)
-        self.assertIsInstance(result['accuracy'][0], float)
-        for key in ['precision', 'recall', 'f1_score', 'specificity', 'auc']:
-            self.assertIn(key, result)
+    def test_output_keys(self):
+        logger.info("Eseguendo test_output_keys")
+        results = evaluate_model_performance(self.y_true, self.y_pred, self.y_proba, confidence_level=0.683)
+        logger.debug(f"Chiavi ottenute: {list(results.keys())}")
+        expected_keys = [
+            'Accuracy', 'Accuracy_error',
+            'Precision', 'Precision_error',
+            'Recall', 'Recall_error',
+            'F1-score', 'F1-score_error',
+            'Specificity', 'Specificity_error',
+            'AUC', 'AUC_error'
+        ]
+        for key in expected_keys:
+            self.assertIn(key, results)
 
-    def test_single_class_in_true_labels(self):
-        # y_true all zeros, y_pred all zeros
-        y_true = np.zeros(5, dtype=int)
-        y_pred = np.zeros(5, dtype=int)
-        y_proba = np.zeros(5, dtype=float)
+    def test_metric_values_range(self):
+        logger.info("Eseguendo test_metric_values_range")
+        results = evaluate_model_performance(self.y_true, self.y_pred, self.y_proba, confidence_level=0.683)
+        for key, value in results.items():
+            logger.debug(f"{key}: {value}")
+            if 'error' not in key:
+                self.assertGreaterEqual(value, 0.0)
+                self.assertLessEqual(value, 1.0)
 
-        result = evaluate_model_performance(y_true, y_pred, y_proba)
-        self.assertIn('accuracy', result)
-        self.assertGreaterEqual(result['accuracy'][0], 0.0)
+    def test_auc_close_to_sklearn(self):
+        logger.info("Eseguendo test_auc_close_to_sklearn")
+        results = evaluate_model_performance(self.y_true, self.y_pred, self.y_proba)
+        sklearn_auc = roc_auc_score(self.y_true, self.y_proba)
+        logger.debug(f"AUC modello: {results['AUC']}, AUC sklearn: {sklearn_auc}")
+        self.assertAlmostEqual(results['AUC'], sklearn_auc, places=2)
 
-if __name__ == "__main__":
+    def test_y_proba_2d_input(self):
+        logger.info("Eseguendo test_y_proba_2d_input")
+        y_proba_2d = np.column_stack([1 - self.y_proba, self.y_proba])
+        results = evaluate_model_performance(self.y_true, self.y_pred, y_proba_2d)
+        logger.debug(f"AUC con proba 2D: {results['AUC']}")
+        self.assertIn('AUC', results)
+
+import atexit
+def _stop_patches():
+    for p in getattr(sys.modules[__name__], '_patches', []):
+        p.stop()
+atexit.register(_stop_patches)
+
+if __name__ == '__main__':
+    logger.info("Avvio dei test...")
     unittest.main()
-
-

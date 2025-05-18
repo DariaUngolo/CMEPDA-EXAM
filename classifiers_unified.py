@@ -129,7 +129,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
 
 
         graph = graphviz.Source(dot_data) # Convert the dot data to a graph
-        graph.render(view=True)  
+        graph.render(view= False)  
 
     # Return the trained pipeline
     return pipeline_random_forest_simple
@@ -209,7 +209,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
 
 
         graph = graphviz.Source(dot_data) # Convert the dot data to a graph
-        graph.render(view=True)
+        graph.render(view= False)
 
     return pipeline_random_forest_PCA
     
@@ -282,7 +282,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
             class_names=["CN", "AD"]
         )
         graph = graphviz.Source(dot_data)
-        graph.render(view=True)
+        graph.render(view= False) # Save the graph to a file without opening it
 
     return rf_selected_features
 
@@ -352,7 +352,5 @@ def SVM_simple(df1, df2, ker: str):
     metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
 
     return grid_optimized
-
-
 
 
