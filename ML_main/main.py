@@ -1,17 +1,21 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+
+
 import argparse
 from pathlib import Path
 import matlab.engine
 from loguru import logger
 
-# Custom modules
-from feature_extractor import feature_extractor
-from classifiers_unified import (
+from ML_codes.feature_extractor import feature_extractor
+from ML_codes.classifiers_unified import (
     RFPipeline_noPCA,
     RFPipeline_PCA,
     RFPipeline_RFECV,
     SVM_simple
 )
-from atlas_resampling import atlas_resampling
+from ML_codes.atlas_resampling import atlas_resampling
 
 def ask_yes_no_prompt(prompt_message, default="N"):
     """
