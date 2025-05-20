@@ -1,18 +1,10 @@
 main package
 ============
 
-main.main\_DL module
+main.ML\_main module
 --------------------
 
-.. automodule:: main.main_DL
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-main.main\_ML module
---------------------
-
-.. automodule:: main.main_ML
+.. automodule:: main.ML_main
    :members:
    :undoc-members:
    :show-inheritance:
