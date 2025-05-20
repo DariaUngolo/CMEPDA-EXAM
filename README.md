@@ -6,25 +6,6 @@ This repository implements an automatic pipeline for classifying brain MRI image
 
 ---
 
-## 📁 Project Structure
-
-
-
-CMEPDA-EXAM/
-├── ML_main/
-│ └── main.py # Script principale da eseguire
-├── ML_codes/
-│ ├── classifiers_unified.py # Classificatori ML (SVM, RF, ecc.)
-│ ├── performance_scores.py # Funzioni per il calcolo delle metriche
-│ └── feature_extractor.py # Interfaccia Python-MATLAB
-├── MATLAB/
-│ └── feature_extractor.m # Script MATLAB per l’estrazione delle feature
-├── data/ # Cartella con file NIfTI, atlante e metadata
-└── README.md # Questo file
-
-
----
-
 ## ⚙️ Requirements
 
 ### 🐍 Python
