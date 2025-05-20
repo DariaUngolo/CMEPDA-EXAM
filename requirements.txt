@@ -4,4 +4,3 @@ numpy
 pandas
 matplotlib
 sphinx-book-theme
-.
