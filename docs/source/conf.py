@@ -9,7 +9,7 @@
 import os
 import sys
 #sys.path.insert(0, os.path.abspath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM'))
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('..'))
 
 project = 'CMEPDA-EXAM'
 copyright = '2025, Spinelli Brando, Ungolo Daria'
