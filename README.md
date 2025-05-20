@@ -94,7 +94,7 @@ The Python module performs classification using the following approaches:
 
      - With custom parameters (e.g., RBF kernel)
 
-  ### Performance Metrics:
+### Performance Metrics:
 - Accuracy
 
 - Precision
@@ -124,6 +124,11 @@ At the end of the execution, the following are generated:
 - Logs and saved trained models
 
 ---
+
+## Documentation
+INSERIRE LINK DOCUMENTAZIONE
+
+--- 
 
 ## 📄 License
 This project is intended solely for academic and research purposes.
