@@ -26,7 +26,7 @@ ML\_codes.feature\_extractor module
 ML\_codes.performance\_scores module
 ----------------------------------
 
-.. automodule:: ML\_codes.performance\_scores
+.. automodule:: ML_codes.performance_scores
    :members:
    :undoc-members:
    :show-inheritance:
@@ -34,7 +34,7 @@ ML\_codes.performance\_scores module
 ML\_codes.atlas\_resampling module
 ----------------------------------
 
-.. automodule:: ML\_codes.atlas\_resampling
+.. automodule:: ML_codes.atlas_resampling
    :members:
    :undoc-members:
    :show-inheritance:
