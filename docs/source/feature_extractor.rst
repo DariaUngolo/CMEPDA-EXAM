@@ -1,8 +1,9 @@
 Feature Extraction
 ==================
 
-.. automodule:: feature_extraction
+.. automodule:: feature_extractor
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-index:
 

@@ -42,7 +42,6 @@ html_theme_options = {
     "navigation_depth": 3,       # Profondità massima della navigazione laterale
     "show_nav_level": 1,         # Mostra il primo livello nella navigazione
     "collapse_navigation": False,  # Mantieni espansa la navigazione laterale
-    "sticky_navigation": True,   # Navigazione sempre visibile mentre scorri
 }
 html_static_path = ['_static']
 

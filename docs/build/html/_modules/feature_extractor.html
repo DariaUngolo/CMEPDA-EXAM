@@ -349,10 +349,11 @@
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span><span class="o">.</span><span class="n">parent</span><span class="p">))</span>
 
 <div class="viewcode-block" id="feature_extractor">
-<a class="viewcode-back" href="../API%20Reference.html#feature_extractor.feature_extractor">[docs]</a>
+<a class="viewcode-back" href="../feature_extractor.html#feature_extractor.feature_extractor">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">feature_extractor</span><span class="p">(</span><span class="n">folder_path</span><span class="p">,</span> <span class="n">atlas_file</span><span class="p">,</span> <span class="n">atlas_txt</span><span class="p">,</span> <span class="n">metadata_csv</span><span class="p">,</span> <span class="n">output_csv_prefix</span><span class="p">,</span> <span class="n">matlab_feature_extractor_path</span><span class="p">):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
 <span class="sd">    Extract feature means and standard deviations from brain image data using a MATLAB function.</span>
 
 <span class="sd">    This function interfaces with MATLAB to extract mean and standard deviation values from image data in a specified folder,</span>
@@ -379,6 +380,7 @@
 <span class="sd">    matlab_feature_extractor_path : str</span>
 <span class="sd">        Path to the MATLAB function used for feature extraction.</span>
 
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
@@ -391,16 +393,20 @@
 <span class="sd">        - df_media_std_volume (pandas.DataFrame): DataFrame with mean, standard deviation, and volume.</span>
 <span class="sd">        - df_std_volume (pandas.DataFrame): DataFrame with standard deviation and volume values.</span>
 
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    - The function requires MATLAB integration and appropriate MATLAB paths.</span>
 <span class="sd">    - Outputs from MATLAB are converted to NumPy arrays before creating pandas DataFrames.</span>
 <span class="sd">    - Group labels are loaded from the provided metadata CSV file.</span>
 
+
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    - https://www.mathworks.com/help/matlab/matlab-engine-for-python.html</span>
 <span class="sd">    - https://pandas.pydata.org/</span>
+
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
 

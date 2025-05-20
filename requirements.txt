@@ -4,3 +4,7 @@ numpy
 pandas
 matplotlib
 sphinx-book-theme
+sphinx-autodoc
+sphinx-napoleon
+pydata-sphinx-theme
+.

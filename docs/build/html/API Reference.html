@@ -44,7 +44,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'API Reference';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Contributing" href="Contributing.html" />
+    <link rel="next" title="Feature Extraction" href="feature_extractor.html" />
     <link rel="prev" title="User Guide" href="User%20Guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -153,11 +153,28 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="Contributing.html">
+  <a class="nav-link nav-internal" href="feature_extractor.html">
+    Feature Extraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="Contributing.html">
     Contributing
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -255,6 +272,13 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
     API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="feature_extractor.html">
+    Feature Extraction
   </a>
 </li>
 
@@ -675,6 +699,59 @@ using GridSearchCV, and trains a Support Vector Machine (SVM) model.</p>
 <section id="main-application">
 <h2>Main Application<a class="headerlink" href="#main-application" title="Link to this heading">#</a></h2>
 <p>Main application logic and entry points.</p>
+<dl class="py function" id="module-main">
+<dt class="sig sig-object py" id="main.ask_yes_no_prompt">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">ask_yes_no_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#ask_yes_no_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.ask_yes_no_prompt" title="Link to this definition">#</a></dt>
+<dd><p>Prompt the user with a yes/no question and return their response as a boolean.</p>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>prompt_message</strong> (<cite>str</cite>):</dt><dd><p>The message or question to display to the user.</p>
+</dd>
+<dt><strong>default</strong> (<cite>str</cite>, optional, default=`”N”<a href="#id1"><span class="problematic" id="id2">`</span></a>):</dt><dd><p>The default response if the user provides no input.
+Must be either <cite>“Y”</cite> (yes) or <cite>“N”</cite> (no).</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong>:</p>
+<blockquote>
+<div><dl class="simple">
+<dt><cite>bool</cite>:</dt><dd><p><cite>True</cite> if the user selects <cite>“Y”</cite> (yes), <cite>False</cite> if the user selects <cite>“N”</cite> (no).</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>Notes</strong>:</p>
+<blockquote>
+<div><p>The user can input <cite>“Y”</cite>/<cite>”y”</cite> for yes or <cite>“N”</cite>/<cite>”n”</cite> for no.
+If no input is given, the default value is used.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Prompts repeatedly until a valid response is provided.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.main">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.main" title="Link to this definition">#</a></dt>
+<dd><p>Run the complete brain MRI classification pipeline.</p>
+<p>This function orchestrates the entire workflow:
+1. Resampling the brain atlas to match MRI resolution.
+2. Extracting regional features using MATLAB.
+3. Training and evaluating the selected classification model.</p>
+<p><strong>Notes</strong>:
+- User inputs and parameters are parsed from command-line arguments.
+- Supports Random Forest with optional PCA or RFECV, and SVM classifiers.
+- Logs progress and handles basic sanity checks.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.parse_arguments">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">parse_arguments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#parse_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.parse_arguments" title="Link to this definition">#</a></dt>
+<dd><p>Parses command-line arguments for the classification pipeline.
+:returns: Parsed arguments for resampling, feature extraction, and classification.
+:rtype: argparse.Namespace</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -698,11 +775,11 @@ using GridSearchCV, and trains a Support Vector Machine (SVM) model.</p>
       </div>
     </a>
     <a class="right-next"
-       href="Contributing.html"
+       href="feature_extractor.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Contributing</p>
+        <p class="prev-next-title">Feature Extraction</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -745,7 +822,12 @@ using GridSearchCV, and trains a Support Vector Machine (SVM) model.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classifiers_unified.SVM_simple"><code class="docutils literal notranslate"><span class="pre">SVM_simple()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#main-application">Main Application</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#main-application">Main Application</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main.ask_yes_no_prompt"><code class="docutils literal notranslate"><span class="pre">ask_yes_no_prompt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main.parse_arguments"><code class="docutils literal notranslate"><span class="pre">parse_arguments()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

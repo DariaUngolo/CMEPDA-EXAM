@@ -9,7 +9,7 @@ API Reference
 
 
 Feature Extraction
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 Functions for extracting features from brain images and other data sources.
 
 .. automodule:: feature_extractor
@@ -19,7 +19,7 @@ Functions for extracting features from brain images and other data sources.
 
 
 Resampling Utilities
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 Utilities for atlas resampling and related operations.
 
 .. automodule:: atlas_resampling
@@ -29,7 +29,7 @@ Utilities for atlas resampling and related operations.
 
 
 Performance Metrics
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 Functions to compute accuracy, precision, recall, and other metrics.
 
 .. automodule:: performance_scores
@@ -39,7 +39,7 @@ Functions to compute accuracy, precision, recall, and other metrics.
 
 
 Classification Pipelines
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Pipelines implementing various classification strategies including Random Forest and SVM.
 
 .. automodule:: classifiers_unified
