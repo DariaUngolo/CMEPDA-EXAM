@@ -38,13 +38,14 @@ Install all dependencies with:
 
 ```bash
 pip install -r requirements.txt
+```
 
 ### 🧮 MATLAB
 - MATLAB R2024b (or compatible)
 
 - MNI152 brain atlas (in .nii.gz format)
 
----
+
 
 ## 🚀 How to Run
 
