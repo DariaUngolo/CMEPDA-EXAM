@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(package_root, 'ML_codes'))
 sys.path.insert(0, os.path.join(package_root, 'ML_main'))
 
 # List of modules to mock
-autodoc_mock_imports = ['matlabengine','matlab','matlab.engine']
+autodoc_mock_imports = ['matlab', 'matlab.engine', 'numpy', 'pandas']
 
 
 copyright = '2025, Brando Spinelli, Daria Ungolo'
