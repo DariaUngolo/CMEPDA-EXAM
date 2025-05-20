@@ -9,9 +9,11 @@
 import os
 import sys
 
-
-
+# Aggiungi la directory 'ML_codes' al path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../ML_codes')))
+
+# Aggiungi la directory 'ML_main' al path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../ML_main')))
 
 
 copyright = '2025, Brando Spinelli, Daria Ungolo'
