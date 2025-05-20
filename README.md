@@ -45,9 +45,23 @@ pip install -r requirements.txt
 
 - MNI152 brain atlas (in .nii.gz format)
 
-
+---
 
 ## 🚀 How to Run
 
 Execute the main.py script with the following arguments from the terminal or PowerShell:
+``` bash
+python main.py \
+  --folder_path "path/to/nifti_folder" \
+  --atlas_file "path/to/original_atlas.nii.gz" \
+  --atlas_file_resized "path/to/resampled_atlas.nii.gz" \
+  --atlas_txt "path/to/atlas_labels.txt" \
+  --metadata_csv "path/to/metadata.csv" \
+  --output_prefix "path/to/output_prefix" \
+  --matlab_path "path/to/MATLAB_folder" \
+  --classifier {rf, svm} \
+  --n_iter N_ITER \
+  --cv CV \
+  --kernel {linear, rbf}
+```
 
