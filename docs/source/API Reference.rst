@@ -12,7 +12,7 @@ Feature Extraction
 ~~~~~~~~~~~~~~~~~~~~~~
 Functions for extracting features from brain images and other data sources.
 
-.. automodule:: feature_extractor
+.. automodule:: ML_codes.feature_extractor
    :members:
    :undoc-members:
    :show-inheritance:
