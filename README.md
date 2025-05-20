@@ -50,7 +50,7 @@ python main.py \
 
 ## Steps
 
-### Feature Extraction (MATLAB)
+### 1. Feature Extraction (MATLAB)
 
 The MATLAB script feature_extractor.m computes the following for each ROI defined in the atlas:
 
@@ -62,7 +62,7 @@ The MATLAB script feature_extractor.m computes the following for each ROI define
 
 The results are saved to .csv files and read by the Python module for classification.
 
-### Classification (Python)
+### 2. Classification (Python)
 The Python module performs classification using the following approaches:
 
 - ✅ Random Forest (--classifier rf)
@@ -75,7 +75,7 @@ The Python module performs classification using the following approaches:
 
      - With custom parameters (e.g., RBF kernel)
 
-### Performance Metrics:
+### 3. Performance Metrics:
 - Accuracy
 
 - Precision
@@ -87,7 +87,7 @@ The Python module performs classification using the following approaches:
 - Confidence intervals (binomial, bootstrap-based)
 
   
-### Output
+### 4. Output
 At the end of the execution, the following are generated:
 
 - CSV files with the extracted features
