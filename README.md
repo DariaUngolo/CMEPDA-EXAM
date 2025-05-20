@@ -52,28 +52,28 @@ python main.py \
 
 ### 1. Feature Extraction (MATLAB)
 
-The MATLAB script feature_extractor.m computes the following for each ROI defined in the atlas:
+The MATLAB script `feature_extractor.m` computes the following for each **ROI** defined in the atlas:
 
-- Mean intensity
+- *Mean intensity*
 
-- Standard deviation
+- *Standard deviation*
 
-- Region volume
+- *Region volume*
 
 The results are saved to .csv files and read by the Python module for classification.
 
 ### 2. Classification (Python)
 The Python module performs classification using the following approaches:
 
-- ✅ Random Forest (--classifier rf)
+- ✅ Random Forest ( --classifier rf )
 
-     - With or without PCA
+     - With or without *PCA*
 
-     - With RFECV (automated feature selection)
+     - With *RFECV* (automated feature selection)
 
-- ✅ SVM (--classifier svm)
+- ✅ SVM ( --classifier svm )
 
-     - With custom parameters (e.g., RBF kernel)
+     - With custom parameters (e.g., *RBF kernel*)
 
 ### 3. Performance Metrics:
 - Accuracy
@@ -112,7 +112,7 @@ INSERIRE LINK DOCUMENTAZIONE
 --- 
 
 ## 📄 License
-This project is intended solely for academic and research purposes.
+This project is intended solely for **academic and research purposes**.
 
 ---
 
