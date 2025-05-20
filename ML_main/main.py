@@ -152,6 +152,7 @@ def parse_arguments():
 
 def main():
     """
+
     Run the complete brain MRI classification pipeline.
 
     This function orchestrates the entire workflow:
@@ -163,6 +164,7 @@ def main():
     - User inputs and parameters are parsed from command-line arguments.
     - Supports Random Forest with optional PCA or RFECV, and SVM classifiers.
     - Logs progress and handles basic sanity checks.
+    
     """
     args = parse_arguments()
 

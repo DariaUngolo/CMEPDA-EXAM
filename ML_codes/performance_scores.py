@@ -10,6 +10,7 @@ from sklearn.metrics import (
 def compute_binomial_error(metric_value, n_samples, confidence_level):
 
     """
+
     Estimate the error margin for a binomial metric using the normal approximation.
 
     This function calculates the error associated with metrics such as accuracy, precision,
@@ -50,6 +51,7 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     >>> from scipy.stats import norm
     >>> compute_binomial_error(0.85, 100, 0.95)
     0.0647  # Approximate value
+
     """
 
 
@@ -59,6 +61,7 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
 def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
 
     """
+
     Evaluate the performance of a classification model using various metrics.
 
     This function computes common evaluation metrics such as accuracy, precision, recall,
@@ -95,6 +98,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     >>> results = evaluate_model_performance(y_true, y_pred, metric="f1")
     >>> print(results)
     {'f1': 0.6667}
+    
     """
 
     # Ensure probabilities are 1D for the positive class
