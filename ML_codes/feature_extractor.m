@@ -133,15 +133,3 @@ function [Means, Stds, Volumes] = feature_extractor(folder_path, atlas_file, atl
     end
 end
 
-    %folder_path = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL";
-    %atlas_file = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\lpba40.spm5.avg152T1.gm.label.nii.gz";
-    %atlas_txt = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\lpba40_labelID.txt";
-    %output_csv_prefix = "C:\\Users\\brand\\OneDrive\\Desktop\\feature_extracted";
-    %metadata_csv = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\AD_CTRL_metadata.csv";
-
-    %atlas_file = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\BN_Atlas_246_2mm.nii.gz";
-    %atlas_txt = "C:\\Users\\brand\\OneDrive\\Desktop\\CMEPDA\\progetto esame\\data\\BN_Atlas_246_LUT.txt";
-
-    %feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix);
-
-
