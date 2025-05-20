@@ -8,7 +8,7 @@ ML\_codes
 ML\_codes.classifiers\_unified module
 ----------------------------
 
-.. automodule:: ML_codes.classifiers:unified
+.. automodule:: ML_codes.classifiers_unified
    :members:
    :undoc-members:
    :show-inheritance:
