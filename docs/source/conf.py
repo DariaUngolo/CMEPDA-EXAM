@@ -8,10 +8,12 @@
 
 import os
 import sys
-#sys.path.insert(0, os.path.abspath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM'))
-sys.path.insert(0, os.path.abspath('../ML_codes'))
 
-project = 'CMEPDA-EXAM'
+
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../ML_codes')))
+
+
 copyright = '2025, Brando Spinelli, Daria Ungolo'
 author = 'Brando Spinelli , Daria Ungolo'
 release = '0.0.1'
@@ -40,6 +42,6 @@ html_theme_options = {
     "collapse_navigation": False,  # Mantieni espansa la navigazione laterale
     "sticky_navigation": True,   # Navigazione sempre visibile mentre scorri
 }
-
 html_static_path = ['_static']
+
 

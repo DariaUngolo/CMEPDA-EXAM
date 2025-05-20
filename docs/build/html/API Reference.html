@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API Reference &#8212; CMEPDA-EXAM 0.0.1 documentation</title>
+    <title>API Reference &#8212; Project name not set 0.0.1 documentation</title>
   
   
   
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">CMEPDA-EXAM 0.0.1 documentation</p>
+    <p class="title logo__title">Project name not set 0.0.1 documentation</p>
   
 </a></div>
     
@@ -675,56 +675,6 @@ using GridSearchCV, and trains a Support Vector Machine (SVM) model.</p>
 <section id="main-application">
 <h2>Main Application<a class="headerlink" href="#main-application" title="Link to this heading">#</a></h2>
 <p>Main application logic and entry points.</p>
-<dl class="py function" id="module-main">
-<dt class="sig sig-object py" id="main.ask_yes_no_prompt">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">ask_yes_no_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#ask_yes_no_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.ask_yes_no_prompt" title="Link to this definition">#</a></dt>
-<dd><p>Prompt the user with a yes/no question and return their response as a boolean.</p>
-<p><strong>Parameters</strong>:
-- <strong>prompt_message</strong> (<cite>str</cite>):</p>
-<blockquote>
-<div><p>The message or question to display to the user.</p>
-</div></blockquote>
-<ul class="simple">
-<li><dl class="simple">
-<dt><strong>default</strong> (<cite>str</cite>, optional, default=`”N”<a href="#id1"><span class="problematic" id="id2">`</span></a>):</dt><dd><p>The default response if the user provides no input.
-Must be either <cite>“Y”</cite> (yes) or <cite>“N”</cite> (no).</p>
-</dd>
-</dl>
-</li>
-</ul>
-<p><strong>Returns</strong>:
-- <cite>bool</cite>:</p>
-<blockquote>
-<div><p><cite>True</cite> if the user selects <cite>“Y”</cite> (yes), <cite>False</cite> if the user selects <cite>“N”</cite> (no).</p>
-</div></blockquote>
-<p><strong>Notes</strong>:
-- The user can input <cite>“Y”</cite>/<cite>”y”</cite> for yes or <cite>“N”</cite>/<cite>”n”</cite> for no.
-- If no input is given, the default value is used.
-- Prompts repeatedly until a valid response is provided.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.main">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.main" title="Link to this definition">#</a></dt>
-<dd><p>Run the complete brain MRI classification pipeline.</p>
-<p>This function orchestrates the entire workflow:
-1. Resampling the brain atlas to match MRI resolution.
-2. Extracting regional features using MATLAB.
-3. Training and evaluating the selected classification model.</p>
-<p><strong>Notes</strong>:
-- User inputs and parameters are parsed from command-line arguments.
-- Supports Random Forest with optional PCA or RFECV, and SVM classifiers.
-- Logs progress and handles basic sanity checks.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.parse_arguments">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">parse_arguments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#parse_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.parse_arguments" title="Link to this definition">#</a></dt>
-<dd><p>Parses command-line arguments for the classification pipeline.
-:returns: Parsed arguments for resampling, feature extraction, and classification.
-:rtype: argparse.Namespace</p>
-</dd></dl>
-
 </section>
 </section>
 
@@ -795,12 +745,7 @@ Must be either <cite>“Y”</cite> (yes) or <cite>“N”</cite> (no).</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classifiers_unified.SVM_simple"><code class="docutils literal notranslate"><span class="pre">SVM_simple()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#main-application">Main Application</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main.ask_yes_no_prompt"><code class="docutils literal notranslate"><span class="pre">ask_yes_no_prompt()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#main.parse_arguments"><code class="docutils literal notranslate"><span class="pre">parse_arguments()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#main-application">Main Application</a></li>
 </ul>
   </nav></div>
 
@@ -838,7 +783,7 @@ Must be either <cite>“Y”</cite> (yes) or <cite>“N”</cite> (no).</p>
 
   <p class="copyright">
     
-      © Copyright 2025, Spinelli Brando, Ungolo Daria.
+      © Copyright 2025, Brando Spinelli, Daria Ungolo.
       <br/>
     
   </p>

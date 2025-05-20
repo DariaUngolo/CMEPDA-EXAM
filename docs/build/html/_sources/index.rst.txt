@@ -6,7 +6,7 @@
 CMEPDA-EXAM Documentation
 ==========================
 
-Welcome to the documentation for CMEPDA-EXAM. This project is an application for [brief description].
+Welcome to the documentation for CMEPDA-EXAM. 
 
 Contents Index:
 ---------------

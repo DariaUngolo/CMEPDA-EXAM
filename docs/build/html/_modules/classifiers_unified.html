@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>classifiers_unified &#8212; CMEPDA-EXAM 0.0.1 documentation</title>
+    <title>classifiers_unified &#8212; Project name not set 0.0.1 documentation</title>
   
   
   
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">CMEPDA-EXAM 0.0.1 documentation</p>
+    <p class="title logo__title">Project name not set 0.0.1 documentation</p>
   
 </a></div>
     
@@ -441,7 +441,7 @@
         <span class="n">steps</span><span class="o">=</span><span class="p">[</span> <span class="p">(</span>  
                 <span class="s2">&quot;hyper_opt&quot;</span><span class="p">,</span>                           <span class="c1">#&quot;hyper_opt&quot; is the name of the step in the pipeline</span>
                 <span class="n">RandomizedSearchCV</span><span class="p">(</span>                    
-                    <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span><span class="p">),</span>          
+                    <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>          
                     <span class="n">param_distributions</span><span class="o">=</span><span class="n">param_dist</span><span class="p">,</span>    
                     <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span>                     <span class="c1"># Number of hyperparameters combination sampled</span>
                     <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span>                             <span class="c1"># Cross-validation folds</span>
@@ -483,7 +483,7 @@
 
 
         <span class="n">graph</span> <span class="o">=</span> <span class="n">graphviz</span><span class="o">.</span><span class="n">Source</span><span class="p">(</span><span class="n">dot_data</span><span class="p">)</span> <span class="c1"># Convert the dot data to a graph</span>
-        <span class="n">graph</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+        <span class="n">graph</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">view</span><span class="o">=</span> <span class="kc">False</span><span class="p">)</span>  
 
     <span class="c1"># Return the trained pipeline</span>
     <span class="k">return</span> <span class="n">pipeline_random_forest_simple</span></div>
@@ -540,7 +540,7 @@
 
     
     <span class="n">pipeline_random_forest_PCA</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;dim_reduction&quot;</span><span class="p">,</span> <span class="n">PCA</span><span class="p">()),</span>
-                                   <span class="p">(</span><span class="s2">&quot;hyper_opt&quot;</span><span class="p">,</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(),</span>
+                                   <span class="p">(</span><span class="s2">&quot;hyper_opt&quot;</span><span class="p">,</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
                                                                     <span class="n">param_distributions</span><span class="o">=</span><span class="n">param_dist</span><span class="p">,</span>
                                                                     <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span>
                                                                     <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span>
@@ -577,7 +577,7 @@
 
 
         <span class="n">graph</span> <span class="o">=</span> <span class="n">graphviz</span><span class="o">.</span><span class="n">Source</span><span class="p">(</span><span class="n">dot_data</span><span class="p">)</span> <span class="c1"># Convert the dot data to a graph</span>
-        <span class="n">graph</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">view</span><span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">pipeline_random_forest_PCA</span></div>
 
@@ -586,6 +586,7 @@
 <div class="viewcode-block" id="RFPipeline_RFECV">
 <a class="viewcode-back" href="../API%20Reference.html#classifiers_unified.RFPipeline_RFECV">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">RFPipeline_RFECV</span><span class="p">(</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">cv</span><span class="p">):</span>
+
 <span class="w">    </span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Train a Random Forest model with recursive feature elimination and hyperparameter tuning.</span>
@@ -625,6 +626,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     
+
     <span class="n">X</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">values</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="s1">&#39;Normal&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;AD&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">values</span>
     <span class="n">roi_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
@@ -633,7 +635,7 @@
     <span class="n">X_tr</span><span class="p">,</span> <span class="n">X_tst</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">y_tst</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 
     <span class="c1"># feature selection (RFECV) only on the training set to avoid data leakage</span>
-    <span class="n">rf_base</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">rf_base</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span><span class="p">)</span>
     <span class="n">feature_selector</span> <span class="o">=</span> <span class="n">RFECV</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">rf_base</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;recall&#39;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_features_to_select</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> 
     <span class="n">feature_selector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
 
@@ -649,7 +651,7 @@
 
     <span class="c1"># Random Forest optimization on selected features</span>
     <span class="n">rf_selected_features</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span>
-        <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span><span class="p">),</span>
+        <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
         <span class="n">param_distributions</span><span class="o">=</span><span class="n">param_dist</span><span class="p">,</span>
         <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span>
         <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span>
@@ -689,7 +691,7 @@
             <span class="n">class_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CN&quot;</span><span class="p">,</span> <span class="s2">&quot;AD&quot;</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">graphviz</span><span class="o">.</span><span class="n">Source</span><span class="p">(</span><span class="n">dot_data</span><span class="p">)</span>
-        <span class="n">graph</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">view</span><span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># Save the graph to a file without opening it</span>
 
     <span class="k">return</span> <span class="n">rf_selected_features</span></div>
 
@@ -775,8 +777,6 @@
 
 
 
-
-
 </pre></div>
 
                 </article>
@@ -818,7 +818,7 @@
 
   <p class="copyright">
     
-      © Copyright 2025, Spinelli Brando, Ungolo Daria.
+      © Copyright 2025, Brando Spinelli, Daria Ungolo.
       <br/>
     
   </p>
