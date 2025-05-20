@@ -22,7 +22,7 @@ Resampling Utilities
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Utilities for atlas resampling and related operations.
 
-.. automodule:: atlas_resampling
+.. automodule:: ML_codes.atlas_resampling
    :members:
    :undoc-members:
    :show-inheritance:
