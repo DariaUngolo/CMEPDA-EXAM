@@ -48,7 +48,7 @@ python main.py \
 
 ---
 
-## Steps
+## Pipeline guide
 
 ### 1. Feature Extraction (MATLAB)
 
