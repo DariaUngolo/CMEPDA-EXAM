@@ -8,15 +8,6 @@ CMEPDA-EXAM Documentation
 
 Welcome to the documentation for CMEPDA-EXAM. 
 
-Modules documentation:
-----------------------
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Documentation:
-
-   modules
-
 
 Contents:
 ---------------
@@ -30,4 +21,13 @@ Contents:
    User Guide
    Contributing
 
+
+Modules documentation:
+----------------------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Documentation:
+
+   modules
 
