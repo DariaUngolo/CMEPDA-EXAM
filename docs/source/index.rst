@@ -19,7 +19,6 @@ Contents Index:
    Installation
    User Guide
    API Reference
-   feature_extractor
    Contributing
 
 

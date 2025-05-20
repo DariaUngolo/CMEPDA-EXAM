@@ -10,12 +10,14 @@ from sklearn.metrics import (
 def compute_binomial_error(metric_value, n_samples, confidence_level):
 
     """
+
     Estimate the error margin for a binomial metric using the normal approximation.
 
     This function calculates the error associated with metrics such as accuracy, precision,
     or recall by approximating the binomial distribution with a normal distribution.
 
     Parameters
+
     ----------
     metric_value : float
         The value of the metric (between 0 and 1), such as accuracy, precision, or recall.
@@ -32,11 +34,13 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
         The estimated error margin based on the z-score and binomial variance.
 
     Notes
+
     -----
     - This approximation assumes a sufficiently large number of samples (n), satisfying the condition: n * p and n * (1 - p) ≥ 5.
     - The z-score is derived from the standard normal distribution for the specified confidence level.
 
     Formula
+
     -------
     The error is calculated using the formula:
         error ≈ z * sqrt(p * (1 - p) / n)
@@ -46,10 +50,12 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     - n is the number of samples.
 
     Examples
+
     --------
     >>> from scipy.stats import norm
     >>> compute_binomial_error(0.85, 100, 0.95)
     0.0647  # Approximate value
+
     """
 
 
@@ -66,6 +72,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     containing the results for the specified metric.
 
     Parameters
+
     ----------
     y_true : list or array-like
         The ground truth (actual labels).
@@ -82,12 +89,14 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
         - "f1"
 
     Returns
+
     -------
     dict
         A dictionary containing the evaluation results with keys corresponding to
         the metric names and values as the computed scores.
 
     Examples
+
     --------
     >>> from my_module import evaluate_model_performance
     >>> y_true = [0, 1, 1, 0]
@@ -95,6 +104,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     >>> results = evaluate_model_performance(y_true, y_pred, metric="f1")
     >>> print(results)
     {'f1': 0.6667}
+
     """
 
     # Ensure probabilities are 1D for the positive class

@@ -371,7 +371,8 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">performance_scores</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_binomial_error</span><span class="p">,</span> <span class="n">evaluate_model_performance</span> <span class="c1"># Importing a custom module for performance evaluation</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">feature_extractor</span> <span class="c1"># Importing a custom module to interact with MATLAB Engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">feature_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">feature_extractor</span>
+ <span class="c1"># Importing a custom module to interact with MATLAB Engine</span>
 
 <span class="n">param_dist</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>  <span class="c1"># number of trees</span>

@@ -1,46 +1,51 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+
+
 import argparse
 from pathlib import Path
 import matlab.engine
 from loguru import logger
 
-# Custom modules
-from feature_extractor import feature_extractor
-from classifiers_unified import (
+from ML_codes.feature_extractor import feature_extractor
+from ML_codes.classifiers_unified import (
     RFPipeline_noPCA,
     RFPipeline_PCA,
     RFPipeline_RFECV,
     SVM_simple
 )
-from atlas_resampling import atlas_resampling
+from ML_codes.atlas_resampling import atlas_resampling
 
 def ask_yes_no_prompt(prompt_message, default="N"):
 
 
     """
-
     Prompt the user with a yes/no question and return their response as a boolean.
 
-    **Parameters**:
+    Parameters
 
-        **prompt_message** (`str`):
-            The message or question to display to the user.
-        **default** (`str`, optional, default=`"N"`):
-            The default response if the user provides no input.
-            Must be either `"Y"` (yes) or `"N"` (no).
+    ----------
+    prompt_message : str
+        The message or question to display to the user.
+    default : str, optional, default='N'
+        The default response if the user provides no input.
+        Must be either 'Y' (yes) or 'N' (no).
 
-    **Returns**:
+    Returns
 
-        `bool`:
-            `True` if the user selects `"Y"` (yes), `False` if the user selects `"N"` (no).
+    -------
+    bool
+        True if the user selects 'Y' (yes), False if the user selects 'N' (no).
 
-    **Notes**:
+    Notes
 
-        The user can input `"Y"`/`"y"` for yes or `"N"`/`"n"` for no.
-        If no input is given, the default value is used.
-    -   Prompts repeatedly until a valid response is provided.
-
-
+    -----
+    The user can input 'Y'/'y' for yes or 'N'/'n' for no.
+    If no input is given, the default value is used.
+    Prompts repeatedly until a valid response is provided.
     """
+
     while True:
         # Determine the displayed default option
         default_display = "Y" if default.upper() == "Y" else "N"

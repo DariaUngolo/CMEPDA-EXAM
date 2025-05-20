@@ -1,4 +1,4 @@
-Feature Extraction
+Feature Extractor
 ==================
 
 .. automodule:: feature_extractor

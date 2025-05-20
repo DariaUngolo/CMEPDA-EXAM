@@ -44,7 +44,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'API Reference';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Feature Extraction" href="feature_extractor.html" />
+    <link rel="next" title="Contributing" href="Contributing.html" />
     <link rel="prev" title="User Guide" href="User%20Guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -153,28 +153,11 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="feature_extractor.html">
-    Feature Extraction
-  </a>
-</li>
-
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                aria-controls="pst-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-nav-more-links" class="dropdown-menu">
-                    
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="Contributing.html">
+  <a class="nav-link nav-internal" href="Contributing.html">
     Contributing
   </a>
 </li>
 
-                </ul>
-            </li>
-            
   </ul>
 </nav></div>
       
@@ -272,13 +255,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
     API Reference
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="feature_extractor.html">
-    Feature Extraction
   </a>
 </li>
 
@@ -476,43 +452,37 @@ modifying the affine transformation matrix, and saving the resulting image.</p>
 <dd><p>Estimate the error margin for a binomial metric using the normal approximation.</p>
 <p>This function calculates the error associated with metrics such as accuracy, precision,
 or recall by approximating the binomial distribution with a normal distribution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_value</strong> (<em>float</em>) – The value of the metric (between 0 and 1), such as accuracy, precision, or recall.</p></li>
-<li><p><strong>n_samples</strong> (<em>int</em>) – The number of independent observations (e.g., test set size).</p></li>
-<li><p><strong>confidence_level</strong> (<em>float</em>) – The confidence level for the error estimation (e.g., 0.683 for 68.3% confidence, 0.95 for 95% confidence).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The estimated error margin based on the z-score and binomial variance.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>This approximation assumes a sufficiently large number of samples (n), satisfying the condition: n * p and n * (1 - p) ≥ 5.</p></li>
-<li><p>The z-score is derived from the standard normal distribution for the specified confidence level.</p></li>
-</ul>
-<section id="formula">
-<h3>Formula<a class="headerlink" href="#formula" title="Link to this heading">#</a></h3>
+<p>Parameters</p>
 <dl class="simple">
-<dt>The error is calculated using the formula:</dt><dd><p>error ≈ z * sqrt(p * (1 - p) / n)</p>
+<dt>n_samples<span class="classifier">int</span></dt><dd><p>The number of independent observations (e.g., test set size).</p>
+</dd>
+<dt>confidence_level<span class="classifier">float</span></dt><dd><p>The confidence level for the error estimation (e.g., 0.683 for 68.3% confidence, 0.95 for 95% confidence).</p>
 </dd>
 </dl>
-<p>where:
-- z is the z-score for the specified confidence level,
-- p is the metric value,
-- n is the number of samples.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">compute_binomial_error</span><span class="p">(</span><span class="mf">0.85</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">)</span>
-<span class="go">0.0647  # Approximate value</span>
-</pre></div>
-</div>
-</section>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>float</em> – The estimated error margin based on the z-score and binomial variance.</p></li>
+<li><p><em>Notes</em></p></li>
+<li><p><em>—–</em></p></li>
+<li><p><strong>- This approximation assumes a sufficiently large number of samples (n), satisfying the condition</strong> (<em>n * p and n * (1 - p) ≥ 5.</em>)</p></li>
+<li><p><em>- The z-score is derived from the standard normal distribution for the specified confidence level.</em></p></li>
+<li><p><em>Formula</em></p></li>
+<li><p><em>——-</em></p></li>
+<li><p><em>The error is calculated using the formula</em> – error ≈ z * sqrt(p * (1 - p) / n)</p></li>
+<li><p><em>where</em></p></li>
+<li><p><em>- z is the z-score for the specified confidence level,</em></p></li>
+<li><p><em>- p is the metric value,</em></p></li>
+<li><p><em>- n is the number of samples.</em></p></li>
+<li><p><em>Examples</em></p></li>
+<li><p><em>——–</em></p></li>
+<li><p><em>&gt;&gt;&gt; from scipy.stats import norm</em></p></li>
+<li><p><em>&gt;&gt;&gt; compute_binomial_error(0.85, 100, 0.95)</em></p></li>
+<li><p><em>0.0647  # Approximate value</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -522,31 +492,24 @@ or recall by approximating the binomial distribution with a normal distribution.
 <p>This function computes common evaluation metrics such as accuracy, precision, recall,
 and F1-score based on the provided true and predicted labels. It returns a dictionary
 containing the results for the specified metric.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>y_true</strong> (<em>list</em><em> or </em><em>array-like</em>) – The ground truth (actual labels).</p></li>
-<li><p><strong>y_pred</strong> (<em>list</em><em> or </em><em>array-like</em>) – The predicted labels generated by the model.</p></li>
-<li><p><strong>metric</strong> (<em>str</em><em>, </em><em>optional</em>) – The evaluation metric to compute. Default is ‘accuracy’.
+<p>Parameters</p>
+<dl class="simple">
+<dt>y_pred<span class="classifier">list or array-like</span></dt><dd><p>The predicted labels generated by the model.</p>
+</dd>
+<dt>metric<span class="classifier">str, optional</span></dt><dd><p>The evaluation metric to compute. Default is ‘accuracy’.
 Supported metrics include:
 - “accuracy”
 - “precision”
 - “recall”
-- “f1”</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary containing the evaluation results with keys corresponding to
-the metric names and values as the computed scores.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
+- “f1”</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">my_module</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate_model_performance</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<p>Returns</p>
+<blockquote>
+<div><p>the metric names and values as the computed scores.</p>
+</div></blockquote>
+<p>Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">evaluate_model_performance</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;f1&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 <span class="go">{&#39;f1&#39;: 0.6667}</span>
@@ -703,31 +666,15 @@ using GridSearchCV, and trains a Support Vector Machine (SVM) model.</p>
 <dt class="sig sig-object py" id="main.ask_yes_no_prompt">
 <span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">ask_yes_no_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#ask_yes_no_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.ask_yes_no_prompt" title="Link to this definition">#</a></dt>
 <dd><p>Prompt the user with a yes/no question and return their response as a boolean.</p>
-<p><strong>Parameters</strong>:</p>
-<blockquote>
-<div><dl class="simple">
-<dt><strong>prompt_message</strong> (<cite>str</cite>):</dt><dd><p>The message or question to display to the user.</p>
-</dd>
-<dt><strong>default</strong> (<cite>str</cite>, optional, default=`”N”<a href="#id1"><span class="problematic" id="id2">`</span></a>):</dt><dd><p>The default response if the user provides no input.
-Must be either <cite>“Y”</cite> (yes) or <cite>“N”</cite> (no).</p>
+<p>Parameters</p>
+<dl class="simple">
+<dt>default<span class="classifier">str, optional, default=’N’</span></dt><dd><p>The default response if the user provides no input.
+Must be either ‘Y’ (yes) or ‘N’ (no).</p>
 </dd>
 </dl>
-</div></blockquote>
-<p><strong>Returns</strong>:</p>
-<blockquote>
-<div><dl class="simple">
-<dt><cite>bool</cite>:</dt><dd><p><cite>True</cite> if the user selects <cite>“Y”</cite> (yes), <cite>False</cite> if the user selects <cite>“N”</cite> (no).</p>
-</dd>
-</dl>
-</div></blockquote>
-<p><strong>Notes</strong>:</p>
-<blockquote>
-<div><p>The user can input <cite>“Y”</cite>/<cite>”y”</cite> for yes or <cite>“N”</cite>/<cite>”n”</cite> for no.
-If no input is given, the default value is used.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>Prompts repeatedly until a valid response is provided.</p></li>
-</ul>
+<p>Returns</p>
+<p>Notes</p>
+<p>Prompts repeatedly until a valid response is provided.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -775,11 +722,11 @@ If no input is given, the default value is used.</p>
       </div>
     </a>
     <a class="right-next"
-       href="feature_extractor.html"
+       href="Contributing.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Feature Extraction</p>
+        <p class="prev-next-title">Contributing</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

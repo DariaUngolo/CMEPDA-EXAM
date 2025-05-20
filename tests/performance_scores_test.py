@@ -148,5 +148,5 @@ def _stop_patches():
 atexit.register(_stop_patches)
 
 if __name__ == '__main__':
-    logger.info("Starting performance scores test...")
+    logger.info("Starting unittest for performance scores...")
     unittest.main()

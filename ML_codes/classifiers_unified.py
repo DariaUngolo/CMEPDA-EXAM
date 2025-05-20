@@ -31,7 +31,8 @@ from sklearn.feature_selection import RFECV
 
 from performance_scores import compute_binomial_error, evaluate_model_performance # Importing a custom module for performance evaluation
 
-import feature_extractor # Importing a custom module to interact with MATLAB Engine
+from feature_extractor import feature_extractor
+ # Importing a custom module to interact with MATLAB Engine
 
 param_dist = {
     'n_estimators': randint(50, 500),  # number of trees

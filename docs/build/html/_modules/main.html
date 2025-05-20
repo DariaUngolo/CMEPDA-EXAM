@@ -338,20 +338,24 @@
                 <article class="bd-article">
                   
   <h1>Source code for main</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;../&#39;</span><span class="p">)))</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matlab.engine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="c1"># Custom modules</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">feature_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">feature_extractor</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">classifiers_unified</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ML_codes.feature_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">feature_extractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ML_codes.classifiers_unified</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">RFPipeline_noPCA</span><span class="p">,</span>
     <span class="n">RFPipeline_PCA</span><span class="p">,</span>
     <span class="n">RFPipeline_RFECV</span><span class="p">,</span>
     <span class="n">SVM_simple</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atlas_resampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">atlas_resampling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ML_codes.atlas_resampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">atlas_resampling</span>
 
 <div class="viewcode-block" id="ask_yes_no_prompt">
 <a class="viewcode-back" href="../API%20Reference.html#main.ask_yes_no_prompt">[docs]</a>
@@ -359,30 +363,31 @@
 
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">    Prompt the user with a yes/no question and return their response as a boolean.</span>
 
-<span class="sd">    **Parameters**:</span>
+<span class="sd">    Parameters</span>
 
-<span class="sd">        **prompt_message** (`str`):</span>
-<span class="sd">            The message or question to display to the user.</span>
-<span class="sd">        **default** (`str`, optional, default=`&quot;N&quot;`):</span>
-<span class="sd">            The default response if the user provides no input.</span>
-<span class="sd">            Must be either `&quot;Y&quot;` (yes) or `&quot;N&quot;` (no).</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prompt_message : str</span>
+<span class="sd">        The message or question to display to the user.</span>
+<span class="sd">    default : str, optional, default=&#39;N&#39;</span>
+<span class="sd">        The default response if the user provides no input.</span>
+<span class="sd">        Must be either &#39;Y&#39; (yes) or &#39;N&#39; (no).</span>
 
-<span class="sd">    **Returns**:</span>
+<span class="sd">    Returns</span>
 
-<span class="sd">        `bool`:</span>
-<span class="sd">            `True` if the user selects `&quot;Y&quot;` (yes), `False` if the user selects `&quot;N&quot;` (no).</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the user selects &#39;Y&#39; (yes), False if the user selects &#39;N&#39; (no).</span>
 
-<span class="sd">    **Notes**:</span>
+<span class="sd">    Notes</span>
 
-<span class="sd">        The user can input `&quot;Y&quot;`/`&quot;y&quot;` for yes or `&quot;N&quot;`/`&quot;n&quot;` for no.</span>
-<span class="sd">        If no input is given, the default value is used.</span>
-<span class="sd">    -   Prompts repeatedly until a valid response is provided.</span>
-
-
+<span class="sd">    -----</span>
+<span class="sd">    The user can input &#39;Y&#39;/&#39;y&#39; for yes or &#39;N&#39;/&#39;n&#39; for no.</span>
+<span class="sd">    If no input is given, the default value is used.</span>
+<span class="sd">    Prompts repeatedly until a valid response is provided.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="c1"># Determine the displayed default option</span>
         <span class="n">default_display</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span> <span class="k">if</span> <span class="n">default</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span> <span class="k">else</span> <span class="s2">&quot;N&quot;</span>

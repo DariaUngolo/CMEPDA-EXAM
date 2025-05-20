@@ -1,0 +1,84 @@
+2025-05-18 16:12:34.364 | INFO     | atlas_resampling_test:test_resampled_image_shape:34 - Creating synthetic NIfTI image with shape (5, 5, 5) and voxel size 2mm isotropic.
+2025-05-18 16:12:34.398 | DEBUG    | atlas_resampling_test:test_resampled_image_shape:45 - Saving synthetic image to temporary file: C:\Users\brand\AppData\Local\Temp\tmp8dbfhcq6\input.nii.gz
+2025-05-18 16:12:34.405 | INFO     | atlas_resampling_test:test_resampled_image_shape:48 - Calling atlas_resampling to resample image to 1mm isotropic voxels.
+2025-05-18 16:12:34.405 | INFO     | atlas_resampling:atlas_resampling:50 - 📂 Loading NIfTI image from: C:\Users\brand\AppData\Local\Temp\tmp8dbfhcq6\input.nii.gz
+2025-05-18 16:12:34.405 | DEBUG    | atlas_resampling:atlas_resampling:58 - Original voxel size: (2.0, 2.0, 2.0)
+2025-05-18 16:12:34.414 | INFO     | atlas_resampling:atlas_resampling:62 - 🔍 Calculated zoom factors for resampling: [2. 2. 2.]
+2025-05-18 16:12:34.414 | INFO     | atlas_resampling:atlas_resampling:65 - 🔁 Resampling image with interpolation order 0...
+2025-05-18 16:12:34.414 | SUCCESS  | atlas_resampling:atlas_resampling:81 - 💾 Resampled image saved successfully to: C:\Users\brand\AppData\Local\Temp\tmp8dbfhcq6\output_resampled.nii.gz
+2025-05-18 16:12:34.414 | DEBUG    | atlas_resampling_test:test_resampled_image_shape:51 - Loading resampled image from C:\Users\brand\AppData\Local\Temp\tmp8dbfhcq6\output_resampled.nii.gz
+2025-05-18 16:12:34.422 | INFO     | atlas_resampling_test:test_resampled_image_shape:55 - Expected shape after resampling: (10, 10, 10)
+2025-05-18 16:12:34.422 | INFO     | atlas_resampling_test:test_resampled_image_shape:56 - Actual shape of resampled image: (10, 10, 10)
+2025-05-18 16:12:34.422 | INFO     | atlas_resampling_test:test_resampled_image_shape:61 - Voxel size after resampling: (1.0, 1.0, 1.0)
+2025-05-18 16:12:34.422 | INFO     | classifiers_test:setUp:45 - Setting up synthetic dataset for tests...
+2025-05-18 16:12:34.439 | INFO     | classifiers_test:setUp:53 - Dataset created with 30 samples and 5 features.
+2025-05-18 16:12:34.440 | INFO     | classifiers_test:test_RFPipeline_PCA_runs:76 - Testing RFPipeline_PCA...
+2025-05-18 16:12:36.389 | SUCCESS  | classifiers_test:test_RFPipeline_PCA_runs:82 - RFPipeline_PCA executed and predicted successfully.
+2025-05-18 16:12:36.390 | INFO     | classifiers_test:setUp:45 - Setting up synthetic dataset for tests...
+2025-05-18 16:12:36.390 | INFO     | classifiers_test:setUp:53 - Dataset created with 30 samples and 5 features.
+2025-05-18 16:12:36.390 | INFO     | classifiers_test:test_RFPipeline_RFECV_runs:92 - Testing RFPipeline_RFECV...
+2025-05-18 16:12:41.841 | INFO     | classifiers_test:test_RFPipeline_RFECV_runs:99 - Prediction with RFECV made. Number of predictions: 30
+2025-05-18 16:12:41.841 | SUCCESS  | classifiers_test:test_RFPipeline_RFECV_runs:105 - RFPipeline_RFECV executed (with or without prediction success).
+2025-05-18 16:12:41.849 | INFO     | classifiers_test:setUp:45 - Setting up synthetic dataset for tests...
+2025-05-18 16:12:41.849 | INFO     | classifiers_test:setUp:53 - Dataset created with 30 samples and 5 features.
+2025-05-18 16:12:41.849 | INFO     | classifiers_test:test_RFPipeline_noPCA_runs:62 - Testing RFPipeline_noPCA...
+2025-05-18 16:12:43.448 | SUCCESS  | classifiers_test:test_RFPipeline_noPCA_runs:68 - RFPipeline_noPCA executed and predicted successfully.
+2025-05-18 16:12:43.448 | INFO     | classifiers_test:setUp:45 - Setting up synthetic dataset for tests...
+2025-05-18 16:12:43.456 | INFO     | classifiers_test:setUp:53 - Dataset created with 30 samples and 5 features.
+2025-05-18 16:12:43.456 | INFO     | classifiers_test:test_SVM_simple_linear_runs:113 - Testing SVM_simple with linear kernel...
+2025-05-18 16:12:44.130 | SUCCESS  | classifiers_test:test_SVM_simple_linear_runs:119 - SVM_simple (linear) executed and predicted successfully.
+2025-05-18 16:12:44.130 | INFO     | classifiers_test:setUp:45 - Setting up synthetic dataset for tests...
+2025-05-18 16:12:44.130 | INFO     | classifiers_test:setUp:53 - Dataset created with 30 samples and 5 features.
+2025-05-18 16:12:44.130 | INFO     | classifiers_test:test_SVM_simple_rbf_runs:127 - Testing SVM_simple with rbf kernel...
+2025-05-18 16:12:46.900 | SUCCESS  | classifiers_test:test_SVM_simple_rbf_runs:133 - SVM_simple (rbf) executed and predicted successfully.
+2025-05-18 16:12:46.900 | INFO     | feature_extractor_mocked_test:setUpClass:19 - Setting up TestFeatureExtractorMocked...
+2025-05-18 16:12:46.943 | DEBUG    | feature_extractor_mocked_test:setUpClass:29 - Generated mock DataFrames with shape: (5, 10)
+2025-05-18 16:12:46.943 | INFO     | feature_extractor_mocked_test:setUpClass:39 - feature_extractor() has been patched with mock return values.
+2025-05-18 16:12:46.943 | INFO     | feature_extractor_mocked_test:setUpClass:50 - Mocked feature_extractor() has been called.
+2025-05-18 16:12:46.943 | INFO     | feature_extractor_mocked_test:test_column_names:84 - Running test_column_names...
+2025-05-18 16:12:46.943 | SUCCESS  | feature_extractor_mocked_test:test_column_names:87 - test_column_names passed.
+2025-05-18 16:12:46.943 | INFO     | feature_extractor_mocked_test:test_mock_was_called:93 - Running test_mock_was_called...
+2025-05-18 16:12:46.943 | SUCCESS  | feature_extractor_mocked_test:test_mock_was_called:95 - test_mock_was_called passed.
+2025-05-18 16:12:46.943 | INFO     | feature_extractor_mocked_test:test_not_empty:75 - Running test_not_empty...
+2025-05-18 16:12:46.943 | SUCCESS  | feature_extractor_mocked_test:test_not_empty:78 - test_not_empty passed.
+2025-05-18 16:12:46.943 | INFO     | feature_extractor_mocked_test:test_shape_consistency:66 - Running test_shape_consistency...
+2025-05-18 16:12:46.943 | SUCCESS  | feature_extractor_mocked_test:test_shape_consistency:69 - test_shape_consistency passed.
+2025-05-18 16:12:46.943 | INFO     | feature_extractor_mocked_test:tearDownClass:60 - TearDown complete. feature_extractor() patch removed.
+2025-05-18 16:12:46.950 | INFO     | performance_scores_test:test_error_full_probability:57 - Running test: test_error_full_probability
+2025-05-18 16:12:46.950 | DEBUG    | performance_scores_test:test_error_full_probability:59 - Computed error: 0.0
+2025-05-18 16:12:46.950 | SUCCESS  | performance_scores_test:test_error_full_probability:61 - test_error_full_probability passed.
+2025-05-18 16:12:46.950 | INFO     | performance_scores_test:test_error_invalid_n_samples:67 - Running test: test_error_invalid_n_samples
+2025-05-18 16:12:46.950 | SUCCESS  | performance_scores_test:test_error_invalid_n_samples:70 - test_error_invalid_n_samples passed.
+2025-05-18 16:12:46.950 | INFO     | performance_scores_test:test_error_mid_value:35 - Running test: test_error_mid_value
+2025-05-18 16:12:46.950 | DEBUG    | performance_scores_test:test_error_mid_value:37 - Computed error: 0.05003209143812246
+2025-05-18 16:12:46.950 | SUCCESS  | performance_scores_test:test_error_mid_value:39 - test_error_mid_value passed.
+2025-05-18 16:12:46.950 | INFO     | performance_scores_test:test_error_zero_probability:46 - Running test: test_error_zero_probability
+2025-05-18 16:12:46.950 | DEBUG    | performance_scores_test:test_error_zero_probability:48 - Computed error: 0.0
+2025-05-18 16:12:46.950 | SUCCESS  | performance_scores_test:test_error_zero_probability:50 - test_error_zero_probability passed.
+2025-05-18 16:12:46.950 | INFO     | performance_scores_test:setUp:84 - Setting up test data for TestEvaluateModelPerformance
+2025-05-18 16:12:46.950 | INFO     | performance_scores_test:test_auc_close_to_sklearn:125 - Running test: test_auc_close_to_sklearn
+2025-05-18 16:12:47.206 | DEBUG    | performance_scores_test:test_auc_close_to_sklearn:128 - Model AUC: 1.0, sklearn AUC: 1.0
+2025-05-18 16:12:47.214 | SUCCESS  | performance_scores_test:test_auc_close_to_sklearn:130 - test_auc_close_to_sklearn passed.
+2025-05-18 16:12:47.214 | INFO     | performance_scores_test:setUp:84 - Setting up test data for TestEvaluateModelPerformance
+2025-05-18 16:12:47.214 | INFO     | performance_scores_test:test_metric_values_range:112 - Running test: test_metric_values_range
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - Accuracy: 0.9
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - Accuracy_error: 0.09492921902776577
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - Precision: 1.0
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - Precision_error: 0.0
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - Recall: 0.8333333333333334
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - Recall_error: 0.11792677044280597
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - F1-score: 0.9090909090909091
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - F1-score_error: 0.0909674389784045
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - Specificity: 1.0
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - Specificity_error: 0.0
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - AUC: 1.0
+2025-05-18 16:12:47.470 | DEBUG    | performance_scores_test:test_metric_values_range:115 - AUC_error: 0.0
+2025-05-18 16:12:47.470 | SUCCESS  | performance_scores_test:test_metric_values_range:119 - test_metric_values_range passed.
+2025-05-18 16:12:47.470 | INFO     | performance_scores_test:setUp:84 - Setting up test data for TestEvaluateModelPerformance
+2025-05-18 16:12:47.470 | INFO     | performance_scores_test:test_output_keys:93 - Running test: test_output_keys
+2025-05-18 16:12:47.718 | DEBUG    | performance_scores_test:test_output_keys:95 - Returned keys: ['Accuracy', 'Accuracy_error', 'Precision', 'Precision_error', 'Recall', 'Recall_error', 'F1-score', 'F1-score_error', 'Specificity', 'Specificity_error', 'AUC', 'AUC_error']
+2025-05-18 16:12:47.718 | SUCCESS  | performance_scores_test:test_output_keys:106 - test_output_keys passed.
+2025-05-18 16:12:47.718 | INFO     | performance_scores_test:setUp:84 - Setting up test data for TestEvaluateModelPerformance
+2025-05-18 16:12:47.718 | INFO     | performance_scores_test:test_y_proba_2d_input:136 - Running test: test_y_proba_2d_input
+2025-05-18 16:12:47.959 | DEBUG    | performance_scores_test:test_y_proba_2d_input:139 - AUC from 2D proba: 1.0
+2025-05-18 16:12:47.959 | SUCCESS  | performance_scores_test:test_y_proba_2d_input:141 - test_y_proba_2d_input passed.
