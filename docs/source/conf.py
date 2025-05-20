@@ -9,11 +9,11 @@
 import os
 import sys
 #sys.path.insert(0, os.path.abspath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM'))
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../ML_codes'))
 
 project = 'CMEPDA-EXAM'
-copyright = '2025, Spinelli Brando, Ungolo Daria'
-author = 'Brando Spinelli, Daria Ungolo'
+copyright = '2025, Brando Spinelli, Daria Ungolo'
+author = 'Brando Spinelli , Daria Ungolo'
 release = '0.0.1'
 
 # -- General configuration ---------------------------------------------------
