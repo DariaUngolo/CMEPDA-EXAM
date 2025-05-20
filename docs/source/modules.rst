@@ -4,7 +4,8 @@ CompProject
 .. toctree::
    :maxdepth: 4
 
-   CNN_tools
-   ML_tools
-   main
-   tests
+   Introduction
+   Installation
+   User Guide
+   API Reference
+   Contributing
