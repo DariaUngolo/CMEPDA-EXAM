@@ -4,8 +4,6 @@ CompProject
 .. toctree::
    :maxdepth: 4
 
-   Introduction
-   Installation
-   User Guide
-   API Reference
-   Contributing
+   ML_codes
+   main
+   tests
