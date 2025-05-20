@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(os.getcwd()).parent))
 def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_csv_prefix, matlab_feature_extractor_path):
 
     """
+
     Extract feature means and standard deviations from brain image data using a MATLAB function.
 
     This function interfaces with MATLAB to extract mean and standard deviation values from image data in a specified folder,
@@ -37,6 +38,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     matlab_feature_extractor_path : str
         Path to the MATLAB function used for feature extraction.
 
+
     Returns
     -------
     tuple
@@ -49,16 +51,20 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
         - df_media_std_volume (pandas.DataFrame): DataFrame with mean, standard deviation, and volume.
         - df_std_volume (pandas.DataFrame): DataFrame with standard deviation and volume values.
 
+
     Notes
     -----
     - The function requires MATLAB integration and appropriate MATLAB paths.
     - Outputs from MATLAB are converted to NumPy arrays before creating pandas DataFrames.
     - Group labels are loaded from the provided metadata CSV file.
 
+
     References
     ----------
     - https://www.mathworks.com/help/matlab/matlab-engine-for-python.html
     - https://pandas.pydata.org/
+
+
     """
 
 

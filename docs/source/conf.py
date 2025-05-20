@@ -8,10 +8,14 @@
 
 import os
 import sys
-#sys.path.insert(0, os.path.abspath(r'C:\Users\daria\OneDrive\Desktop\CIAO\CMEPDA-EXAM'))
-sys.path.insert(0, os.path.abspath('../ML_codes'))
 
-project = 'CMEPDA-EXAM'
+# Aggiungi la directory 'ML_codes' al path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../ML_codes')))
+
+# Aggiungi la directory 'ML_main' al path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../ML_main')))
+
+
 copyright = '2025, Brando Spinelli, Daria Ungolo'
 author = 'Brando Spinelli , Daria Ungolo'
 release = '0.0.1'
@@ -38,8 +42,7 @@ html_theme_options = {
     "navigation_depth": 3,       # Profondità massima della navigazione laterale
     "show_nav_level": 1,         # Mostra il primo livello nella navigazione
     "collapse_navigation": False,  # Mantieni espansa la navigazione laterale
-    "sticky_navigation": True,   # Navigazione sempre visibile mentre scorri
 }
-
 html_static_path = ['_static']
+
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API Reference &#8212; CMEPDA-EXAM 0.0.1 documentation</title>
+    <title>API Reference &#8212; Project name not set 0.0.1 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'API Reference';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Contributing" href="Contributing.html" />
+    <link rel="next" title="Feature Extraction" href="feature_extractor.html" />
     <link rel="prev" title="User Guide" href="User%20Guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">CMEPDA-EXAM 0.0.1 documentation</p>
+    <p class="title logo__title">Project name not set 0.0.1 documentation</p>
   
 </a></div>
     
@@ -153,11 +153,28 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="Contributing.html">
+  <a class="nav-link nav-internal" href="feature_extractor.html">
+    Feature Extraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="Contributing.html">
     Contributing
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -255,6 +272,13 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
     API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="feature_extractor.html">
+    Feature Extraction
   </a>
 </li>
 
@@ -679,28 +703,31 @@ using GridSearchCV, and trains a Support Vector Machine (SVM) model.</p>
 <dt class="sig sig-object py" id="main.ask_yes_no_prompt">
 <span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">ask_yes_no_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#ask_yes_no_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.ask_yes_no_prompt" title="Link to this definition">#</a></dt>
 <dd><p>Prompt the user with a yes/no question and return their response as a boolean.</p>
-<p><strong>Parameters</strong>:
-- <strong>prompt_message</strong> (<cite>str</cite>):</p>
+<p><strong>Parameters</strong>:</p>
 <blockquote>
-<div><p>The message or question to display to the user.</p>
-</div></blockquote>
-<ul class="simple">
-<li><dl class="simple">
+<div><dl class="simple">
+<dt><strong>prompt_message</strong> (<cite>str</cite>):</dt><dd><p>The message or question to display to the user.</p>
+</dd>
 <dt><strong>default</strong> (<cite>str</cite>, optional, default=`”N”<a href="#id1"><span class="problematic" id="id2">`</span></a>):</dt><dd><p>The default response if the user provides no input.
 Must be either <cite>“Y”</cite> (yes) or <cite>“N”</cite> (no).</p>
 </dd>
 </dl>
-</li>
-</ul>
-<p><strong>Returns</strong>:
-- <cite>bool</cite>:</p>
-<blockquote>
-<div><p><cite>True</cite> if the user selects <cite>“Y”</cite> (yes), <cite>False</cite> if the user selects <cite>“N”</cite> (no).</p>
 </div></blockquote>
-<p><strong>Notes</strong>:
-- The user can input <cite>“Y”</cite>/<cite>”y”</cite> for yes or <cite>“N”</cite>/<cite>”n”</cite> for no.
-- If no input is given, the default value is used.
-- Prompts repeatedly until a valid response is provided.</p>
+<p><strong>Returns</strong>:</p>
+<blockquote>
+<div><dl class="simple">
+<dt><cite>bool</cite>:</dt><dd><p><cite>True</cite> if the user selects <cite>“Y”</cite> (yes), <cite>False</cite> if the user selects <cite>“N”</cite> (no).</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>Notes</strong>:</p>
+<blockquote>
+<div><p>The user can input <cite>“Y”</cite>/<cite>”y”</cite> for yes or <cite>“N”</cite>/<cite>”n”</cite> for no.
+If no input is given, the default value is used.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Prompts repeatedly until a valid response is provided.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -748,11 +775,11 @@ Must be either <cite>“Y”</cite> (yes) or <cite>“N”</cite> (no).</p>
       </div>
     </a>
     <a class="right-next"
-       href="Contributing.html"
+       href="feature_extractor.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Contributing</p>
+        <p class="prev-next-title">Feature Extraction</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -838,7 +865,7 @@ Must be either <cite>“Y”</cite> (yes) or <cite>“N”</cite> (no).</p>
 
   <p class="copyright">
     
-      © Copyright 2025, Spinelli Brando, Ungolo Daria.
+      © Copyright 2025, Brando Spinelli, Daria Ungolo.
       <br/>
     
   </p>
