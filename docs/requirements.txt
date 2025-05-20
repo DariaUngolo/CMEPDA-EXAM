@@ -4,4 +4,10 @@ numpy
 pandas
 matplotlib
 sphinx-book-theme
+nibabel
+nilearn
+argparse
+scikit-learn
+pathlib
+graphviz
 
