@@ -39,26 +39,26 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
         Path to the MATLAB function used for feature extraction.
 
     Returns
-    --------
+    -------
     df_mean : pandas.DataFrame  
         DataFrame with mean values of features.
-
+    
     df_std : pandas.DataFrame  
         DataFrame with standard deviation values of features.
-
+    
     group : pandas.Series  
         Series containing group labels from the metadata.
-
+    
     df_unita : pandas.DataFrame  
         DataFrame with combined mean and standard deviation values.
-
+    
     df_media_volume : pandas.DataFrame  
         DataFrame with mean values and volume.
-
-    df_media_std_volume: pandas.DataFrame  
+    
+    df_media_std_volume : pandas.DataFrame  
         DataFrame with mean, standard deviation, and volume.
-
-    df_std_volume: pandas.DataFrame  
+    
+    df_std_volume : pandas.DataFrame  
         DataFrame with standard deviation and volume values.
 
 
