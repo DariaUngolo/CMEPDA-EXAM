@@ -5,14 +5,6 @@ import os
 # Add the parent directory of the current working directory to the system path.
 sys.path.insert(0, str(Path(os.getcwd()).parent))
 
-"""
-
-    Random Forest algorithm overview:
-    It constructs a collection of decision trees, where each tree contributes to making a final prediction.
-    The algorithm creates independent trees using a subset of training data (Bootstrapping). One-third of
-    this subset is reserved as test data, known as out-of-bag (oob) samples, which are used to estimate the model’s performance.
-
-"""
 
 # Import essential libraries for Machine Learning
 import numpy as np
