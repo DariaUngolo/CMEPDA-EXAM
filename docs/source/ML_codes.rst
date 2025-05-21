@@ -6,7 +6,7 @@ ML\_codes
    :caption: Modules
 
 ML\_codes.classifiers\_unified module
-----------------------------
+------------------------------------------
 
 .. automodule:: ML_codes.classifiers_unified
    :members:
@@ -14,7 +14,7 @@ ML\_codes.classifiers\_unified module
    :show-inheritance:
 
 ML\_codes.feature\_extractor module
------------------------------------
+------------------------------------------
 
 .. automodule:: ML_codes.feature_extractor
    :members:
@@ -24,7 +24,7 @@ ML\_codes.feature\_extractor module
 
 
 ML\_codes.performance\_scores module
-----------------------------------
+-----------------------------------------
 
 .. automodule:: ML_codes.performance_scores
    :members:
@@ -32,7 +32,7 @@ ML\_codes.performance\_scores module
    :show-inheritance:
 
 ML\_codes.atlas\_resampling module
-----------------------------------
+-----------------------------------------
 
 .. automodule:: ML_codes.atlas_resampling
    :members:
