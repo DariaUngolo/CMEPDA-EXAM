@@ -26,7 +26,7 @@ Modules documentation:
 ----------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 7
    :caption: Documentation:
 
    modules
