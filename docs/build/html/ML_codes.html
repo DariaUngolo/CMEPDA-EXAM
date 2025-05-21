@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Introduction &#8212; Project name not set 0.0.1 documentation</title>
+    <title>ML_codes &#8212; Project name not set 0.0.1 documentation</title>
   
   
   
@@ -41,11 +41,11 @@
     <script src="_static/documentation_options.js?v=d45e8c67"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'Introduction';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ML_codes';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="Installation.html" />
-    <link rel="prev" title="CMEPDA-EXAM Documentation" href="index.html" />
+    <link rel="next" title="main package" href="main.html" />
+    <link rel="prev" title="CompProject" href="modules.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -124,8 +124,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="Introduction.html">
     Introduction
   </a>
 </li>
@@ -166,8 +166,8 @@
                 </button>
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="#">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="Introduction.html">
     Introduction
   </a>
 </li>
@@ -194,7 +194,7 @@
 </li>
 
 
-<li class=" ">
+<li class=" current active">
   <a class="nav-link dropdown-item nav-internal" href="modules.html">
     CompProject
   </a>
@@ -276,8 +276,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="Introduction.html">
     Introduction
   </a>
 </li>
@@ -311,8 +311,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="Introduction.html">
     Introduction
   </a>
 </li>
@@ -339,7 +339,7 @@
 </li>
 
 
-<li class="nav-item ">
+<li class="nav-item current active">
   <a class="nav-link nav-internal" href="modules.html">
     CompProject
   </a>
@@ -372,7 +372,14 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"></div>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">ML_codes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+</div>
 </nav></div>
     </div>
   
@@ -411,7 +418,10 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Introduction</span></li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">CompProject</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ML_codes</span></li>
   </ul>
 </nav>
 </div>
@@ -428,15 +438,67 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h1>
-<p>CMEPDA-EXAM is a classification project aimed at distinguishing subjects with Alzheimer’s disease from those without, using brain imaging data.
-The dataset consists of 333 NIfTI brain scans.
-The project utilizes the BN_Atlas_246_LUT, a brain atlas that divides the brain into distinct regions of interest (ROIs), to extract meaningful features for classification.</p>
-<dl class="simple">
-<dt>The implemented classification models include Random Forest and its variants, as well as Support Vector Machines (SVM).</dt><dd><p>This project combines neuroimaging data processing with machine learning techniques to improve diagnostic accuracy.</p>
+  <section id="ml-codes">
+<h1>ML_codes<a class="headerlink" href="#ml-codes" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="ml-codes-classifiers-unified-module">
+<h2>ML_codes.classifiers_unified module<a class="headerlink" href="#ml-codes-classifiers-unified-module" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-ML_codes.feature_extractor">
+<span id="ml-codes-feature-extractor-module"></span><h2>ML_codes.feature_extractor module<a class="headerlink" href="#module-ML_codes.feature_extractor" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ML_codes.feature_extractor.feature_extractor">
+<span class="sig-prename descclassname"><span class="pre">ML_codes.feature_extractor.</span></span><span class="sig-name descname"><span class="pre">feature_extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atlas_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atlas_txt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_csv_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matlab_feature_extractor_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ML_codes/feature_extractor.html#feature_extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ML_codes.feature_extractor.feature_extractor" title="Link to this definition">#</a></dt>
+<dd><p>Extract feature means and standard deviations from brain image data using a MATLAB function.</p>
+<p>This function interfaces with MATLAB to extract mean and standard deviation values from image data in a specified folder,
+based on a given atlas. It processes MATLAB outputs into NumPy arrays, organizes them into pandas DataFrames,
+and loads metadata about the image groups. The function returns the processed feature data and group labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_path</strong> (<em>str</em>) – Path to the folder containing the image data.</p></li>
+<li><p><strong>atlas_file</strong> (<em>str</em>) – Path to the atlas file used for feature extraction.</p></li>
+<li><p><strong>atlas_txt</strong> (<em>str</em>) – Path to the text file containing atlas-related information.</p></li>
+<li><p><strong>metadata_csv</strong> (<em>str</em>) – Path to the CSV file containing metadata about the image groups.</p></li>
+<li><p><strong>output_csv_prefix</strong> (<em>str</em>) – Prefix for the output CSV file generated by the MATLAB function.</p></li>
+<li><p><strong>matlab_feature_extractor_path</strong> (<em>str</em>) – Path to the MATLAB function used for feature extraction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing:
+- df_mean (pandas.DataFrame): DataFrame with mean values of features.
+- df_std (pandas.DataFrame): DataFrame with standard deviation values of features.
+- group (pandas.Series): Series containing group labels from the metadata.
+- df_unita (pandas.DataFrame): DataFrame with combined mean and standard deviation values.
+- df_media_volume (pandas.DataFrame): DataFrame with mean values and volume.
+- df_media_std_volume (pandas.DataFrame): DataFrame with mean, standard deviation, and volume.
+- df_std_volume (pandas.DataFrame): DataFrame with standard deviation and volume values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function requires MATLAB integration and appropriate MATLAB paths.</p></li>
+<li><p>Outputs from MATLAB are converted to NumPy arrays before creating pandas DataFrames.</p></li>
+<li><p>Group labels are loaded from the provided metadata CSV file.</p></li>
+</ul>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.mathworks.com/help/matlab/matlab-engine-for-python.html">https://www.mathworks.com/help/matlab/matlab-engine-for-python.html</a></p></li>
+<li><p><a class="reference external" href="https://pandas.pydata.org/">https://pandas.pydata.org/</a></p></li>
+</ul>
+</dd></dl>
+
+</section>
+<section id="ml-codes-performance-scores-module">
+<h2>ML_codes.performance_scores module<a class="headerlink" href="#ml-codes-performance-scores-module" title="Link to this heading">#</a></h2>
+</section>
+<section id="ml-codes-atlas-resampling-module">
+<h2>ML_codes.atlas_resampling module<a class="headerlink" href="#ml-codes-atlas-resampling-module" title="Link to this heading">#</a></h2>
+</section>
 </section>
 
 
@@ -450,20 +512,20 @@ The project utilizes the BN_Atlas_246_LUT, a brain atlas that divides the brain 
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="modules.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">CMEPDA-EXAM Documentation</p>
+        <p class="prev-next-title">CompProject</p>
       </div>
     </a>
     <a class="right-next"
-       href="Installation.html"
+       href="main.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Installation</p>
+        <p class="prev-next-title">main package</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -479,10 +541,28 @@ The project utilizes the BN_Atlas_246_LUT, a brain atlas that divides the brain 
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ml-codes-classifiers-unified-module">ML_codes.classifiers_unified module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ML_codes.feature_extractor">ML_codes.feature_extractor module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ML_codes.feature_extractor.feature_extractor"><code class="docutils literal notranslate"><span class="pre">feature_extractor()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ml-codes-performance-scores-module">ML_codes.performance_scores module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ml-codes-atlas-resampling-module">ML_codes.atlas_resampling module</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/Introduction.rst.txt"
+      <li><a href="_sources/ML_codes.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

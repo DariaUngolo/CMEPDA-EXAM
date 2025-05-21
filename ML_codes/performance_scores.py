@@ -65,6 +65,7 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
 def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
 
     """
+
     Evaluate the performance of a classification model using various metrics.
 
     This function computes common evaluation metrics such as accuracy, precision, recall,
@@ -104,7 +105,11 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     >>> results = evaluate_model_performance(y_true, y_pred, metric="f1")
     >>> print(results)
     {'f1': 0.6667}
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 512c320bff2a4aa64e7e0e94d13d8816076ef9a8
     """
 
     # Ensure probabilities are 1D for the positive class

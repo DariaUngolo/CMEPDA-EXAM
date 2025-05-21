@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Introduction &#8212; Project name not set 0.0.1 documentation</title>
+    <title>CompProject &#8212; Project name not set 0.0.1 documentation</title>
   
   
   
@@ -41,11 +41,11 @@
     <script src="_static/documentation_options.js?v=d45e8c67"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'Introduction';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'modules';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="Installation.html" />
-    <link rel="prev" title="CMEPDA-EXAM Documentation" href="index.html" />
+    <link rel="next" title="ML_codes" href="ML_codes.html" />
+    <link rel="prev" title="Contributing" href="Contributing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -124,8 +124,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="Introduction.html">
     Introduction
   </a>
 </li>
@@ -166,8 +166,8 @@
                 </button>
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="#">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="Introduction.html">
     Introduction
   </a>
 </li>
@@ -194,8 +194,8 @@
 </li>
 
 
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="modules.html">
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
     CompProject
   </a>
 </li>
@@ -276,8 +276,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="Introduction.html">
     Introduction
   </a>
 </li>
@@ -311,8 +311,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="Introduction.html">
     Introduction
   </a>
 </li>
@@ -339,8 +339,8 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="modules.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
     CompProject
   </a>
 </li>
@@ -372,7 +372,14 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"></div>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="ML_codes.html">ML_codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+</div>
 </nav></div>
     </div>
   
@@ -411,7 +418,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Introduction</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">CompProject</span></li>
   </ul>
 </nav>
 </div>
@@ -428,15 +435,33 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h1>
-<p>CMEPDA-EXAM is a classification project aimed at distinguishing subjects with Alzheimer’s disease from those without, using brain imaging data.
-The dataset consists of 333 NIfTI brain scans.
-The project utilizes the BN_Atlas_246_LUT, a brain atlas that divides the brain into distinct regions of interest (ROIs), to extract meaningful features for classification.</p>
-<dl class="simple">
-<dt>The implemented classification models include Random Forest and its variants, as well as Support Vector Machines (SVM).</dt><dd><p>This project combines neuroimaging data processing with machine learning techniques to improve diagnostic accuracy.</p>
-</dd>
-</dl>
+  <section id="compproject">
+<h1>CompProject<a class="headerlink" href="#compproject" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ML_codes.html">ML_codes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ML_codes.html#ml-codes-classifiers-unified-module">ML_codes.classifiers_unified module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ML_codes.html#module-ML_codes.feature_extractor">ML_codes.feature_extractor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ML_codes.html#ML_codes.feature_extractor.feature_extractor"><code class="docutils literal notranslate"><span class="pre">feature_extractor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ML_codes.html#ml-codes-performance-scores-module">ML_codes.performance_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ML_codes.html#ml-codes-atlas-resampling-module">ML_codes.atlas_resampling module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="main.html#ml-main-main-module">ML_main.main module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#tests-atlas-resampling-test-module">tests.atlas_resampling_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#tests-classifiers-test-module">tests.classifiers_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#tests-feature-extractor-mocked-test-module">tests.feature_extractor_mocked_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#tests-performance-scores-test-module">tests.performance_scores_test module</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 
 
@@ -450,20 +475,20 @@ The project utilizes the BN_Atlas_246_LUT, a brain atlas that divides the brain 
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="Contributing.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">CMEPDA-EXAM Documentation</p>
+        <p class="prev-next-title">Contributing</p>
       </div>
     </a>
     <a class="right-next"
-       href="Installation.html"
+       href="ML_codes.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Installation</p>
+        <p class="prev-next-title">ML_codes</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -482,7 +507,7 @@ The project utilizes the BN_Atlas_246_LUT, a brain atlas that divides the brain 
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/Introduction.rst.txt"
+      <li><a href="_sources/modules.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

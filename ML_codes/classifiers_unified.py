@@ -6,10 +6,12 @@ import os
 sys.path.insert(0, str(Path(os.getcwd()).parent))
 
 """
+
     Random Forest algorithm overview:
     It constructs a collection of decision trees, where each tree contributes to making a final prediction.
     The algorithm creates independent trees using a subset of training data (Bootstrapping). One-third of
     this subset is reserved as test data, known as out-of-bag (oob) samples, which are used to estimate the model’s performance.
+
 """
 
 # Import essential libraries for Machine Learning
@@ -47,6 +49,7 @@ param_dist = {
 def RFPipeline_noPCA(df1, df2, n_iter, cv):
 
     """
+
     Train a Random Forest model pipeline without PCA.
     
     This function splits the dataset into training and test sets, performs hyperparameter optimization 
@@ -81,6 +84,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     References
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+
     """
 
     
@@ -151,6 +155,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
 def RFPipeline_PCA(df1, df2, n_iter, cv):
     
     """
+
     Train a Random Forest model pipeline with PCA.
     
     This function incorporates Principal Component Analysis (PCA) for dimensionality reduction 
@@ -185,6 +190,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+
     """
 
 
@@ -242,6 +248,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 
     
     """
+
     Train a Random Forest model with recursive feature elimination and hyperparameter tuning.
     
     This function performs Recursive Feature Elimination with Cross-Validation (RFECV) to select the most important features.
@@ -276,6 +283,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+
     """
 
     
@@ -352,6 +360,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 def SVM_simple(df1, df2, ker: str):
     
     """
+
     Train an SVM model pipeline with hyperparameter optimization.
     
     This function splits the dataset into training and test sets, performs hyperparameter optimization 
@@ -381,6 +390,7 @@ def SVM_simple(df1, df2, ker: str):
     References
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
+    
     """
 
     # Extract feature and target data as NumPy arrays

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .. CMEPDA-EXAM documentation master file, created by
    sphinx-quickstart on Sat May 17 16:12:35 2025.
    You can adapt this file completely to your liking, but it should at least
@@ -33,3 +34,38 @@ The implemented classification models include Random Forest and its variants, as
  This project combines neuroimaging data processing with machine learning techniques to improve diagnostic accuracy.
 
 
+=======
+.. CMEPDA-EXAM documentation master file, created by
+   sphinx-quickstart on Sat May 17 16:12:35 2025.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+CMEPDA-EXAM Documentation
+==========================
+
+Welcome to the documentation for CMEPDA-EXAM. 
+
+
+Contents:
+---------------
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Contents:
+
+   Introduction
+   Installation
+   User Guide
+   Contributing
+
+
+Modules documentation:
+----------------------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Documentation:
+
+   modules
+
+>>>>>>> 512c320bff2a4aa64e7e0e94d13d8816076ef9a8

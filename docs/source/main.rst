@@ -1,0 +1,10 @@
+main package
+============
+
+ML\_main.main module
+--------------------
+
+.. automodule:: ML_main.main
+   :members:
+   :undoc-members:
+   :show-inheritance:

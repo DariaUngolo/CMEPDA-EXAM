@@ -1,0 +1,13 @@
+sphinx
+sphinx-rtd-theme
+numpy
+pandas
+matplotlib
+sphinx-book-theme
+nibabel
+nilearn
+argparse
+scikit-learn
+pathlib
+graphviz
+

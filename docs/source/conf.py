@@ -9,11 +9,16 @@
 import os
 import sys
 
-# Aggiungi la directory 'ML_codes' al path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../ML_codes')))
+package_name = 'CMEPDA Project'
 
-# Aggiungi la directory 'ML_main' al path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../ML_main')))
+package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+
+sys.path.insert(0, package_root)
+sys.path.insert(0, os.path.join(package_root, 'ML_codes'))
+sys.path.insert(0, os.path.join(package_root, 'ML_main'))
+
+# List of modules to mock
+autodoc_mock_imports = ['matlab', 'matlab.engine', 'numpy', 'pandas']
 
 
 copyright = '2025, Brando Spinelli, Daria Ungolo'
