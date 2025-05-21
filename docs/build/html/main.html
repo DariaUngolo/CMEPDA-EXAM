@@ -146,63 +146,18 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="API%20Reference.html">
-    API Reference
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="Contributing.html">
     Contributing
   </a>
 </li>
 
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                aria-controls="pst-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-nav-more-links" class="dropdown-menu">
-                    
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="Introduction.html">
-    Introduction
-  </a>
-</li>
 
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="Installation.html">
-    Installation
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="User%20Guide.html">
-    User Guide
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="Contributing.html">
-    Contributing
-  </a>
-</li>
-
-
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="modules.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
     CompProject
   </a>
 </li>
 
-                </ul>
-            </li>
-            
   </ul>
 </nav></div>
       
@@ -276,41 +231,6 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="Introduction.html">
-    Introduction
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="Installation.html">
-    Installation
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="User%20Guide.html">
-    User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="API%20Reference.html">
-    API Reference
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="Contributing.html">
-    Contributing
-  </a>
-</li>
-
-
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="Introduction.html">
     Introduction
@@ -440,8 +360,45 @@
                   
   <section id="main-package">
 <h1>main package<a class="headerlink" href="#main-package" title="Link to this heading">#</a></h1>
-<section id="ml-main-main-module">
-<h2>ML_main.main module<a class="headerlink" href="#ml-main-main-module" title="Link to this heading">#</a></h2>
+<section id="module-ML_main.main">
+<span id="ml-main-main-module"></span><h2>ML_main.main module<a class="headerlink" href="#module-ML_main.main" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ML_main.main.ask_yes_no_prompt">
+<span class="sig-prename descclassname"><span class="pre">ML_main.main.</span></span><span class="sig-name descname"><span class="pre">ask_yes_no_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ML_main/main.html#ask_yes_no_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ML_main.main.ask_yes_no_prompt" title="Link to this definition">#</a></dt>
+<dd><p>Prompt the user with a yes/no question and return their response as a boolean.</p>
+<p>Parameters</p>
+<dl class="simple">
+<dt>default<span class="classifier">str, optional, default=’N’</span></dt><dd><p>The default response if the user provides no input.
+Must be either ‘Y’ (yes) or ‘N’ (no).</p>
+</dd>
+</dl>
+<p>Returns</p>
+<p>Notes</p>
+<p>Prompts repeatedly until a valid response is provided.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ML_main.main.main">
+<span class="sig-prename descclassname"><span class="pre">ML_main.main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ML_main/main.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ML_main.main.main" title="Link to this definition">#</a></dt>
+<dd><p>Run the complete brain MRI classification pipeline.</p>
+<p>This function orchestrates the entire workflow:
+1. Resampling the brain atlas to match MRI resolution.
+2. Extracting regional features using MATLAB.
+3. Training and evaluating the selected classification model.</p>
+<p><strong>Notes</strong>:
+- User inputs and parameters are parsed from command-line arguments.
+- Supports Random Forest with optional PCA or RFECV, and SVM classifiers.
+- Logs progress and handles basic sanity checks.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ML_main.main.parse_arguments">
+<span class="sig-prename descclassname"><span class="pre">ML_main.main.</span></span><span class="sig-name descname"><span class="pre">parse_arguments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ML_main/main.html#parse_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ML_main.main.parse_arguments" title="Link to this definition">#</a></dt>
+<dd><p>Parses command-line arguments for the classification pipeline.
+:returns: Parsed arguments for resampling, feature extraction, and classification.
+:rtype: argparse.Namespace</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -492,7 +449,12 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ml-main-main-module">ML_main.main module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ML_main.main">ML_main.main module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ML_main.main.ask_yes_no_prompt"><code class="docutils literal notranslate"><span class="pre">ask_yes_no_prompt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ML_main.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ML_main.main.parse_arguments"><code class="docutils literal notranslate"><span class="pre">parse_arguments()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

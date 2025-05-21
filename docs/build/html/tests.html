@@ -145,63 +145,18 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="API%20Reference.html">
-    API Reference
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="Contributing.html">
     Contributing
   </a>
 </li>
 
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                aria-controls="pst-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-nav-more-links" class="dropdown-menu">
-                    
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="Introduction.html">
-    Introduction
-  </a>
-</li>
 
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="Installation.html">
-    Installation
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="User%20Guide.html">
-    User Guide
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="Contributing.html">
-    Contributing
-  </a>
-</li>
-
-
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="modules.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="modules.html">
     CompProject
   </a>
 </li>
 
-                </ul>
-            </li>
-            
   </ul>
 </nav></div>
       
@@ -275,41 +230,6 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="Introduction.html">
-    Introduction
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="Installation.html">
-    Installation
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="User%20Guide.html">
-    User Guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="API%20Reference.html">
-    API Reference
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="Contributing.html">
-    Contributing
-  </a>
-</li>
-
-
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="Introduction.html">
     Introduction
@@ -439,17 +359,226 @@
                   
   <section id="tests-package">
 <h1>tests package<a class="headerlink" href="#tests-package" title="Link to this heading">#</a></h1>
-<section id="tests-atlas-resampling-test-module">
-<h2>tests.atlas_resampling_test module<a class="headerlink" href="#tests-atlas-resampling-test-module" title="Link to this heading">#</a></h2>
+<section id="module-tests.atlas_resampling_test">
+<span id="tests-atlas-resampling-test-module"></span><h2>tests.atlas_resampling_test module<a class="headerlink" href="#module-tests.atlas_resampling_test" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.atlas_resampling_test.TestAtlasResampling">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.atlas_resampling_test.</span></span><span class="sig-name descname"><span class="pre">TestAtlasResampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/atlas_resampling_test.html#TestAtlasResampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.atlas_resampling_test.TestAtlasResampling" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Unit test for the <cite>atlas_resampling()</cite> function.</p>
+<p>This test verifies that a NIfTI image is properly resampled to a specified voxel size,
+specifically testing the upsampling from 2mm isotropic voxels to 1mm isotropic voxels.</p>
+<p>Test steps:
+- Create a synthetic NIfTI image with known shape and 2mm voxel size.
+- Save the image to a temporary file.
+- Use atlas_resampling() to resample the image to 1mm isotropic voxels.
+- Load the resampled image and verify:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The shape is doubled in each dimension (due to halving voxel size).</p></li>
+<li><p>The voxel dimensions are correctly updated to (1.0, 1.0, 1.0).</p></li>
+</ul>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.atlas_resampling_test.TestAtlasResampling.test_resampled_image_shape">
+<span class="sig-name descname"><span class="pre">test_resampled_image_shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/atlas_resampling_test.html#TestAtlasResampling.test_resampled_image_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.atlas_resampling_test.TestAtlasResampling.test_resampled_image_shape" title="Link to this definition">#</a></dt>
+<dd><p>Test that a NIfTI image with 2mm voxel spacing is correctly resampled to 1mm spacing.</p>
+<p>Specifically:
+- Input image shape: (5, 5, 5)
+- Expected output shape: (10, 10, 10) after upsampling
+- Confirm that voxel size changes from (2.0, 2.0, 2.0) to (1.0, 1.0, 1.0)</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="tests-classifiers-test-module">
-<h2>tests.classifiers_test module<a class="headerlink" href="#tests-classifiers-test-module" title="Link to this heading">#</a></h2>
+<section id="module-tests.classifiers_test">
+<span id="tests-classifiers-test-module"></span><h2>tests.classifiers_test module<a class="headerlink" href="#module-tests.classifiers_test" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.classifiers_test.TestClassifiers">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.classifiers_test.</span></span><span class="sig-name descname"><span class="pre">TestClassifiers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/classifiers_test.html#TestClassifiers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.classifiers_test.TestClassifiers" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Unit tests for classification pipelines defined in <cite>classifiers_unified</cite>.</p>
+<p>The tests validate:
+- That each model (Random Forest with/without PCA, with RFECV, and SVM with different kernels)</p>
+<blockquote>
+<div><p>runs end-to-end without exceptions.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>That each model can predict and returns an output of the correct length.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.classifiers_test.TestClassifiers.setUp">
+<span class="sig-name descname"><span class="pre">setUp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/classifiers_test.html#TestClassifiers.setUp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.classifiers_test.TestClassifiers.setUp" title="Link to this definition">#</a></dt>
+<dd><p>Create a synthetic dataset for testing.</p>
+<p>This method runs before every test case. It generates:
+- A 30x5 DataFrame with normally distributed features
+- A corresponding binary label Series with 15 “Normal” and 15 “AD” samples</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.classifiers_test.TestClassifiers.test_RFPipeline_PCA_runs">
+<span class="sig-name descname"><span class="pre">test_RFPipeline_PCA_runs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/classifiers_test.html#TestClassifiers.test_RFPipeline_PCA_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.classifiers_test.TestClassifiers.test_RFPipeline_PCA_runs" title="Link to this definition">#</a></dt>
+<dd><p>Test Random Forest pipeline with PCA dimensionality reduction.</p>
+<p>Verifies successful model training and prediction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.classifiers_test.TestClassifiers.test_RFPipeline_RFECV_runs">
+<span class="sig-name descname"><span class="pre">test_RFPipeline_RFECV_runs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/classifiers_test.html#TestClassifiers.test_RFPipeline_RFECV_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.classifiers_test.TestClassifiers.test_RFPipeline_RFECV_runs" title="Link to this definition">#</a></dt>
+<dd><p>Test Random Forest pipeline with recursive feature elimination (RFECV).</p>
+<p>Verifies that the model trains and attempts to predict. Since feature elimination
+can sometimes cause failures (e.g., if too few features are selected), this test
+is wrapped in a try/except block.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.classifiers_test.TestClassifiers.test_RFPipeline_noPCA_runs">
+<span class="sig-name descname"><span class="pre">test_RFPipeline_noPCA_runs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/classifiers_test.html#TestClassifiers.test_RFPipeline_noPCA_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.classifiers_test.TestClassifiers.test_RFPipeline_noPCA_runs" title="Link to this definition">#</a></dt>
+<dd><p>Test Random Forest pipeline without PCA.</p>
+<p>Ensures the model runs without error, supports <cite>.predict</cite>, and returns predictions
+of expected length.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.classifiers_test.TestClassifiers.test_SVM_simple_linear_runs">
+<span class="sig-name descname"><span class="pre">test_SVM_simple_linear_runs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/classifiers_test.html#TestClassifiers.test_SVM_simple_linear_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.classifiers_test.TestClassifiers.test_SVM_simple_linear_runs" title="Link to this definition">#</a></dt>
+<dd><p>Test SVM with linear kernel.</p>
+<p>Ensures the model is created, supports prediction, and the output is correct.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.classifiers_test.TestClassifiers.test_SVM_simple_rbf_runs">
+<span class="sig-name descname"><span class="pre">test_SVM_simple_rbf_runs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/classifiers_test.html#TestClassifiers.test_SVM_simple_rbf_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.classifiers_test.TestClassifiers.test_SVM_simple_rbf_runs" title="Link to this definition">#</a></dt>
+<dd><p>Test SVM with radial basis function (RBF) kernel.</p>
+<p>Ensures proper model training and prediction behavior.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="tests-feature-extractor-mocked-test-module">
-<h2>tests.feature_extractor_mocked_test module<a class="headerlink" href="#tests-feature-extractor-mocked-test-module" title="Link to this heading">#</a></h2>
+<section id="module-tests.feature_extractor_mocked_test">
+<span id="tests-feature-extractor-mocked-test-module"></span><h2>tests.feature_extractor_mocked_test module<a class="headerlink" href="#module-tests.feature_extractor_mocked_test" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.feature_extractor_mocked_test.TestFeatureExtractorMocked">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.feature_extractor_mocked_test.</span></span><span class="sig-name descname"><span class="pre">TestFeatureExtractorMocked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/feature_extractor_mocked_test.html#TestFeatureExtractorMocked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Unit test for the <cite>feature_extractor()</cite> function using mocking and loguru logging.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.setUpClass">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setUpClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/feature_extractor_mocked_test.html#TestFeatureExtractorMocked.setUpClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.setUpClass" title="Link to this definition">#</a></dt>
+<dd><p>Create mock data and patch the target function before any test runs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.tearDownClass">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tearDownClass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/feature_extractor_mocked_test.html#TestFeatureExtractorMocked.tearDownClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.tearDownClass" title="Link to this definition">#</a></dt>
+<dd><p>Clean up by stopping the patcher.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_column_names">
+<span class="sig-name descname"><span class="pre">test_column_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/feature_extractor_mocked_test.html#TestFeatureExtractorMocked.test_column_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_column_names" title="Link to this definition">#</a></dt>
+<dd><p>Ensure column names match across all DataFrames.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_mock_was_called">
+<span class="sig-name descname"><span class="pre">test_mock_was_called</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/feature_extractor_mocked_test.html#TestFeatureExtractorMocked.test_mock_was_called"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_mock_was_called" title="Link to this definition">#</a></dt>
+<dd><p>Ensure mock was triggered exactly once.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_not_empty">
+<span class="sig-name descname"><span class="pre">test_not_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/feature_extractor_mocked_test.html#TestFeatureExtractorMocked.test_not_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_not_empty" title="Link to this definition">#</a></dt>
+<dd><p>Ensure DataFrames are not empty.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_shape_consistency">
+<span class="sig-name descname"><span class="pre">test_shape_consistency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/feature_extractor_mocked_test.html#TestFeatureExtractorMocked.test_shape_consistency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_shape_consistency" title="Link to this definition">#</a></dt>
+<dd><p>Ensure returned DataFrames have consistent shape.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="tests-performance-scores-test-module">
-<h2>tests.performance_scores_test module<a class="headerlink" href="#tests-performance-scores-test-module" title="Link to this heading">#</a></h2>
+<section id="module-tests.performance_scores_test">
+<span id="tests-performance-scores-test-module"></span><h2>tests.performance_scores_test module<a class="headerlink" href="#module-tests.performance_scores_test" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestComputeBinomialError">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.performance_scores_test.</span></span><span class="sig-name descname"><span class="pre">TestComputeBinomialError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestComputeBinomialError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestComputeBinomialError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Unit tests for the compute_binomial_error function.
+These tests cover the core statistical behavior of the confidence interval estimation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestComputeBinomialError.test_error_full_probability">
+<span class="sig-name descname"><span class="pre">test_error_full_probability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestComputeBinomialError.test_error_full_probability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestComputeBinomialError.test_error_full_probability" title="Link to this definition">#</a></dt>
+<dd><p>Test the error for p=1.0.
+Again, the error should be zero for a perfect classifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestComputeBinomialError.test_error_invalid_n_samples">
+<span class="sig-name descname"><span class="pre">test_error_invalid_n_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestComputeBinomialError.test_error_invalid_n_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestComputeBinomialError.test_error_invalid_n_samples" title="Link to this definition">#</a></dt>
+<dd><p>Test that passing n=0 (invalid number of samples) raises a ZeroDivisionError.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestComputeBinomialError.test_error_mid_value">
+<span class="sig-name descname"><span class="pre">test_error_mid_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestComputeBinomialError.test_error_mid_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestComputeBinomialError.test_error_mid_value" title="Link to this definition">#</a></dt>
+<dd><p>Test the error for p=0.5 and n=100.
+This represents the maximum uncertainty scenario.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestComputeBinomialError.test_error_zero_probability">
+<span class="sig-name descname"><span class="pre">test_error_zero_probability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestComputeBinomialError.test_error_zero_probability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestComputeBinomialError.test_error_zero_probability" title="Link to this definition">#</a></dt>
+<dd><p>Test the error for a perfect classifier (p=0.0).
+The error bound should be zero.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestEvaluateModelPerformance">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.performance_scores_test.</span></span><span class="sig-name descname"><span class="pre">TestEvaluateModelPerformance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestEvaluateModelPerformance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestEvaluateModelPerformance" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Unit tests for the evaluate_model_performance function.
+These tests validate the correctness of metrics, confidence intervals,
+and input flexibility (e.g., accepting both 1D and 2D probability arrays).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestEvaluateModelPerformance.setUp">
+<span class="sig-name descname"><span class="pre">setUp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestEvaluateModelPerformance.setUp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestEvaluateModelPerformance.setUp" title="Link to this definition">#</a></dt>
+<dd><p>Create dummy prediction labels and probabilities for classification performance testing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestEvaluateModelPerformance.test_auc_close_to_sklearn">
+<span class="sig-name descname"><span class="pre">test_auc_close_to_sklearn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestEvaluateModelPerformance.test_auc_close_to_sklearn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestEvaluateModelPerformance.test_auc_close_to_sklearn" title="Link to this definition">#</a></dt>
+<dd><p>Ensure the computed AUC matches scikit-learn’s AUC within acceptable tolerance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestEvaluateModelPerformance.test_metric_values_range">
+<span class="sig-name descname"><span class="pre">test_metric_values_range</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestEvaluateModelPerformance.test_metric_values_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestEvaluateModelPerformance.test_metric_values_range" title="Link to this definition">#</a></dt>
+<dd><p>Check that all metric values (excluding errors) fall between 0.0 and 1.0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestEvaluateModelPerformance.test_output_keys">
+<span class="sig-name descname"><span class="pre">test_output_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestEvaluateModelPerformance.test_output_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestEvaluateModelPerformance.test_output_keys" title="Link to this definition">#</a></dt>
+<dd><p>Ensure all expected metric and error keys are present in the output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.performance_scores_test.TestEvaluateModelPerformance.test_y_proba_2d_input">
+<span class="sig-name descname"><span class="pre">test_y_proba_2d_input</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/performance_scores_test.html#TestEvaluateModelPerformance.test_y_proba_2d_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.performance_scores_test.TestEvaluateModelPerformance.test_y_proba_2d_input" title="Link to this definition">#</a></dt>
+<dd><p>Ensure that the function correctly handles 2D probability arrays (e.g., from softmax).</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -491,10 +620,55 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tests-atlas-resampling-test-module">tests.atlas_resampling_test module</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tests-classifiers-test-module">tests.classifiers_test module</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tests-feature-extractor-mocked-test-module">tests.feature_extractor_mocked_test module</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tests-performance-scores-test-module">tests.performance_scores_test module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-tests.atlas_resampling_test">tests.atlas_resampling_test module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.atlas_resampling_test.TestAtlasResampling"><code class="docutils literal notranslate"><span class="pre">TestAtlasResampling</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.atlas_resampling_test.TestAtlasResampling.test_resampled_image_shape"><code class="docutils literal notranslate"><span class="pre">TestAtlasResampling.test_resampled_image_shape()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-tests.classifiers_test">tests.classifiers_test module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.classifiers_test.TestClassifiers"><code class="docutils literal notranslate"><span class="pre">TestClassifiers</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.classifiers_test.TestClassifiers.setUp"><code class="docutils literal notranslate"><span class="pre">TestClassifiers.setUp()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.classifiers_test.TestClassifiers.test_RFPipeline_PCA_runs"><code class="docutils literal notranslate"><span class="pre">TestClassifiers.test_RFPipeline_PCA_runs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.classifiers_test.TestClassifiers.test_RFPipeline_RFECV_runs"><code class="docutils literal notranslate"><span class="pre">TestClassifiers.test_RFPipeline_RFECV_runs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.classifiers_test.TestClassifiers.test_RFPipeline_noPCA_runs"><code class="docutils literal notranslate"><span class="pre">TestClassifiers.test_RFPipeline_noPCA_runs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.classifiers_test.TestClassifiers.test_SVM_simple_linear_runs"><code class="docutils literal notranslate"><span class="pre">TestClassifiers.test_SVM_simple_linear_runs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.classifiers_test.TestClassifiers.test_SVM_simple_rbf_runs"><code class="docutils literal notranslate"><span class="pre">TestClassifiers.test_SVM_simple_rbf_runs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-tests.feature_extractor_mocked_test">tests.feature_extractor_mocked_test module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked"><code class="docutils literal notranslate"><span class="pre">TestFeatureExtractorMocked</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.setUpClass"><code class="docutils literal notranslate"><span class="pre">TestFeatureExtractorMocked.setUpClass()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.tearDownClass"><code class="docutils literal notranslate"><span class="pre">TestFeatureExtractorMocked.tearDownClass()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_column_names"><code class="docutils literal notranslate"><span class="pre">TestFeatureExtractorMocked.test_column_names()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_mock_was_called"><code class="docutils literal notranslate"><span class="pre">TestFeatureExtractorMocked.test_mock_was_called()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_not_empty"><code class="docutils literal notranslate"><span class="pre">TestFeatureExtractorMocked.test_not_empty()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.feature_extractor_mocked_test.TestFeatureExtractorMocked.test_shape_consistency"><code class="docutils literal notranslate"><span class="pre">TestFeatureExtractorMocked.test_shape_consistency()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-tests.performance_scores_test">tests.performance_scores_test module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestComputeBinomialError"><code class="docutils literal notranslate"><span class="pre">TestComputeBinomialError</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestComputeBinomialError.test_error_full_probability"><code class="docutils literal notranslate"><span class="pre">TestComputeBinomialError.test_error_full_probability()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestComputeBinomialError.test_error_invalid_n_samples"><code class="docutils literal notranslate"><span class="pre">TestComputeBinomialError.test_error_invalid_n_samples()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestComputeBinomialError.test_error_mid_value"><code class="docutils literal notranslate"><span class="pre">TestComputeBinomialError.test_error_mid_value()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestComputeBinomialError.test_error_zero_probability"><code class="docutils literal notranslate"><span class="pre">TestComputeBinomialError.test_error_zero_probability()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestEvaluateModelPerformance"><code class="docutils literal notranslate"><span class="pre">TestEvaluateModelPerformance</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestEvaluateModelPerformance.setUp"><code class="docutils literal notranslate"><span class="pre">TestEvaluateModelPerformance.setUp()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestEvaluateModelPerformance.test_auc_close_to_sklearn"><code class="docutils literal notranslate"><span class="pre">TestEvaluateModelPerformance.test_auc_close_to_sklearn()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestEvaluateModelPerformance.test_metric_values_range"><code class="docutils literal notranslate"><span class="pre">TestEvaluateModelPerformance.test_metric_values_range()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestEvaluateModelPerformance.test_output_keys"><code class="docutils literal notranslate"><span class="pre">TestEvaluateModelPerformance.test_output_keys()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tests.performance_scores_test.TestEvaluateModelPerformance.test_y_proba_2d_input"><code class="docutils literal notranslate"><span class="pre">TestEvaluateModelPerformance.test_y_proba_2d_input()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
