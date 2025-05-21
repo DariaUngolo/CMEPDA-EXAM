@@ -38,10 +38,8 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, output_c
     matlab_feature_extractor_path : str
         Path to the MATLAB function used for feature extraction.
 
-
     Returns
-    -------
-    
+    --------
     df_mean : pandas.DataFrame  
         DataFrame with mean values of features.
 
