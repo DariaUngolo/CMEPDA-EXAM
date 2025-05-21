@@ -23,10 +23,10 @@ autodoc_mock_imports = [
     "matplotlib.pyplot",
     "nibabel",
     "scipy",
-    "scipy.ndimage",
-    "scipy.stats",
-    "sklearn",
-    "sklearn.metrics"
+   # "scipy.ndimage",
+   # "scipy.stats",
+   # "sklearn",
+    #"sklearn.metrics"
     # altri moduli che causano problema
 ]
 
