@@ -26,8 +26,7 @@ autodoc_mock_imports = [
     "scipy.ndimage",
     "scipy.stats",
     "sklearn",
-    "sklearn.metrics",
-    "feature_extractor"
+    "sklearn.metrics"
     # altri moduli che causano problema
 ]
 
