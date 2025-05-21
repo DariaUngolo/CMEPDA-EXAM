@@ -18,8 +18,21 @@ sys.path.insert(0, os.path.join(package_root, 'ML_codes'))
 sys.path.insert(0, os.path.join(package_root, 'ML_main'))
 
 # List of modules to mock
+autodoc_mock_imports = [
+    'matlabengine',  # Modulo principale mockato
+    'matlab',        # Modulo generale
+    'matlab.engine'  # Sottopacchetto mockato
+]
 
-autodoc_mock_imports = ['matlabengine','matlab','matlab.engine']
+# Configura autodoc per includere tutto:
+autodoc_default_options = {
+    'members': True,               # Includi tutte le funzioni e metodi documentati
+    'undoc-members': True,         # Includi anche funzioni non documentate
+    'show-inheritance': True       # Mostra gerarchie di ereditarietà
+}
+
+# Imposta l'inclusione completa dei docstring:
+autodoc_inherit_docstrings = True
 
 
 
