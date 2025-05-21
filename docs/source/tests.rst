@@ -20,6 +20,7 @@ tests.classifiers\_test module
 tests.feature\_extractor\_mocked\_test module
 ----------------------------------------------------
 
+
 .. automodule:: tests.feature_extractor_mocked_test
    :members:
    :undoc-members:
