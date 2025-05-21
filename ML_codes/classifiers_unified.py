@@ -23,9 +23,9 @@ from sklearn.model_selection import RandomizedSearchCV, GridSearchCV, train_test
 from sklearn.tree import export_graphviz
 from sklearn.feature_selection import RFECV
 
-from performance_scores import compute_binomial_error, evaluate_model_performance # Importing a custom module for performance evaluation
+from ML_codes.performance_scores import compute_binomial_error, evaluate_model_performance # Importing a custom module for performance evaluation
 
-from feature_extractor import feature_extractor
+from ML_codes.feature_extractor import feature_extractor
  # Importing a custom module to interact with MATLAB Engine
 
 param_dist = {
@@ -113,6 +113,9 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     y_pred = pipeline_random_forest_simple.predict(X_tst)
 
     y_prob = pipeline_random_forest_simple.predict_proba(X_tst)
+
+    print("Predictions:", y_pred) # Print the predicted labels
+    print("Probabilities:", y_prob) # Print the predicted probabilities
 
     # Compute performance scores based on predictions
     metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
