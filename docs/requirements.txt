@@ -10,4 +10,7 @@ argparse
 scikit-learn
 pathlib
 graphviz
+scipy
+loguru
+
 
