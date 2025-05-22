@@ -7,13 +7,17 @@ import feature_extractor  # Import the module, not the function, to allow correc
 
 
 class TestFeatureExtractorMocked(unittest.TestCase):
+
     """
+
     Unit test for the `feature_extractor()` function using mocking and loguru logging.
     """
 
     @classmethod
     def setUpClass(cls):
+
         """
+
         Create mock data and patch the target function before any test runs.
         """
         logger.info("Setting up TestFeatureExtractorMocked...")
@@ -53,14 +57,18 @@ class TestFeatureExtractorMocked(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+
         """
+
         Clean up by stopping the patcher.
         """
         cls.patcher.stop()
         logger.info("TearDown complete. feature_extractor() patch removed.")
 
     def test_shape_consistency(self):
+
         """
+
         Ensure returned DataFrames have consistent shape.
         """
         logger.info("Running test_shape_consistency...")
@@ -69,7 +77,9 @@ class TestFeatureExtractorMocked(unittest.TestCase):
         logger.success("test_shape_consistency passed.")
 
     def test_not_empty(self):
+
         """
+
         Ensure DataFrames are not empty.
         """
         logger.info("Running test_not_empty...")
@@ -78,7 +88,9 @@ class TestFeatureExtractorMocked(unittest.TestCase):
         logger.success("test_not_empty passed.")
 
     def test_column_names(self):
+
         """
+
         Ensure column names match across all DataFrames.
         """
         logger.info("Running test_column_names...")
@@ -87,7 +99,9 @@ class TestFeatureExtractorMocked(unittest.TestCase):
         logger.success("test_column_names passed.")
 
     def test_mock_was_called(self):
+
         """
+
         Ensure mock was triggered exactly once.
         """
         logger.info("Running test_mock_was_called...")

@@ -7,7 +7,9 @@ from atlas_resampling import atlas_resampling  # Function under test
 from loguru import logger
 
 class TestAtlasResampling(unittest.TestCase):
+
     """
+
     Unit test for the `atlas_resampling()` function.
 
     This test verifies that a NIfTI image is properly resampled to a specified voxel size,
@@ -16,20 +18,24 @@ class TestAtlasResampling(unittest.TestCase):
     Test steps:
     - Create a synthetic NIfTI image with known shape and 2mm voxel size.
     - Save the image to a temporary file.
-    - Use `atlas_resampling()` to resample the image to 1mm isotropic voxels.
+    - Use atlas_resampling() to resample the image to 1mm isotropic voxels.
     - Load the resampled image and verify:
         * The shape is doubled in each dimension (due to halving voxel size).
         * The voxel dimensions are correctly updated to (1.0, 1.0, 1.0).
+
     """
 
     def test_resampled_image_shape(self):
+
         """
+
         Test that a NIfTI image with 2mm voxel spacing is correctly resampled to 1mm spacing.
 
         Specifically:
         - Input image shape: (5, 5, 5)
         - Expected output shape: (10, 10, 10) after upsampling
         - Confirm that voxel size changes from (2.0, 2.0, 2.0) to (1.0, 1.0, 1.0)
+
         """
         logger.info("Creating synthetic NIfTI image with shape (5, 5, 5) and voxel size 2mm isotropic.")
         data = np.random.randint(0, 5, size=(5, 5, 5))
@@ -54,7 +60,7 @@ class TestAtlasResampling(unittest.TestCase):
             expected_shape = tuple(np.array(data.shape) * 2)
             logger.info(f"Expected shape after resampling: {expected_shape}")
             logger.info(f"Actual shape of resampled image: {resampled_img.shape}")
-            self.assertEqual(resampled_img.shape, expected_shape, 
+            self.assertEqual(resampled_img.shape, expected_shape,
                              msg=f"Expected shape {expected_shape}, got {resampled_img.shape}")
 
             new_voxel_size = resampled_img.header.get_zooms()[:3]

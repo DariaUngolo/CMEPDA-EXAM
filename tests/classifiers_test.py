@@ -26,21 +26,26 @@ for p in patches:
 
 class TestClassifiers(unittest.TestCase):
     """
+
     Unit tests for classification pipelines defined in `classifiers_unified`.
 
     The tests validate:
     - That each model (Random Forest with/without PCA, with RFECV, and SVM with different kernels)
       runs end-to-end without exceptions.
     - That each model can predict and returns an output of the correct length.
+
     """
+
 
     def setUp(self):
         """
+
         Create a synthetic dataset for testing.
 
         This method runs before every test case. It generates:
         - A 30x5 DataFrame with normally distributed features
         - A corresponding binary label Series with 15 "Normal" and 15 "AD" samples
+
         """
         logger.info("Setting up synthetic dataset for tests...")
         np.random.seed(42)
@@ -54,10 +59,12 @@ class TestClassifiers(unittest.TestCase):
 
     def test_RFPipeline_noPCA_runs(self):
         """
+
         Test Random Forest pipeline without PCA.
 
         Ensures the model runs without error, supports `.predict`, and returns predictions
         of expected length.
+
         """
         logger.info("Testing RFPipeline_noPCA...")
         model = RFPipeline_noPCA(self.X, self.y, n_iter=2, cv=2)
@@ -68,10 +75,13 @@ class TestClassifiers(unittest.TestCase):
         logger.success("RFPipeline_noPCA executed and predicted successfully.")
 
     def test_RFPipeline_PCA_runs(self):
+
         """
+
         Test Random Forest pipeline with PCA dimensionality reduction.
 
         Verifies successful model training and prediction.
+
         """
         logger.info("Testing RFPipeline_PCA...")
         model = RFPipeline_PCA(self.X, self.y, n_iter=2, cv=2)
@@ -82,12 +92,15 @@ class TestClassifiers(unittest.TestCase):
         logger.success("RFPipeline_PCA executed and predicted successfully.")
 
     def test_RFPipeline_RFECV_runs(self):
+
         """
+
         Test Random Forest pipeline with recursive feature elimination (RFECV).
 
         Verifies that the model trains and attempts to predict. Since feature elimination
         can sometimes cause failures (e.g., if too few features are selected), this test
         is wrapped in a try/except block.
+
         """
         logger.info("Testing RFPipeline_RFECV...")
         model = RFPipeline_RFECV(self.X, self.y, n_iter=2, cv=2)
@@ -105,10 +118,13 @@ class TestClassifiers(unittest.TestCase):
         logger.success("RFPipeline_RFECV executed (with or without prediction success).")
 
     def test_SVM_simple_linear_runs(self):
+
         """
+
         Test SVM with linear kernel.
 
         Ensures the model is created, supports prediction, and the output is correct.
+
         """
         logger.info("Testing SVM_simple with linear kernel...")
         model = SVM_simple(self.X, self.y, ker='linear')
@@ -119,10 +135,13 @@ class TestClassifiers(unittest.TestCase):
         logger.success("SVM_simple (linear) executed and predicted successfully.")
 
     def test_SVM_simple_rbf_runs(self):
+
         """
+
         Test SVM with radial basis function (RBF) kernel.
 
         Ensures proper model training and prediction behavior.
+
         """
         logger.info("Testing SVM_simple with rbf kernel...")
         model = SVM_simple(self.X, self.y, ker='rbf')

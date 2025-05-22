@@ -108,7 +108,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
 <<<<<<< HEAD
 
 =======
-    
+
 >>>>>>> 512c320bff2a4aa64e7e0e94d13d8816076ef9a8
     """
 
