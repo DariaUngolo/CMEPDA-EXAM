@@ -153,20 +153,21 @@ def parse_arguments():
 
 def main():
     """
-
     Run the complete brain MRI classification pipeline.
 
     This function orchestrates the entire workflow:
     1. Resampling the brain atlas to match MRI resolution.
     2. Extracting regional features using MATLAB.
     3. Training and evaluating the selected classification model.
+    4. Saving the trained model using joblib.
 
-    **Notes**:
+    Notes:
     - User inputs and parameters are parsed from command-line arguments.
     - Supports Random Forest with optional PCA or RFECV, and SVM classifiers.
     - Logs progress and handles basic sanity checks.
-    
     """
+    import joblib  # Imported here to limit changes to original structure
+
     args = parse_arguments()
 
     # === Step 1: Resample the atlas ===
@@ -200,43 +201,36 @@ def main():
     # === Step 4: Classification ===
     logger.info(f"🚀 Running classifier: {args.classifier}")
 
+    model = None  # To store the trained model for later saving
 
-    # Check which classifier is selected by the user
     if args.classifier == "rf":
-        # Ask user if they want to apply PCA before Random Forest classification
         use_pca = ask_yes_no_prompt("Principal component analysis (PCA)? Y or N:", default="N")
 
-        # If PCA is chosen, run the Random Forest pipeline with PCA
         if use_pca:
             logger.info(" Applying Random Forest with PCA...")
-            RFPipeline_PCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
+            model = RFPipeline_PCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
 
         else:
-            # If PCA is not chosen, ask if Recursive Feature Elimination (RFE) should be applied
             use_rfe = ask_yes_no_prompt("Recursive Feature Elimination (RFE)? Y or N:", default="N")
 
             if use_rfe:
-                # Run the Random Forest pipeline with RFE and cross-validation (RFECV)
                 logger.info(" Applying Random Forest with RFECV...")
-                RFPipeline_RFECV(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
+                model = RFPipeline_RFECV(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
             else:
-                # Run the standard Random Forest pipeline without PCA or RFE
                 logger.info(" Applying Random Forest without PCA or RFE...")
-                RFPipeline_noPCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
+                model = RFPipeline_noPCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
 
-    # If SVM is selected as classifier
     elif args.classifier == "svm":
-        # Log the choice and run the SVM pipeline with specified kernel
         logger.info(" Applying Support Vector Machine...")
-        SVM_simple(df_mean_std, diagnostic_group_labels, ker=args.kernel)
+        model = SVM_simple(df_mean_std, diagnostic_group_labels, ker=args.kernel)
 
-
-
+    # === Step 5: Save the trained model ===
+    if model is not None:
+        model_filename = "trained_model.joblib"
+        joblib.dump(model, model_filename)
+        logger.success(f"💾 Trained model saved to '{model_filename}'")
 
     logger.success("🎯 Classification pipeline completed successfully.")
-
-
-
 
 
 if __name__ == "__main__":
