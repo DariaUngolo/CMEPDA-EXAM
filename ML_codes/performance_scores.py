@@ -53,6 +53,7 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     >>> compute_binomial_error(0.85, 100, 0.95)
     0.0647  # Approximate value
 
+
     """
 
 
@@ -71,7 +72,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
 
     Parameters
     ----------
-    
+
     y_true : list or array-like
         The ground truth (actual labels).
 
@@ -88,14 +89,14 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
 
     Returns
     -------
-    
+
     dict
         A dictionary containing the evaluation results with keys corresponding to
         the metric names and values as the computed scores.
 
     Examples
     --------
-    
+
     >>> from my_module import evaluate_model_performance
     >>> y_true = [0, 1, 1, 0]
     >>> y_pred = [0, 1, 0, 0]

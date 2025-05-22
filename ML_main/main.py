@@ -19,12 +19,12 @@ from ML_codes.atlas_resampling import atlas_resampling
 
 def ask_yes_no_prompt(prompt_message, default="N"):
     """
-    
+
     Prompt the user with a yes/no question and return their response as a boolean.
 
     Parameters
     ----------
-    
+
     prompt_message : str
         The message or question to display to the user.
     default : str, optional, default='N'
@@ -33,17 +33,17 @@ def ask_yes_no_prompt(prompt_message, default="N"):
 
     Returns
     -------
-    
+
     bool
         True if the user selects 'Y' (yes), False if the user selects 'N' (no).
 
     Notes
     -----
-    
+
     The user can input 'Y'/'y' for yes or 'N'/'n' for no.
     If no input is given, the default value is used.
     Prompts repeatedly until a valid response is provided.
-    
+
     """
 
     while True:
@@ -113,10 +113,6 @@ def parse_arguments():
         It must include: subject ID and diagnosis label (e.g., 'Normal', 'AD')."""
     )
 
-    parser.add_argument(
-        "--output_prefix", required=True, type=str,
-        help="""Prefix to use for intermediate output CSV files produced by the MATLAB feature extraction step."""
-    )
 
     parser.add_argument(
         "--matlab_path", required=True, type=str,
@@ -186,7 +182,6 @@ def main():
         args.atlas_file_resized,
         args.atlas_txt,
         args.metadata_csv,
-        args.output_prefix,
         args.matlab_path
     )
 

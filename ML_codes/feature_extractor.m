@@ -1,5 +1,5 @@
 
-function [Means, Stds, Volumes] = feature_extractor(folder_path, atlas_file, atlas_txt, output_csv_prefix)
+function [Means, Stds, Volumes] = feature_extractor(folder_path, atlas_file, atlas_txt)
     % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
     %
     % Description:
@@ -115,21 +115,5 @@ function [Means, Stds, Volumes] = feature_extractor(folder_path, atlas_file, atl
     VolTable = addvars(VolTable, img_names, 'Before', 1, 'NewVariableNames', 'Image'); 
 
     
-
-    %% 9. Save to CSV
-    % If an output prefix is provided, save the tables as CSV files
-    if nargin == 4 && ~isempty(output_csv_prefix)
-        mean_file = strcat(output_csv_prefix, '_mean.csv');
-        std_file = strcat(output_csv_prefix, '_std.csv');
-        vol_file = strcat(output_csv_prefix, '_volume.csv');  
-
-        % Write the tables to CSV files
-        writetable(MeanTable, mean_file);
-        writetable(StdTable, std_file);
-        writetable(VolTable, vol_file);  
-
-        % Print the file names to confirm
-        fprintf('Tables saved:\n  - %s\n  - %s\n- %s\n', mean_file, std_file, vol_file);
-    end
 end
 
