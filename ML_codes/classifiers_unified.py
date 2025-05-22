@@ -111,9 +111,13 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
 
     # Predict labels and probabilities for the test set
     y_pred = pipeline_random_forest_simple.predict(X_tst)
+    y_prob = pipeline_random_forest_simple.predict_proba(X_tst)
     
     print("labels for the test set  ",pipeline_random_forest_simple.predict(X_tst))
 
+
+    print("Predictions:", y_pred) # Print the predicted labels
+    print("Probabilities:", y_prob) # Print the predicted probabilities
 
     # Compute performance scores based on predictions
     metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)

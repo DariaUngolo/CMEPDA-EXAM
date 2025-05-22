@@ -18,14 +18,13 @@ from ML_codes.classifiers_unified import (
 from ML_codes.atlas_resampling import atlas_resampling
 
 def ask_yes_no_prompt(prompt_message, default="N"):
-
-
     """
+    
     Prompt the user with a yes/no question and return their response as a boolean.
 
     Parameters
-
     ----------
+    
     prompt_message : str
         The message or question to display to the user.
     default : str, optional, default='N'
@@ -33,17 +32,18 @@ def ask_yes_no_prompt(prompt_message, default="N"):
         Must be either 'Y' (yes) or 'N' (no).
 
     Returns
-
     -------
+    
     bool
         True if the user selects 'Y' (yes), False if the user selects 'N' (no).
 
     Notes
-
     -----
+    
     The user can input 'Y'/'y' for yes or 'N'/'n' for no.
     If no input is given, the default value is used.
     Prompts repeatedly until a valid response is provided.
+    
     """
 
     while True:

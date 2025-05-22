@@ -17,20 +17,16 @@ sys.path.insert(0, package_root)
 sys.path.insert(0, os.path.join(package_root, 'ML_codes'))
 sys.path.insert(0, os.path.join(package_root, 'ML_main'))
 
-# List of modules to mock
 autodoc_mock_imports = [
-    "matplotlib",
-    "matplotlib.pyplot",
-    "nibabel",
+    "graphviz",
     "scipy",
-    "scipy.ndimage",
-    "scipy.stats",
+    "nibabel",
+    "loguru",
     "sklearn",
-    "sklearn.metrics",
-    "feature_extractor"
-    # altri moduli che causano problema
+    "matlabengine",
+    "matlab",
+    "matlab.engine",
 ]
-
 
 
 
