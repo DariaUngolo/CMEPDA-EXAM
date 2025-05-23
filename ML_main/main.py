@@ -16,6 +16,7 @@ from ML_codes.classifiers_unified import (
     SVM_simple
 )
 from ML_codes.atlas_resampling import atlas_resampling
+from ML_codes.apply_trained_model import feature_extractor_independent_dataset, classify_independent_dataset
 
 def ask_yes_no_prompt(prompt_message, default="N"):
     """
@@ -62,6 +63,26 @@ def ask_yes_no_prompt(prompt_message, default="N"):
 
         # Prompt again for invalid input
         print("Invalid input. Please enter 'Y' or 'N'.")
+
+def prompt_for_valid_folder_path():
+    """
+    Prompt the user to input a valid folder path containing NIfTI images for classification.
+    Keeps asking until a valid folder path is given or the user chooses to quit.
+
+    Returns
+    -------
+    str or None
+        Valid path to the folder or None if the user wants to quit.
+    """
+    while True:
+        folder_path = input("Please enter the path to the folder containing NIfTI images to classify (or type 'quit' to exit): ").strip()
+        if folder_path.lower() == "quit":
+            return None
+        if os.path.isdir(folder_path):
+            return folder_path
+        else:
+            print(f"Error: The folder '{folder_path}' does not exist or is not accessible. Please try again.")
+
 
 
 def parse_arguments():
@@ -144,7 +165,31 @@ def parse_arguments():
         help="Kernel type to use for SVM (only applicable if classifier is 'svm')."
     )
 
+    # === Classification option: use pre-trained model for classification mode ===
+    parser.add_argument(
+        "--use_trained_model", action="store_true",
+        help="Skip training; classify images with a saved model."
+    )
+    parser.add_argument(
+        "--trained_model_path", type=str,
+        help="Path to saved model (joblib). Required if --use_trained_model is set."
+    )
+    parser.add_argument(
+        "--nifti_image_path", type=str,
+        help="Comma-separated NIfTI image path(s) to classify when using --use_trained_model."
+    )
+
     return parser.parse_args()
+
+    if args.use_trained_model:
+        if not args.trained_model_path or not args.nifti_image_path:
+            parser.error("--trained_model_path and --nifti_image_path are required when --use_trained_model is set.")
+    else:
+        required_for_training = [args.folder_path, args.atlas_file, args.atlas_file_resized, args.atlas_txt, args.metadata_csv, args.classifier]
+        if not all(required_for_training):
+            parser.error("For training, --folder_path, --atlas_file, --atlas_file_resized, --atlas_txt, --metadata_csv and --classifier are required.")
+
+    return args
 
 
 def main():
@@ -165,7 +210,27 @@ def main():
     import joblib  # Imported here to limit changes to original structure
 
     args = parse_arguments()
+  
+    # === Step 0: Classification only mode ===
+    if args.use_trained_model:
+    
+        logger.info("Using pre-trained model for classification.")
 
+        nifti_paths = [p.strip() for p in args.nifti_image_path.split(",") if p.strip()]
+        for image_path in nifti_paths:
+            logger.info(f"Extracting features from: {image_path}")
+            df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume = feature_extractor_independent_dataset(
+                image_path,
+                args.atlas_file_resized,
+                args.atlas_txt,
+                args.matlab_path
+            )
+            classification, _probability = classify_independent_dataset(df_mean_std, args.trained_model_path)
+            logger.success(f"Image '{image_path}' classified as: {classification}")
+
+        logger.success("Classification completed.")
+        return
+    
     # === Step 1: Resample the atlas ===
     target_voxel = (1.5, 1.5, 1.5)
     logger.info(f"📏 Resampling atlas to voxel size {target_voxel}...")
@@ -224,6 +289,35 @@ def main():
         model_filename = "trained_model.joblib"
         joblib.dump(model, model_filename)
         logger.success(f"💾 Trained model saved to '{model_filename}'")
+
+    # === Step 6: Classify the independent dataset ===
+    # Ask user if they want to classify new images now
+    if model is not None:
+        do_classify = ask_yes_no_prompt("Do you want to classify new images now? Y/N", default="N")
+        if do_classify:
+            while True:
+                image_path = prompt_for_valid_folder_path()
+                if image_path is None:
+                    logger.info("Classification aborted by user.")
+                    break
+
+                logger.info(f"Extracting features for image '{image_path}'...")
+                # Extract features for this image using the independent function
+                df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume = feature_extractor_independent_dataset(
+                    image_path,
+                    args.atlas_file_resized,
+                    args.atlas_txt,
+                    args.matlab_path
+                )
+
+                # We classify using df_mean_std as in training
+                classification, _ = classify_independent_dataset(df_mean_std, model_filename)
+
+                logger.success(f"Classification result for image '{image_path}': {classification}")
+
+                continue_classify = ask_yes_no_prompt("Classify another image? Y/N", default="N")
+                if not continue_classify:
+                    break
 
     logger.success("🎯 Classification pipeline completed successfully.")
 

@@ -99,11 +99,11 @@ def feature_extractor_independent_dataset(nifti_image_path, atlas_file, atlas_tx
                             index=range(std_matrix[:, data_start:].shape[0]),
                             columns=index_ROI_std_volume)
 
-       return df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume
+    return df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume
 
 
 
-def classify_image(data_frame, model_path):
+def classify_independent_dataset(data_frame, model_path):
 
 
     # Predizione con il modello
@@ -114,30 +114,33 @@ def classify_image(data_frame, model_path):
 
     return classification, probability
 
+
+
 # Main con argparse per NIfTI
-if __name__ == "__main__":
-
-
-
+#if __name__ == "__main__":
 
     # Percorsi predefiniti per gli altri file
-    NIFTI_FILE =
-    ATLAS_FILE =
-    ATLAS_TXT =
-    METADATA_CSV =
-    MATLAB_FEATURE_EXTRACTOR_PATH =
-    MODEL_PATH =
+ #   NIFTI_FILE = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\images_for_trained_model"
+  #  ATLAS_FILE = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\lpba40.spm5.avg152T1.gm.label.nii.gz"
+   # ATLAS_TXT = r"C:\Users\brand\OneDrive\Desktop\CMEPDA\progetto esame\data\lpba40_labelID.txt"
+    #MATLAB_FEATURE_EXTRACTOR_PATH = r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM\ML_codes"
+    #MODEL_PATH = r"C:\Users\brand\OneDrive\Desktop\CMEPDA-EXAM\ML_main\trained_model.joblib"
 
-    try:
-        predicted_class = classify_image(
-            NIFTI_FILE,
-            ATLAS_FILE,
-            ATLAS_TXT,
-            METADATA_CSV,
-            MATLAB_FEATURE_EXTRACTOR_PATH,
-            MODEL_PATH
-        )
+    # Estrazione delle caratteristiche
+    #df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume = feature_extractor_independent_dataset(
+     #   NIFTI_FILE,
+      #  ATLAS_FILE,
+      #  ATLAS_TXT,
+      #  MATLAB_FEATURE_EXTRACTOR_PATH
+    #)
 
-        print(f"L'immagine appartiene alla classe: {predicted_class}")
-    except Exception as e:
-        print(f"Errore durante la classificazione: {e}")
+    
+    #df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume = feature_extractor_independent_dataset(
+    #NIFTI_FILE, ATLAS_FILE, ATLAS_TXT, MATLAB_FEATURE_EXTRACTOR_PATH
+
+    #)
+    #classification = classify_image(df_mean_std, MODEL_PATH)
+
+    # Stampa i risultati
+    #print(f"Classificazione: {classification}")
+    #print(f"Probabilità: {probability}")
