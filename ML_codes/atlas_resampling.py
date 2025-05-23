@@ -7,7 +7,7 @@ from loguru import logger
 def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
 
     """
-    
+
     Resample a NIfTI image to a specified voxel size.
 
     This function adjusts the spatial resolution of a NIfTI image by rescaling it to the target voxel size,
@@ -45,7 +45,7 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
     ----------
     - NiBabel Documentation: https://nipy.org/nibabel/
     - SciPy Zoom Documentation: https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.zoom.html
-    
+
     """
 
     # Step 1: Load the original NIfTI image
@@ -59,20 +59,28 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
     original_voxel_size = header.get_zooms()[:3]
     logger.debug(f"Original voxel size: {original_voxel_size}")
 
-    # Step 3: Compute scaling factors for resampling
+    # Step 3: Check if the voxel size is already correct
+    if np.allclose(original_voxel_size, target_voxel_size, atol=1e-6):  # ADD
+        logger.info("✅ Original voxel size matches target voxel size. No resampling needed.")  # ADD
+        # Optionally save the original image to the output path if required
+        nib.save(img, output_path)  # ADD
+        logger.success(f"💾 Original image saved to: {output_path}")  # ADD
+        return  # ADD
+
+    # Step 4: Compute scaling factors for resampling
     zoom_factors = np.array(original_voxel_size) / np.array(target_voxel_size)
     logger.info(f"🔍 Calculated zoom factors for resampling: {zoom_factors}")
 
-    # Step 4: Perform the resampling with the chosen interpolation order
+    # Step 5: Perform the resampling with the chosen interpolation order
     logger.info(f"🔁 Resampling image with interpolation order {order}...")
     data_resampled = zoom(data, zoom=zoom_factors, order=order)
 
-    # Step 5: Construct a new affine matrix with updated voxel size
+    # Step 6: Construct a new affine matrix with updated voxel size
     new_affine = np.eye(4)
     new_affine[:3, :3] = np.diag(target_voxel_size)
     new_affine[:3, 3] = affine[:3, 3]  # preserve image origin
 
-    # Step 6: Create a new NIfTI image with the resampled data and updated affine
+    # Step 7: Create a new NIfTI image with the resampled data and updated affine
     new_img = nib.Nifti1Image(data_resampled, affine=new_affine)
     new_img.set_qform(new_affine)
     new_img.set_sform(new_affine)
