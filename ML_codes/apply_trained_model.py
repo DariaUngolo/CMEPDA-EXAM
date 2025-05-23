@@ -134,7 +134,7 @@ def classify_independent_dataset(data_frame, model_path):
       #  MATLAB_FEATURE_EXTRACTOR_PATH
     #)
 
-    
+
     #df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume = feature_extractor_independent_dataset(
     #NIFTI_FILE, ATLAS_FILE, ATLAS_TXT, MATLAB_FEATURE_EXTRACTOR_PATH
 

@@ -7,7 +7,7 @@ from loguru import logger
 def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
 
     """
-    
+
     Resample a NIfTI image to a specified voxel size.
 
     This function adjusts the spatial resolution of a NIfTI image by rescaling it to the target voxel size,
@@ -45,7 +45,7 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
     ----------
     - NiBabel Documentation: https://nipy.org/nibabel/
     - SciPy Zoom Documentation: https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.zoom.html
-    
+
     """
 
     # Step 1: Load the original NIfTI image
