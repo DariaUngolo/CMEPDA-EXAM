@@ -12,5 +12,5 @@ pathlib
 graphviz
 scipy
 loguru
-
+joblib
 
