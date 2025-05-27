@@ -9,7 +9,7 @@
 import os
 import sys
 
-package_name = 'CMEPDA Project'
+project= 'CMEPDA Project'
 
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 
