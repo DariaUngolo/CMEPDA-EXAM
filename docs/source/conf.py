@@ -19,6 +19,8 @@ sys.path.insert(0, os.path.join(package_root, 'ML_main'))
 sys.path.insert(0, os.path.join(package_root, 'CNN_codes'))
 
 autodoc_mock_imports = [
+    "tensorflow",
+    "keras",
     "graphviz",
     "scipy",
     "nibabel",
