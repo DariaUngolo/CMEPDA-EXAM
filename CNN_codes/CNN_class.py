@@ -247,7 +247,9 @@ class MyCNNModel(tensorflow.keras.Model):
 
 
     def load(self, path, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
+        
         """
+        
         Carica un modello salvato, continua l'allenamento e valuta le sue prestazioni.
 
         Parametri:
@@ -260,7 +262,9 @@ class MyCNNModel(tensorflow.keras.Model):
             Numero di epoche per il riaddestramento.
         batchsize : int
             Dimensione del batch per il riaddestramento.
+            
         """
+        
         # Compila il modello con i parametri iniziali
         self.compile(optimizer=SGD(learning_rate=0.01), loss=BCE(), metrics=['accuracy'])
 
