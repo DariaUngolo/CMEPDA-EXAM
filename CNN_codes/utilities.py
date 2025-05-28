@@ -20,6 +20,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def pad_images(images):
+    
     """
     Pads a list of 3D images to the same shape by adding zero-padding.
 
@@ -34,6 +35,7 @@ def pad_images(images):
         4D numpy array where each 3D image is padded to the maximum shape.
     max_shape : tuple
         The maximum shape found across all images.
+        
     """
     logger.debug("Padding images to the same size.")
     max_shape = np.max([img.shape for img in images], axis=0)
@@ -53,6 +55,7 @@ def pad_images(images):
     return np.array(padded_images), max_shape
 
 def random_rotate(volume):
+    
     """
     Randomly rotates a 3D volume around the x, y, z axes.
 
@@ -65,6 +68,7 @@ def random_rotate(volume):
     --------
     np.ndarray
         Rotated volume.
+        
     """
     logger.debug("Applying random rotation to the volume.")
     angles = np.random.uniform(-0.5, 0.5, size=3)
@@ -74,6 +78,7 @@ def random_rotate(volume):
     return rotated
 
 def random_zoom_and_crop(volume, target_shape, zoom_range=(0.8, 1.2)):
+    
     """
     Randomly zooms into a 3D volume and crops or pads it to a target shape.
 
@@ -90,6 +95,7 @@ def random_zoom_and_crop(volume, target_shape, zoom_range=(0.8, 1.2)):
     --------
     np.ndarray
         Transformed volume with the target dimensions.
+        
     """
     logger.debug("Applying random zoom and cropping the volume.")
     zoom_factor = np.random.uniform(*zoom_range)
@@ -109,6 +115,7 @@ def random_zoom_and_crop(volume, target_shape, zoom_range=(0.8, 1.2)):
     return output
 
 def preprocess_nifti_images(image_folder, atlas_path, meta_data, roi_ids=(165, 166)):
+    
     """
     Processes NIFTI images by extracting a Z range containing specified ROIs,
     removing black voxels, and padding images to uniform size.
@@ -129,6 +136,7 @@ def preprocess_nifti_images(image_folder, atlas_path, meta_data, roi_ids=(165, 1
     group : np.ndarray
         Array of corresponding group labels loaded from metadata.
     """
+    
     logger.debug("Loading atlas and determining Z range with specified ROIs.")
     atlas = nib.load(atlas_path)
     atlas_data = atlas.get_fdata()
@@ -168,6 +176,7 @@ def preprocess_nifti_images(image_folder, atlas_path, meta_data, roi_ids=(165, 1
     return images, group
 
 def split_data(images, group):
+    
     """
     Splits the dataset into training, validation, and test sets.
 
@@ -186,7 +195,9 @@ def split_data(images, group):
         Validation images and labels.
     x_test, y_test : np.ndarray
         Test images and labels.
+        
     """
+    
     logger.debug("Splitting data into training, validation, and test sets.")
     x_temp, x_test, y_temp, y_test = train_test_split(
         images, group, test_size=0.2, random_state=10
