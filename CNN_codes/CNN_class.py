@@ -1,11 +1,12 @@
 import sys
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 from pathlib import Path
 import scipy
-import matplotlib.pyplot as plt
+
 import tensorflow
 from sklearn.metrics import roc_curve, auc
-import numpy as np
 from keras.layers import MaxPooling3D, Conv3D, Flatten, Dense, BatchNormalization, Activation, Dropout
 from keras.optimizers import SGD
 from tensorflow.keras.regularizers import l2
@@ -15,173 +16,256 @@ from keras.models import Model, Sequential
 from keras.losses import BinaryCrossentropy
 from keras.layers import Input
 
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(message)s")
+logger = logging.getLogger(__name__)
+
 
 class MyCNNModel(tensorflow.keras.Model):
 
-    def __init__(self, input_shape=(121, 145, 47, 1)):
+    """
 
-        print("[DEBUG] __init__: inizializzazione modello leggero con input_shape:", input_shape)
+    A lightweight 3D CNN model for binary classification.
+
+
+    Attributes:
+
+    -----------
+
+    model : tensorflow.keras.Sequential
+        The internal sequential model that defines the architecture.
+
+    Methods:
+
+    --------
+
+    compile_and_fit:
+        Compiles and trains the model on the provided datasets.
+    accuracy_loss_plot:
+        Plots training and validation accuracy and loss curves.
+    validation_roc:
+        Evaluates model performance using ROC on validation data.
+    test_roc:
+        Evaluates model performance using ROC on test data.
+    load:
+        Loads saved model weights and optionally continues training.
+
+    """
+
+    def __init__(self, input_shape):
+
+        """
+
+        Initializes the CNN model with a predefined architecture.
+
+        Parameters:
+
+        ----------
+
+        input_shape : tuple, optional
+            The shape of the input data
+
+        """
+
+        logger.info("Initializing MyCNNModel with input shape: %s", input_shape)
         super(MyCNNModel, self).__init__()
 
-        self.model = Sequential()
+        #Define the model architecture
+        self.model = Sequential([
+            Input(shape=input_shape),
 
-         # Primo livello: MaxPooling3D
-        self.model.add(Input(shape=input_shape))
-        print("[DEBUG] __init__: Input layer aggiunto")
-        self.model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="valid"))
-        print("[DEBUG] __init__: Primo MaxPooling3D aggiunto")
+            # MaxPooling before first Conv3D
+            MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
 
-        # Secondo livello: Conv3D con kernel_regularizer
-        self.model.add(Conv3D(filters=16, kernel_size=(3, 3, 3), padding='valid', activation='relu'))
-        print("[DEBUG] __init__: Primo Conv3D aggiunto")
-        self.model.add(BatchNormalization())
+            Conv3D(16, (3, 3, 3), activation='relu', padding='same'),
+            #BatchNormalization(),
 
-        # Terzo livello: MaxPooling3D
-        self.model.add(MaxPooling3D(pool_size=(2, 2, 2)))
-        print("[DEBUG] __init__: Secondo MaxPooling3D aggiunto")
 
-        # Quarto livello: Conv3D con regolarizzazione
-        self.model.add(Conv3D(filters=32, kernel_size=(3, 3, 3), activation='relu'))
-        print("[DEBUG] __init__: Secondo Conv3D aggiunto")
-        self.model.add(BatchNormalization())
-        
 
-        # Flatten e Dense layers
-        self.model.add(Flatten())
-        print("[DEBUG] __init__: Flatten aggiunto")
-        self.model.add(Dropout(0.5))
-        self.model.add(Dense(units=64, activation='relu', kernel_regularizer=l2(0.01)))
-        print("[DEBUG] __init__: Dense 64 aggiunto")
+            Conv3D(32, (3, 3, 3), activation='relu', padding='same'),
+            #BatchNormalization(),
 
-        # Layer finale
-        self.model.add(Dense(units=1, activation='sigmoid'))
-        print("[DEBUG] __init__: Dense finale aggiunto")
+            Flatten(),
+
+            Dropout(0.2),
+            Dense(64, activation='relu'),
+            Dense(1, activation='sigmoid')
+        ])
+
+        logger.info("Model architecture successfully initialized.")
 
 
     def call(self, inputs, training=False):
-        # Chiama il modello sequenziale interno
+
+        """
+
+        Forward pass for the model.
+
+        Parameters:
+
+        ----------
+        inputs : tensor
+            Input tensor for the forward pass.
+        training : bool, optional
+            Whether the model is in training mode, by default False.
+
+        Returns:
+
+        -------
+        tensor
+            Output of the model.
+
+        """
         return self.model(inputs, training=training)
 
     def compile_and_fit(self, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
-        print("[DEBUG] compile_and_fit: inizio")
-        print(f"[DEBUG] compile_and_fit: x_train shape {x_train.shape}, y_train shape {y_train.shape}")
-        print(f"[DEBUG] compile_and_fit: x_val shape {x_val.shape}, y_val shape {y_val.shape}")
-        print(f"[DEBUG] compile_and_fit: x_test shape {x_test.shape}, y_test shape {y_test.shape}")
-        print(f"[DEBUG] compile_and_fit: n_epochs {n_epochs}, batchsize {batchsize}")
 
-        # Compilazione del modello
+        """
+
+        Compiles the model and trains it on the provided datasets.
+
+        Parameters:
+
+        ----------
+
+        x_train, y_train : numpy.ndarray
+            Training data and labels.
+        x_val, y_val : numpy.ndarray
+            Validation data and labels.
+        x_test, y_test : numpy.ndarray
+            Test data and labels.
+        n_epochs : int
+            Number of training epochs.
+        batchsize : int
+            Batch size for training.
+
+        """
+
+        logger.info("Starting training with %d epochs and batch size %d", n_epochs, batchsize)
+
+        # Compile the model
         self.compile(
-            optimizer=SGD(learning_rate=0.01),  # Ottimizzatore SGD con learning rate 0.01
-            loss=BinaryCrossentropy(),                      # Funzione di perdita BCE
-            metrics=['accuracy']               # Metri: accuratezza
+            optimizer=SGD(learning_rate=0.001),
+            loss=BinaryCrossentropy(),
+            metrics=['accuracy']
         )
-        print("[DEBUG] compile_and_fit: modello compilato")
+        logger.debug("Model compiled successfully.")
 
-        # Callback per migliorare l'allenamento
+        # Define callbacks
         reduce_on_plateau = ReduceLROnPlateau(
-            monitor="val_loss",   # Controlla la perdita sui dati di validazione
-            factor=0.1,           # Riduce il learning rate di 10 volte se non migliora
-            patience=20,          # Aspetta 20 epoche senza miglioramento
+            monitor="val_loss",
+            factor=0.1,
+            patience=20,
             verbose=0,
             mode="auto",
-            min_delta=0.0001,     # Miglioramento minimo richiesto
+            min_delta=0.0001,
             cooldown=0,
-            min_lr=0              # Limite inferiore del learning rate
+            min_lr=0
         )
 
         early_stopping = EarlyStopping(
-            monitor="val_loss",          # Controlla la perdita sui dati di validazione
-            min_delta=0,                 # Nessun miglioramento richiesto oltre il valore corrente
-            patience=20,                 # Termina l'allenamento se non ci sono miglioramenti per 20 epoche
+            monitor="val_loss",
+            min_delta=0,
+            patience=20,
             verbose=0,
             mode="auto",
-            restore_best_weights=False,  # Non ripristina i migliori pesi
-            start_from_epoch=10          # Considera l'interruzione solo dopo 10 epoche
+            restore_best_weights=False,
+            start_from_epoch=10
         )
 
-        # Parametri di addestramento
-        epochs = n_epochs        # Numero di epoche totali (passaggi completi sul dataset)
-        batch_size = batchsize   # Dimensione del batch (numero di campioni per passo)
 
-        # Avvio del processo di allenamento
+        # Train the model
         history = self.fit(
             x_train, y_train,
-            batch_size=batch_size,
-            epochs=epochs,
-            steps_per_epoch=round(len(x_train) / batch_size),  # Numero di passi per epoca
-            verbose=1,                                         # Mostra dettagli durante l'allenamento
-            validation_data=(x_val, y_val),                   # Dati di validazione
-            validation_steps=round(len(x_val) / batch_size),  # Numero di passi per validazione
-            callbacks=[reduce_on_plateau, early_stopping]     # Callback definiti sopra
+            batch_size=batchsize,
+            epochs=n_epochs,
+            steps_per_epoch=round(len(x_train) / batchsize),
+            verbose=1,
+            validation_data=(x_val, y_val),
+            validation_steps=round(len(x_val) / batchsize),
+            callbacks=[reduce_on_plateau, early_stopping]
         )
-        print("[DEBUG] compile_and_fit: fit completato")
+        logger.info("Model training completed.")
 
-        # Visualizzazione dei risultati
-        self.accuracy_loss_plot(history)  # Disegna i grafici di accuratezza e perdita
-        print("[DEBUG] compile_and_fit: plot di accuracy e loss mostrati")
+        # Plot accuracy and loss
+        self.accuracy_loss_plot(history)
 
-        # Valutazione ROC su validazione e test
+        # Evaluate ROC
         self.validation_roc(x_val, y_val)
-        print("[DEBUG] compile_and_fit: validazione ROC completata")
         self.test_roc(x_test, y_test)
-        print("[DEBUG] compile_and_fit: test ROC completata")
 
-        # Salvataggio dei pesi del modello
-        self.save_weights(Path('C:\\Users\\daria\\OneDrive\\Desktop\\model.h5'))  # Pesa salvati in "model.h5"
-        print("[DEBUG] compile_and_fit: pesi salvati")
+        # Save model weights
+        model_path = Path("model.h5")
+        self.save_weights(model_path)
+        logger.info("Model weights saved to %s", model_path)
 
     def accuracy_loss_plot(self, history):
-        print("[DEBUG] accuracy_loss_plot: inizio")
-        # Estrazione dei dati di accuratezza e perdita dall'oggetto history
-        acc = history.history['accuracy']         # Accuratezza su dati di addestramento
-        val_acc = history.history['val_accuracy'] # Accuratezza su dati di validazione
-        loss = history.history['loss']            # Perdita su dati di addestramento
-        val_loss = history.history['val_loss']    # Perdita su dati di validazione
-        print(f"[DEBUG] accuracy_loss_plot: {len(acc)} epoche trovate")
 
-        # Creazione di una sequenza di epoche per l'asse X
-        epochs_range = range(1, len(acc) + 1)
+        """
+        Plots training and validation accuracy and loss curves.
 
-        # Imposta la dimensione complessiva della figura
+        Parameters:
+
+        ----------
+        history : keras.callbacks.History
+            Training history object returned by `fit`.
+
+        """
+
+        logger.info("Plotting training and validation accuracy and loss.")
+        epochs_range = range(1, len(history.history['accuracy']) + 1)
         plt.figure(figsize=(15, 15))
 
-        # Grafico 1: Accuratezza di addestramento e validazione
-        plt.subplot(1, 2, 1)  # Una griglia di 1x2 con questo come primo grafico
-        plt.plot(epochs_range, acc, label='Training Accuracy')  # Accuratezza addestramento
-        plt.plot(epochs_range, val_acc, label='Validation Accuracy')  # Accuratezza validazione
-        plt.legend(loc='lower right')  # Posizione della legenda
-        plt.title('Training and Validation Accuracy')  # Titolo del grafico
+        # Accuracy
+        plt.subplot(1, 2, 1)
+        plt.plot(epochs_range, history.history['accuracy'], label="Train Accuracy")
+        plt.plot(epochs_range, history.history['val_accuracy'], label="Validation Accuracy")
+        plt.legend(loc="lower right")
+        plt.title("Training and Validation Accuracy")
 
-        # Grafico 2: Perdita di addestramento e validazione
-        plt.subplot(1, 2, 2)  # Secondo grafico nella griglia
-        plt.plot(epochs_range, loss, label='Training Loss')  # Perdita addestramento
-        plt.plot(epochs_range, val_loss, label='Validation Loss')  # Perdita validazione
-        plt.legend(loc='upper right')  # Posizione della legenda
-        plt.title('Training and Validation Loss')  # Titolo del grafico
+        # Loss
+        plt.subplot(1, 2, 2)
+        plt.plot(epochs_range, history.history['loss'], label="Train Loss")
+        plt.plot(epochs_range, history.history['val_loss'], label="Validation Loss")
+        plt.legend(loc="upper right")
+        plt.title("Training and Validation Loss")
 
-        # Mostra i grafici creati
+
         plt.show()
-        print("[DEBUG] accuracy_loss_plot: grafici mostrati")
+        logger.info("Accuracy and loss plots displayed.")
 
     def validation_roc(self, x_val, y_val):
-        print("[DEBUG] validation_roc: inizio")
+
+        """
+
+        Evaluates the model using ROC on validation data.
+
+        Parameters:
+
+        ----------
+        x_val, y_val : numpy.ndarray
+            Validation data and labels.
+
+        """
+
+        logger.info("Calculating ROC curve for validation data.")
         confidence_int = 0.683  # Livello di confidenza
         z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)  # Calcolo del punteggio z
 
-        # Valutazione dell'accuratezza
+        # Evaluate accuracy on validation data
         _, val_acc = self.evaluate(x_val, y_val, verbose=0)
-        print(f"[DEBUG] validation_roc: val_acc={val_acc}")
         accuracy_err = z_score * np.sqrt((val_acc * (1 - val_acc)) / y_val.shape[0])
-        print(f'Validation accuracy: {round(val_acc, 2)} +/- {round(accuracy_err, 2)}')
+        logger.info(f"Validation Accuracy: {round(val_acc, 2)} ± {round(accuracy_err, 2)}")
 
-        # Predizioni e calcolo della curva ROC
+        # Generate predictions and compute ROC curve
         preds = self.predict(x_val, verbose=1)
-        print(f"[DEBUG] validation_roc: preds shape {preds.shape}, min={preds.min()}, max={preds.max()}")
         fpr, tpr, _ = roc_curve(y_val, preds)
         roc_auc = auc(fpr, tpr)
-        print(f"[DEBUG] validation_roc: roc_auc={roc_auc}")
+        logger.info(f"Validation ROC AUC: {round(roc_auc, 2)}")
 
-        # Calcolo dell'errore sull'AUC
+        # Calculate AUC confidence interval
         n1 = np.sum(y_val == 1)
         n2 = np.sum(y_val == 0)
         q1 = roc_auc / (2 - roc_auc)
@@ -189,13 +273,12 @@ class MyCNNModel(tensorflow.keras.Model):
         auc_err = z_score * np.sqrt(
             (roc_auc * (1 - roc_auc) + (n1 - 1) * (q1 - roc_auc ** 2) + (n2 - 1) * (q2 - roc_auc ** 2)) / (n1 * n2)
         )
-        print(f"AUC: {round(roc_auc, 2)} +/- {round(auc_err, 2)}")
+        logger.info(f"Validation AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
 
-        # Plot della curva ROC
+        # Plot ROC curve
         plt.figure()
-        lw = 2
-        plt.plot(fpr, tpr, color='darkorange', lw=lw, label=f'ROC curve (area = {roc_auc:.2f})')
-        plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate')
@@ -206,23 +289,41 @@ class MyCNNModel(tensorflow.keras.Model):
         print("[DEBUG] validation_roc: plot mostrato")
 
     def test_roc(self, x_test, y_test):
-        print("[DEBUG] test_roc: inizio")
-        confidence_int = 0.683
+
+        """
+
+        Evaluates the model's performance on test data using ROC analysis.
+
+        This method computes the ROC curve and its corresponding area under the curve (AUC)
+        for the given test dataset. It also calculates the confidence intervals
+        for accuracy and AUC based on the given confidence level.
+
+        Parameters:
+
+        ----------
+
+        x_test : numpy.ndarray
+            Test feature data.
+        y_test : numpy.ndarray
+            Test labels.
+
+        """
+        logger.info("Starting ROC curve computation for test data.")
+        confidence_int = 0.683  # Confidence level
         z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)
 
-        # Valutazione dell'accuratezza
+        # Evaluate accuracy on test data
         test_loss, test_acc = self.evaluate(x_test, y_test, verbose=0)
-        print(f"[DEBUG] test_roc: test_acc={test_acc}")
         accuracy_err = z_score * np.sqrt((test_acc * (1 - test_acc)) / y_test.shape[0])
-        print(f'Test accuracy: {round(test_acc, 2)} +/- {round(accuracy_err, 2)}')
+        logger.info(f"Test Accuracy: {round(test_acc, 2)} ± {round(accuracy_err, 2)}")
 
-        # Predizioni e calcolo della curva ROC
+        # Generate predictions and compute ROC curve
         preds_test = self.predict(x_test, verbose=1)
-        print(f"[DEBUG] test_roc: preds_test shape {preds_test.shape}, min={preds_test.min()}, max={preds_test.max()}")
         fpr, tpr, _ = roc_curve(y_test, preds_test)
         roc_auc = auc(fpr, tpr)
+        logger.info(f"Test ROC AUC: {round(roc_auc, 2)}")
 
-        # Calcolo dell'errore sull'AUC
+        # Calculate AUC confidence interval
         n1 = np.sum(y_test == 1)
         n2 = np.sum(y_test == 0)
         q1 = roc_auc / (2 - roc_auc)
@@ -230,9 +331,9 @@ class MyCNNModel(tensorflow.keras.Model):
         auc_err = z_score * np.sqrt(
             (roc_auc * (1 - roc_auc) + (n1 - 1) * (q1 - roc_auc ** 2) + (n2 - 1) * (q2 - roc_auc ** 2)) / (n1 * n2)
         )
-        print(f"AUC: {round(roc_auc, 2)} +/- {round(auc_err, 2)}")
+        logger.info(f"Test AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
 
-        # Plot della curva ROC
+        # Plot ROC curve
         plt.figure()
         lw = 2
         plt.plot(fpr, tpr, color='darkorange', lw=lw, label=f'ROC curve (area = {roc_auc:.2f})')
@@ -246,33 +347,48 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.show()
 
 
-    def load(self, path, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
-        
-        """
-        
-        Carica un modello salvato, continua l'allenamento e valuta le sue prestazioni.
+def load(self, path, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
+    """
+    Loads pretrained weights and continues model training and evaluation.
 
-        Parametri:
-        ----------
-        path : str
-            Percorso del file dei pesi del modello salvato.
-        x_train, y_train, x_val, y_val, x_test, y_test : numpy.ndarray
-            Dati di addestramento, validazione e test con le rispettive etichette.
-        n_epochs : int
-            Numero di epoche per il riaddestramento.
-        batchsize : int
-            Dimensione del batch per il riaddestramento.
-            
-        """
-        
-        # Compila il modello con i parametri iniziali
-        self.compile(optimizer=SGD(learning_rate=0.01), loss=BCE(), metrics=['accuracy'])
+    This method initializes the model with the required compilation parameters,
+    loads pretrained weights from a specified path, and resumes the training
+    process. It also evaluates the model performance on the provided datasets.
 
-        # Esegue un singolo passo di addestramento
-        self.train_on_batch(x_train, y_train)
+    Parameters:
+    ----------
+    path : str
+        Path to the saved model weights.
+    x_train : numpy.ndarray
+        Training feature data.
+    y_train : numpy.ndarray
+        Training labels.
+    x_val : numpy.ndarray
+        Validation feature data.
+    y_val : numpy.ndarray
+        Validation labels.
+    x_test : numpy.ndarray
+        Test feature data.
+    y_test : numpy.ndarray
+        Test labels.
+    n_epochs : int
+        Number of epochs for continued training.
+    batchsize : int
+        Batch size for training.
 
-        # Carica i pesi salvati
-        self.load_weights(path)
+    """
+    # Compile the model with initial parameters
+    logger.info("Compiling the model with initial parameters.")
+    self.compile(optimizer=SGD(learning_rate=0.01), loss=BCE(), metrics=['accuracy'])
 
-        # Continua l'allenamento e valuta il modello
-        self.compile_and_fit(x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize)
+    # Perform a single training step
+    logger.info("Performing a single training step to initialize model weights.")
+    self.train_on_batch(x_train, y_train)
+
+    # Load pretrained weights from the specified path
+    logger.info(f"Loading pretrained weights from: {path}")
+    self.load_weights(path)
+
+    # Continue training and evaluate the model on the provided datasets
+    logger.info("Resuming training and evaluating the model.")
+    self.compile_and_fit(x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize)
