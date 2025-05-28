@@ -35,7 +35,7 @@ autodoc_mock_imports = [
 
 copyright = '2025, Brando Spinelli, Daria Ungolo'
 author = 'Brando Spinelli , Daria Ungolo'
-release = '0.0.1'
+#release = '0.0.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
