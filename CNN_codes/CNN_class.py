@@ -321,48 +321,48 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.show()
 
 
-def load(self, path, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
-    """
-    Loads pretrained weights and continues model training and evaluation.
-
-    This method initializes the model with the required compilation parameters,
-    loads pretrained weights from a specified path, and resumes the training
-    process. It also evaluates the model performance on the provided datasets.
-
-    Parameters:
-    ----------
-    path : str
-        Path to the saved model weights.
-    x_train : numpy.ndarray
-        Training feature data.
-    y_train : numpy.ndarray
-        Training labels.
-    x_val : numpy.ndarray
-        Validation feature data.
-    y_val : numpy.ndarray
-        Validation labels.
-    x_test : numpy.ndarray
-        Test feature data.
-    y_test : numpy.ndarray
-        Test labels.
-    n_epochs : int
-        Number of epochs for continued training.
-    batchsize : int
-        Batch size for training.
-
-    """
-    # Compile the model with initial parameters
-    logger.info("Compiling the model with initial parameters.")
-    self.compile(optimizer=SGD(learning_rate=0.01), loss=BCE(), metrics=['accuracy'])
-
-    # Perform a single training step
-    logger.info("Performing a single training step to initialize model weights.")
-    self.train_on_batch(x_train, y_train)
-
-    # Load pretrained weights from the specified path
-    logger.info(f"Loading pretrained weights from: {path}")
-    self.load_weights(path)
-
-    # Continue training and evaluate the model on the provided datasets
-    logger.info("Resuming training and evaluating the model.")
-    self.compile_and_fit(x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize)
+    def load(self, path, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
+        """
+        Loads pretrained weights and continues model training and evaluation.
+    
+        This method initializes the model with the required compilation parameters,
+        loads pretrained weights from a specified path, and resumes the training
+        process. It also evaluates the model performance on the provided datasets.
+    
+        Parameters:
+        ----------
+        path : str
+            Path to the saved model weights.
+        x_train : numpy.ndarray
+            Training feature data.
+        y_train : numpy.ndarray
+            Training labels.
+        x_val : numpy.ndarray
+            Validation feature data.
+        y_val : numpy.ndarray
+            Validation labels.
+        x_test : numpy.ndarray
+            Test feature data.
+        y_test : numpy.ndarray
+            Test labels.
+        n_epochs : int
+            Number of epochs for continued training.
+        batchsize : int
+            Batch size for training.
+    
+        """
+        # Compile the model with initial parameters
+        logger.info("Compiling the model with initial parameters.")
+        self.compile(optimizer=SGD(learning_rate=0.01), loss=BCE(), metrics=['accuracy'])
+    
+        # Perform a single training step
+        logger.info("Performing a single training step to initialize model weights.")
+        self.train_on_batch(x_train, y_train)
+    
+        # Load pretrained weights from the specified path
+        logger.info(f"Loading pretrained weights from: {path}")
+        self.load_weights(path)
+    
+        # Continue training and evaluate the model on the provided datasets
+        logger.info("Resuming training and evaluating the model.")
+        self.compile_and_fit(x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize)
