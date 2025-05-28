@@ -13,4 +13,5 @@ graphviz
 scipy
 loguru
 joblib
-
+keras
+tensorflow
