@@ -17,7 +17,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def parse_arguments():
-
     """
     Parse command-line arguments for the CNN training script.
 
@@ -25,6 +24,7 @@ def parse_arguments():
     -------
     argparse.Namespace
         Parsed command-line arguments.
+        
     """
     parser = argparse.ArgumentParser(
         description="Script for training a CNN model on NIfTI images",
@@ -62,7 +62,6 @@ def parse_arguments():
 
 
 def main(args):
-
     """
     Main function that performs preprocessing, data augmentation,
     data splitting, and CNN model training.
@@ -71,6 +70,7 @@ def main(args):
     ----------
     args : argparse.Namespace
         Parsed command-line arguments.
+        
     """
 
     roi_ids=(165,166)
