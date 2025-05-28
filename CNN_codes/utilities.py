@@ -21,22 +21,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def pad_images(images):
-
     """
 
     Pads a list of 3D images to the same shape by adding zero-padding.
 
     Parameters:
-
     -----------
-
     images : list of np.ndarray
         List of 3D numpy arrays with varying shapes.
 
     Returns:
-
     --------
-
     padded_images : np.ndarray
         4D numpy array where each 3D image is padded to the maximum shape.
     max_shape : tuple
@@ -66,20 +61,15 @@ def pad_images(images):
 
 
 def random_rotate(volume):
-
     """
-
     Randomly rotates a 3D volume around the x, y, z axes.
 
     Parameters:
-
     -----------
-
     volume : np.ndarray
         3D volume (x, y, z).
 
     Returns:
-
     --------
 
     np.ndarray
@@ -96,13 +86,10 @@ def random_rotate(volume):
 
 
 def random_zoom_and_crop(volume, target_shape, zoom_range=(0.8, 1.2)):
-
     """
-
     Randomly zooms into a 3D volume and crops or pads it to a target shape.
 
     Parameters:
-
     -----------
 
     volume : np.ndarray
@@ -113,9 +100,7 @@ def random_zoom_and_crop(volume, target_shape, zoom_range=(0.8, 1.2)):
         Range of zoom factors (default is (0.8, 1.2)).
 
     Returns:
-
     --------
-
     np.ndarray
         Transformed volume with the target dimensions.
 
@@ -152,6 +137,7 @@ def augment_image_4d(volume_4d, target_shape):
     --------
     np.ndarray
         Immagine augmentata 4D (x, y, z, 1).
+        
     """
     volume = volume_4d[..., 0]  # Rimuovi la dimensione del canale
     volume = random_rotate(volume)
@@ -159,13 +145,10 @@ def augment_image_4d(volume_4d, target_shape):
     return np.expand_dims(volume, axis=-1)  # Ripristina il canale
 
 def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_per_image):
-
     """
-
     Generates augmented images while preserving the associated original labels.
 
     Parameters:
-
     -----------
     images : np.ndarray
         Batch of original images (shape: [num_images, x, y, z, 1]).
@@ -177,7 +160,6 @@ def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_pe
         Number of augmented images to generate for each original image.
 
     Returns:
-
     --------
     augmented_images : np.ndarray
         Batch of augmented images (num_augmented_images, x, y, z, 1).
@@ -200,14 +182,11 @@ def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_pe
 
 
 def preprocess_nifti_images(image_folder, atlas_path,metadata, roi_ids=(165, 166)):
-
     """
-
     Processes NIFTI images by extracting a Z range containing specified ROIs,
     removing black voxels, and padding images to uniform size.
 
     Parameters:
-
     -----------
     image_folder : str
         Path to the folder containing NIFTI images.
@@ -217,7 +196,6 @@ def preprocess_nifti_images(image_folder, atlas_path,metadata, roi_ids=(165, 166
         Tuple of ROI IDs to include when determining Z range (default is (165, 166)).
 
     Returns:
-
     --------
     images : np.ndarray
         4D numpy array of preprocessed and padded 3D images ready for CNN input.
@@ -277,13 +255,10 @@ def preprocess_nifti_images(image_folder, atlas_path,metadata, roi_ids=(165, 166
 
 
 def normalize_images_uniformly(images, global_min=None, global_max=None, min_val=0.0, max_val=1.0):
-
     """
-
     Normalize an array of images using a uniform range for all images.
 
     Parameters:
-
     -----------
 
     images : np.ndarray
@@ -298,9 +273,7 @@ def normalize_images_uniformly(images, global_min=None, global_max=None, min_val
         Maximum value of the normalized range (default 1.0).
 
     Returns:
-
     --------
-
     np.ndarray
         Normalized images in the same 4D format.
     float, float
@@ -328,13 +301,10 @@ def normalize_images_uniformly(images, global_min=None, global_max=None, min_val
 
 
 def split_data(images, group):
-
     """
-
     Splits the dataset into training, validation, and test sets.
 
     Parameters:
-
     -----------
     images : np.ndarray
         Array of images (e.g., DTI images).
@@ -342,7 +312,6 @@ def split_data(images, group):
         Corresponding array of labels.
 
     Returns:
-
     --------
     x_train, y_train : np.ndarray
         Training images and labels.
