@@ -24,23 +24,16 @@ logger = logging.getLogger(__name__)
 
 
 class MyCNNModel(tensorflow.keras.Model):
-
     """
-
     A lightweight 3D CNN model for binary classification.
 
-
     Attributes:
-
     -----------
-
     model : tensorflow.keras.Sequential
         The internal sequential model that defines the architecture.
 
     Methods:
-
     --------
-
     compile_and_fit:
         Compiles and trains the model on the provided datasets.
     accuracy_loss_plot:
@@ -55,15 +48,11 @@ class MyCNNModel(tensorflow.keras.Model):
     """
 
     def __init__(self, input_shape):
-
         """
-
         Initializes the CNN model with a predefined architecture.
 
         Parameters:
-
         ----------
-
         input_shape : tuple, optional
             The shape of the input data
 
@@ -98,13 +87,10 @@ class MyCNNModel(tensorflow.keras.Model):
 
 
     def call(self, inputs, training=False):
-
         """
-
         Forward pass for the model.
 
         Parameters:
-
         ----------
         inputs : tensor
             Input tensor for the forward pass.
@@ -112,7 +98,6 @@ class MyCNNModel(tensorflow.keras.Model):
             Whether the model is in training mode, by default False.
 
         Returns:
-
         -------
         tensor
             Output of the model.
@@ -121,13 +106,10 @@ class MyCNNModel(tensorflow.keras.Model):
         return self.model(inputs, training=training)
 
     def compile_and_fit(self, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
-
         """
-
         Compiles the model and trains it on the provided datasets.
 
         Parameters:
-
         ----------
 
         x_train, y_train : numpy.ndarray
@@ -202,12 +184,10 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info("Model weights saved to %s", model_path)
 
     def accuracy_loss_plot(self, history):
-
         """
         Plots training and validation accuracy and loss curves.
 
         Parameters:
-
         ----------
         history : keras.callbacks.History
             Training history object returned by `fit`.
@@ -237,13 +217,10 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info("Accuracy and loss plots displayed.")
 
     def validation_roc(self, x_val, y_val):
-
         """
-
         Evaluates the model using ROC on validation data.
 
         Parameters:
-
         ----------
         x_val, y_val : numpy.ndarray
             Validation data and labels.
@@ -289,9 +266,7 @@ class MyCNNModel(tensorflow.keras.Model):
         print("[DEBUG] validation_roc: plot mostrato")
 
     def test_roc(self, x_test, y_test):
-
         """
-
         Evaluates the model's performance on test data using ROC analysis.
 
         This method computes the ROC curve and its corresponding area under the curve (AUC)
@@ -299,7 +274,6 @@ class MyCNNModel(tensorflow.keras.Model):
         for accuracy and AUC based on the given confidence level.
 
         Parameters:
-
         ----------
 
         x_test : numpy.ndarray
