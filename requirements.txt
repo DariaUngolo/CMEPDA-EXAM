@@ -4,5 +4,15 @@ numpy
 pandas
 matplotlib
 sphinx-book-theme
-joblib
+nibabel
+nilearn
+argparse
+scikit-learn
+pathlib
+graphviz
+scipy
 loguru
+joblib
+keras
+tensorflow
+scikit-image
