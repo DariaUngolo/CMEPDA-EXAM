@@ -12,5 +12,7 @@ pathlib
 graphviz
 scipy
 loguru
-
-
+joblib
+keras
+tensorflow
+scikit-image

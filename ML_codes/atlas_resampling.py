@@ -59,14 +59,15 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
     original_voxel_size = header.get_zooms()[:3]
     logger.debug(f"Original voxel size: {original_voxel_size}")
 
+    
     # Step 3: Check if the voxel size is already correct
-    if np.allclose(original_voxel_size, target_voxel_size, atol=1e-6):  # ADD
-        logger.info("✅ Original voxel size matches target voxel size. No resampling needed.")  # ADD
+    if np.allclose(original_voxel_size, target_voxel_size, atol=1e-6): 
+        logger.info("✅ Original voxel size matches target voxel size. No resampling needed.")  
         # Optionally save the original image to the output path if required
-        nib.save(img, output_path)  # ADD
-        logger.success(f"💾 Original image saved to: {output_path}")  # ADD
-        return  # ADD
-
+        nib.save(img, output_path) 
+        logger.success(f"💾 Original image saved to: {output_path}")  
+        return
+    
     # Step 4: Compute scaling factors for resampling
     zoom_factors = np.array(original_voxel_size) / np.array(target_voxel_size)
     logger.info(f"🔍 Calculated zoom factors for resampling: {zoom_factors}")
@@ -86,6 +87,6 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
     new_img.set_sform(new_affine)
     new_img.header.set_zooms(target_voxel_size)
 
-    # Step 7: Save the new image
+    # Step 8: Save the new image
     nib.save(new_img, output_path)
     logger.success(f"💾 Resampled image saved successfully to: {output_path}")

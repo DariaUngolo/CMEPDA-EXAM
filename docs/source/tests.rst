@@ -1,35 +1,35 @@
 tests package
 =================
 
-tests.atlas\_resampling\_test module
+tests.test\_atlas\_resampling module
 ------------------------------------------
 
-.. automodule:: tests.atlas_resampling_test
+.. automodule:: tests.test_atlas_resampling
    :members:
    :undoc-members:
    :show-inheritance:
 
-tests.classifiers\_test module
+tests.test\_classifiers module
 -----------------------------------
 
-.. automodule:: tests.classifiers_test
+.. automodule:: tests.test_classifiers
    :members:
    :undoc-members:
    :show-inheritance:
 
-tests.feature\_extractor\_mocked\_test module
+tests.test\_feature\_extractor\_mocked module
 ----------------------------------------------------
 
 
-.. automodule:: tests.feature_extractor_mocked_test
+.. automodule:: tests.test_feature_extractor_mocked
    :members:
    :undoc-members:
    :show-inheritance:
 
-tests.performance\_scores\_test module
+tests.test\_performance\_scores module
 ------------------------------------------
 
-.. automodule:: tests.performance_scores_test
+.. automodule:: tests.test_performance_scores
    :members:
    :undoc-members:
    :show-inheritance:
