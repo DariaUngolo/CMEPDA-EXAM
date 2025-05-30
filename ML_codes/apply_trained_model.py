@@ -131,30 +131,16 @@ def classify_independent_dataset(data_frame, model_path):
     Returns:
         Tuple[int, np.ndarray]: Predicted class label and class probabilities.
     """
+    
     logger.info(f"Loading trained model from: {model_path}")
     model = joblib.load(model_path)
 
-    logger.info("Making prediction.")
+    logger.info("Making prediction using pipeline.")
     classification = model.predict(data_frame)[0]
     probability = model.predict_proba(data_frame)[0]
 
     logger.success("Prediction completed.")
-
+    
     return classification, probability
 
-
-# Main block (commented out)
-# if __name__ == "__main__":
-#     NIFTI_FILE = r"C:\path\to\nifti\images"
-#     ATLAS_FILE = r"C:\path\to\atlas.nii.gz"
-#     ATLAS_TXT = r"C:\path\to\atlas_labels.txt"
-#     MATLAB_FEATURE_EXTRACTOR_PATH = r"C:\path\to\matlab\feature_extractor"
-#     MODEL_PATH = r"C:\path\to\trained_model.joblib"
-#
-#     df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume = \
-#         feature_extractor_independent_dataset(NIFTI_FILE, ATLAS_FILE, ATLAS_TXT, MATLAB_FEATURE_EXTRACTOR_PATH)
-#
-#     classification, probability = classify_independent_dataset(df_mean_std, MODEL_PATH)
-#
-#     print(f"Classification: {classification}")
-#     print(f"Probability: {probability}")
+    

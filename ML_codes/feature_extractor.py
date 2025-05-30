@@ -149,7 +149,7 @@ def feature_extractor(folder_path, atlas_file, atlas_txt, metadata_csv, matlab_f
     # === 8. Extract group labels (metadata) ===
     diagnostic_group_labels = df_dxgroup.iloc[:, 1]
     diagnostic_group_labels.index = df_dxgroup.iloc[:, 0]  # Set the index to the subject ID
-
+    
     label_id_row =  df_dxgroup.iloc[:, 0].values # First column is the subject ID
 
 

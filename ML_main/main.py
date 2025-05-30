@@ -7,6 +7,9 @@ import argparse
 from pathlib import Path
 import matlab.engine
 from loguru import logger
+import joblib  
+from tabulate import tabulate
+
 
 from ML_codes.feature_extractor import feature_extractor
 from ML_codes.classifiers_unified import (
@@ -95,7 +98,7 @@ def parse_arguments():
     """
     parser = argparse.ArgumentParser(
         description="""
-        🧠 Brain MRI classification pipeline using region-based feature extraction.
+         Brain MRI classification pipeline using region-based feature extraction.
         The pipeline leverages MATLAB for extracting features from NIfTI images
         based on a parcellation atlas, and uses machine learning models in Python
         (Random Forest, SVM) to classify between Alzheimer (AD) and control (CN) subjects.
@@ -194,29 +197,66 @@ def parse_arguments():
 
 def main():
     """
-    Run the complete brain MRI classification pipeline.
+    Executes the full pipeline for brain MRI classification using region-based features.
 
-    This function orchestrates the entire workflow:
-    1. Resampling the brain atlas to match MRI resolution.
-    2. Extracting regional features using MATLAB.
-    3. Training and evaluating the selected classification model.
-    4. Saving the trained model using joblib.
+    This script supports two execution modes: training and inference.
 
-    Notes:
-    - User inputs and parameters are parsed from command-line arguments.
-    - Supports Random Forest with optional PCA or RFECV, and SVM classifiers.
-    - Logs progress and handles basic sanity checks.
+    Modes:
+    ------
+    1. Training mode (--train):
+       - Resamples the input brain atlas to the resolution of each subject's MRI.
+       - Extracts features from NIfTI images using a MATLAB script.
+       - Trains a classifier (Random Forest or SVM) using the extracted features.
+       - Saves the trained model to a specified path for later use.
+
+    2. Inference mode (--inference):
+       - Loads a pre-trained classifier model from disk.
+       - Extracts features from new subjects using the same MATLAB pipeline.
+       - Applies the loaded model to predict the class (e.g., Alzheimer's or control).
+       - Displays classification results and prediction probabilities in tabular format using `tabulate`.
+
+    Command-line arguments:
+    -----------------------
+    --train                  : Activates training mode.
+    --inference              : Activates inference mode.
+    --subjects_dir <path>    : Path to the folder containing subject NIfTI images.
+    --atlas_path <path>      : Path to the brain atlas in NIfTI format.
+    --clinical_data <path>   : Path to a CSV file containing clinical labels or metadata.
+    --model_path <path>      : Path to save the trained model (in training mode), or to load a model (in inference mode).
+    --classifier <str>       : Classifier type, either "rf" (Random Forest) or "svm" (Support Vector Machine). Default is "rf".
+    --resample               : If set, the atlas will be resampled to subject space.
+    --matlab_function <name> : Name of the MATLAB function to use for feature extraction.
+
+    Requirements:
+    -------------
+    - MATLAB must be installed and the MATLAB Engine API for Python must be properly configured.
+    - All subject NIfTI images must be preprocessed and compatible with the chosen atlas.
+    - For inference, ensure that the provided model path points to a valid `.joblib` file.
+
+    Output:
+    -------
+    - Trained classifier saved to disk (training mode).
+    - Tabulated predictions with class probabilities (inference mode).
+
+    Example usage:
+    --------------
+    Train a model:
+        python main.py --train --subjects_dir ./data/ --atlas_path ./atlas.nii.gz --clinical_data ./labels.csv --model_path ./model.joblib
+
+    Run inference:
+        python main.py --inference --subjects_dir ./new_subjects/ --atlas_path ./atlas.nii.gz --model_path ./model.joblib
     """
-    import joblib  # Imported here to limit changes to original structure
 
+    
     args = parse_arguments()
   
     # === Step 0: Classification only mode ===
     if args.use_trained_model:
-    
         logger.info("Using pre-trained model for classification.")
 
         nifti_paths = [p.strip() for p in args.nifti_image_path.split(",") if p.strip()]
+        results = []
+
         for image_path in nifti_paths:
             logger.info(f"Extracting features from: {image_path}")
             df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume = feature_extractor_independent_dataset(
@@ -225,15 +265,23 @@ def main():
                 args.atlas_txt,
                 args.matlab_path
             )
-            classification, _probability = classify_independent_dataset(df_mean_std, args.trained_model_path)
-            logger.success(f"Image '{image_path}' classified as: {classification}")
+            classification, probability = classify_independent_dataset(df_mean_std, args.trained_model_path)
+            results.append({
+                "Image": os.path.basename(image_path),
+                "Prediction": classification,
+                "Probability": f"{probability[0]:.2f}"
+            })
+
+        # Display results in a table
+        print("\nClassification Results:")
+        print(tabulate(results, headers="keys", tablefmt="fancy_grid"))
 
         logger.success("Classification completed.")
         return
     
     # === Step 1: Resample the atlas ===
     target_voxel = (1.5, 1.5, 1.5)
-    logger.info(f"📏 Resampling atlas to voxel size {target_voxel}...")
+    logger.info(f" Resampling atlas to voxel size {target_voxel}...")
     atlas_resampling(args.atlas_file, args.atlas_file_resized, target_voxel, order=0)
 
     # === Step 2: Start MATLAB engine for feature extraction ===
@@ -241,7 +289,7 @@ def main():
     eng = matlab.engine.start_matlab()
     eng.addpath(args.matlab_path, nargout=0)
 
-    logger.info("📊 Extracting features from NIfTI images using MATLAB...")
+    logger.info(" Extracting features from NIfTI images using MATLAB...")
     df_mean, df_std, df_volume, df_mean_std, df_mean_volume, df_std_volume, df_mean_std_volume, diagnostic_group_labels = feature_extractor(
         args.folder_path,
         args.atlas_file_resized,
@@ -251,15 +299,15 @@ def main():
     )
 
     eng.quit()
-    logger.success("✅ Feature extraction completed successfully.")
+    logger.success(" Feature extraction completed successfully.")
 
     # === Step 3: Sanity check ===
     if df_mean.shape[0] != diagnostic_group_labels.shape[0]:
-        logger.error("❌ Mismatch in number of subjects between features and metadata.")
+        logger.error(" Mismatch in number of subjects between features and metadata.")
         return
 
     # === Step 4: Classification ===
-    logger.info(f"🚀 Running classifier: {args.classifier}")
+    logger.info(f" Running classifier: {args.classifier}")
 
     model = None  # To store the trained model for later saving
 
@@ -285,10 +333,11 @@ def main():
         model = SVM_simple(df_mean_std, diagnostic_group_labels, ker=args.kernel)
 
     # === Step 5: Save the trained model ===
+
     if model is not None:
         model_filename = "trained_model.joblib"
         joblib.dump(model, model_filename)
-        logger.success(f"💾 Trained model saved to '{model_filename}'")
+        logger.success(f" Trained model saved to '{model_filename}'")
 
     # === Step 6: Classify the independent dataset ===
     # Ask user if they want to classify new images now
@@ -319,7 +368,7 @@ def main():
                 if not continue_classify:
                     break
 
-    logger.success("🎯 Classification pipeline completed successfully.")
+    logger.success(" Classification pipeline completed successfully.")
 
 
 if __name__ == "__main__":

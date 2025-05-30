@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(os.getcwd()).parent))
 # Import essential libraries for Machine Learning
 import numpy as np
 import graphviz
+import matplotlib.pyplot as plt
 
 # Add Graphviz path to system PATH for Python
 os.environ["PATH"] += os.pathsep + r"C:\Program Files\Graphviz\bin"
@@ -288,6 +289,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     X = df1.values
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values
     roi_names = np.array(df1.columns.values)
+    
 
     # Split data into training and test sets (10% test data)
     X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=0.1, random_state=7)
@@ -328,15 +330,33 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     # extract feature importance of selected features
     best_rf = rf_selected_features.best_estimator_
     importances = best_rf.feature_importances_
-    sorted_idx = np.argsort(importances)[::-1][:10]  # indices of top 10 ROIs
-    top10_ROIs = selected_ROIs[sorted_idx]
-    top10_importances = importances[sorted_idx]
+    sorted_idx = np.argsort(importances)[::-1][:8]  # indices of top 10 ROIs
+    top8_ROIs = selected_ROIs[sorted_idx]
+    top8_importances = importances[sorted_idx]
 
     # print the complete ranking of ROIs
-    print("\nRanking completo delle ROI (importanza):")
+    print("\nROIs complete ranking (importance):")
     ranking_ROIs = sorted(zip(selected_ROIs, importances), key=lambda x: x[1], reverse=True)
     for rank, (roi, importance) in enumerate(ranking_ROIs, 1):
-        print(f"{rank}. ROI: {roi}, Importanza: {importance:.4f}")
+        print(f"{rank}. ROI: {roi}, Importance: {importance:.4f}")
+
+    # --- PIE CHART IEEE STYLE FOR TOP 8 ROIs ---
+    plt.figure(figsize=(8, 8))
+    colors = plt.cm.tab20.colors  # IEEE-like color palette
+    patches, texts, autotexts = plt.pie(
+        top8_importances,
+        labels=top8_ROIs,
+        autopct='%1.1f%%',
+        startangle=140,
+        colors=colors[:8],
+        textprops={'fontsize': 3, 'weight': 'bold'},
+        radius=0.80,  # Adjust radius for better visibility
+    )
+    plt.title("Importance of the 8 best ROIs", fontsize=6, weight='bold')
+    plt.tight_layout()
+    #plt.legend(top8_ROIs, title="ROI", loc="center left", bbox_to_anchor=(1, 0.5), fontsize=12)
+    #plt.savefig("top8_ROI_piechart.png", dpi=300, bbox_inches='tight')
+    plt.show()
 
     # visualize best tree
     for i, tree in enumerate(best_rf.estimators_[:1]):
@@ -351,7 +371,14 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         graph = graphviz.Source(dot_data)
         graph.render(view= False) # Save the graph to a file without opening it
 
-    return rf_selected_features
+    # ✅ Wrap feature selector + final estimator into a Pipeline
+    pipeline_rfecv = Pipeline([
+        ("selector", feature_selector),
+        ("classifier", rf_selected_features.best_estimator_)
+    ])
+
+    return pipeline_rfecv
+    #return rf_selected_features
 
 
 def SVM_simple(df1, df2, ker: str):
@@ -403,21 +430,23 @@ def SVM_simple(df1, df2, ker: str):
         param_grid = {
                 'C': np.logspace(-3, 3, 10),
                 'kernel': [ker],
-                'class_weight': ['balanced', None]
+                'class_weight': ['balanced', None],
+                'probability': [True]
             }
     else:
         param_grid = {
                 'C': np.logspace(-3, 3, 10),
                 'gamma': np.logspace(-4, 2, 10),
                 'kernel': [ker],
-                'class_weight': ['balanced', None]
+                'class_weight': ['balanced', None],
+                'probability': [True]
             }
 
     X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1, random_state=6) # 10% test data
 
     # Create SVM classifier
     # The kernel is specified based on the input parameter
-    classifier_svm = svm.SVC(kernel=ker)
+    classifier_svm = svm.SVC(kernel=ker, probability=True, class_weight='balanced')
 
     grid_optimized = GridSearchCV(classifier_svm, param_grid, refit=True, scoring='roc_auc', cv=5)
 
