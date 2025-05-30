@@ -10,6 +10,7 @@ from sklearn.metrics import roc_curve, auc
 from keras.layers import MaxPooling3D, Conv3D, Flatten, Dense, BatchNormalization, Activation, Dropout
 from keras.optimizers import SGD
 from tensorflow.keras.regularizers import l2
+from tensorflow.keras.models import load_model
 
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from keras.models import Model, Sequential
@@ -24,16 +25,23 @@ logger = logging.getLogger(__name__)
 
 
 class MyCNNModel(tensorflow.keras.Model):
+
     """
+
     A lightweight 3D CNN model for binary classification.
 
+
     Attributes:
+
     -----------
+
     model : tensorflow.keras.Sequential
         The internal sequential model that defines the architecture.
 
     Methods:
+
     --------
+
     compile_and_fit:
         Compiles and trains the model on the provided datasets.
     accuracy_loss_plot:
@@ -48,11 +56,15 @@ class MyCNNModel(tensorflow.keras.Model):
     """
 
     def __init__(self, input_shape):
+
         """
+
         Initializes the CNN model with a predefined architecture.
 
         Parameters:
+
         ----------
+
         input_shape : tuple, optional
             The shape of the input data
 
@@ -87,10 +99,13 @@ class MyCNNModel(tensorflow.keras.Model):
 
 
     def call(self, inputs, training=False):
+
         """
+
         Forward pass for the model.
 
         Parameters:
+
         ----------
         inputs : tensor
             Input tensor for the forward pass.
@@ -98,6 +113,7 @@ class MyCNNModel(tensorflow.keras.Model):
             Whether the model is in training mode, by default False.
 
         Returns:
+
         -------
         tensor
             Output of the model.
@@ -106,10 +122,13 @@ class MyCNNModel(tensorflow.keras.Model):
         return self.model(inputs, training=training)
 
     def compile_and_fit(self, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
+
         """
+
         Compiles the model and trains it on the provided datasets.
 
         Parameters:
+
         ----------
 
         x_train, y_train : numpy.ndarray
@@ -129,7 +148,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Compile the model
         self.compile(
-            optimizer=SGD(learning_rate=0.001),
+            optimizer=SGD(learning_rate=0.01),
             loss=BinaryCrossentropy(),
             metrics=['accuracy']
         )
@@ -178,16 +197,18 @@ class MyCNNModel(tensorflow.keras.Model):
         self.validation_roc(x_val, y_val)
         self.test_roc(x_test, y_test)
 
-        # Save model weights
-        model_path = Path("model.h5")
-        self.save_weights(model_path)
-        logger.info("Model weights saved to %s", model_path)
+        # Salva il modello completo subito dopo il training
+        self.save_model("model_full.h5")
+
+        
 
     def accuracy_loss_plot(self, history):
+
         """
         Plots training and validation accuracy and loss curves.
 
         Parameters:
+
         ----------
         history : keras.callbacks.History
             Training history object returned by `fit`.
@@ -212,15 +233,26 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.legend(loc="upper right")
         plt.title("Training and Validation Loss")
 
+        # Prendi il percorso assoluto della cartella del file python in esecuzione
+        save_name="training_plot.png"
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        save_path = os.path.join(base_path, save_name)
+
+        plt.savefig(save_path)  # salva il grafico nella stessa cartella dello script
+        logger.info(f"Plot saved to {save_path}")
+
 
         plt.show()
         logger.info("Accuracy and loss plots displayed.")
 
     def validation_roc(self, x_val, y_val):
+
         """
+
         Evaluates the model using ROC on validation data.
 
         Parameters:
+
         ----------
         x_val, y_val : numpy.ndarray
             Validation data and labels.
@@ -262,11 +294,19 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.ylabel('True Positive Rate')
         plt.title('Validation ROC')
         plt.legend(loc="lower right")
+
+        # Salvataggio immagine nella stessa cartella dello script
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        save_path = os.path.join(base_path, 'validation_roc.png')
+        plt.savefig(save_path)
+
         plt.show()
         print("[DEBUG] validation_roc: plot mostrato")
 
     def test_roc(self, x_test, y_test):
+
         """
+
         Evaluates the model's performance on test data using ROC analysis.
 
         This method computes the ROC curve and its corresponding area under the curve (AUC)
@@ -274,6 +314,7 @@ class MyCNNModel(tensorflow.keras.Model):
         for accuracy and AUC based on the given confidence level.
 
         Parameters:
+
         ----------
 
         x_test : numpy.ndarray
@@ -318,51 +359,45 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.ylabel('True Positive Rate')
         plt.title('Test ROC')
         plt.legend(loc="lower right")
+
+        # salva immagine
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        save_path = os.path.join(base_path, 'test_roc.png')
+        plt.savefig(save_path)
+        print(f"[DEBUG] test_roc: plot salvato in {save_path}")
+
         plt.show()
-
-
-    def load(self, path, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
+        
+    def save_model(self, path="model_full.h5"):
         """
-        Loads pretrained weights and continues model training and evaluation.
-    
-        This method initializes the model with the required compilation parameters,
-        loads pretrained weights from a specified path, and resumes the training
-        process. It also evaluates the model performance on the provided datasets.
-    
+        Saves the entire model, including architecture, weights, and optimizer state, to a file.
+
         Parameters:
-        ----------
-        path : str
-            Path to the saved model weights.
-        x_train : numpy.ndarray
-            Training feature data.
-        y_train : numpy.ndarray
-            Training labels.
-        x_val : numpy.ndarray
-            Validation feature data.
-        y_val : numpy.ndarray
-            Validation labels.
-        x_test : numpy.ndarray
-            Test feature data.
-        y_test : numpy.ndarray
-            Test labels.
-        n_epochs : int
-            Number of epochs for continued training.
-        batchsize : int
-            Batch size for training.
-    
+        -----------
+        path : str, optional
+            The file path where the model will be saved. Default is "model_full.h5".
+
+        This allows you to later reload the model exactly as it was saved,
+        enabling easy deployment or further training.
         """
-        # Compile the model with initial parameters
-        logger.info("Compiling the model with initial parameters.")
-        self.compile(optimizer=SGD(learning_rate=0.01), loss=BCE(), metrics=['accuracy'])
-    
-        # Perform a single training step
-        logger.info("Performing a single training step to initialize model weights.")
-        self.train_on_batch(x_train, y_train)
-    
-        # Load pretrained weights from the specified path
-        logger.info(f"Loading pretrained weights from: {path}")
-        self.load_weights(path)
-    
-        # Continue training and evaluate the model on the provided datasets
-        logger.info("Resuming training and evaluating the model.")
-        self.compile_and_fit(x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize)
+        self.model.save(path)
+        logger.info(f"Model saved to {path}")
+
+
+    def load_model(self, path="model_full.h5"):
+        """
+        Loads a complete model (architecture + weights + optimizer state) from a file.
+
+        Parameters:
+        -----------
+        path : str, optional
+            The file path from which to load the model. Default is "model_full.h5".
+
+        This replaces the current model with the loaded one, ready for inference or training.
+        """
+        self.model = load_model(path)
+        logger.info(f"Model loaded from {path}")
+
+
+
+

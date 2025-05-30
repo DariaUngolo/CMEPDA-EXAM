@@ -21,17 +21,22 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def pad_images(images):
+
     """
 
     Pads a list of 3D images to the same shape by adding zero-padding.
 
     Parameters:
+
     -----------
+
     images : list of np.ndarray
         List of 3D numpy arrays with varying shapes.
 
     Returns:
+
     --------
+
     padded_images : np.ndarray
         4D numpy array where each 3D image is padded to the maximum shape.
     max_shape : tuple
@@ -57,19 +62,24 @@ def pad_images(images):
 
     logger.debug(f"All images padded to shape {max_shape}.")
 
-    return np.array(padded_images), max_shape
+    return np.array(padded_images)
 
 
 def random_rotate(volume):
+
     """
+
     Randomly rotates a 3D volume around the x, y, z axes.
 
     Parameters:
+
     -----------
+
     volume : np.ndarray
         3D volume (x, y, z).
 
     Returns:
+
     --------
 
     np.ndarray
@@ -86,10 +96,13 @@ def random_rotate(volume):
 
 
 def random_zoom_and_crop(volume, target_shape, zoom_range=(0.8, 1.2)):
+
     """
+
     Randomly zooms into a 3D volume and crops or pads it to a target shape.
 
     Parameters:
+
     -----------
 
     volume : np.ndarray
@@ -100,7 +113,9 @@ def random_zoom_and_crop(volume, target_shape, zoom_range=(0.8, 1.2)):
         Range of zoom factors (default is (0.8, 1.2)).
 
     Returns:
+
     --------
+
     np.ndarray
         Transformed volume with the target dimensions.
 
@@ -137,7 +152,6 @@ def augment_image_4d(volume_4d, target_shape):
     --------
     np.ndarray
         Immagine augmentata 4D (x, y, z, 1).
-        
     """
     volume = volume_4d[..., 0]  # Rimuovi la dimensione del canale
     volume = random_rotate(volume)
@@ -145,10 +159,13 @@ def augment_image_4d(volume_4d, target_shape):
     return np.expand_dims(volume, axis=-1)  # Ripristina il canale
 
 def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_per_image):
+
     """
+
     Generates augmented images while preserving the associated original labels.
 
     Parameters:
+
     -----------
     images : np.ndarray
         Batch of original images (shape: [num_images, x, y, z, 1]).
@@ -160,6 +177,7 @@ def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_pe
         Number of augmented images to generate for each original image.
 
     Returns:
+
     --------
     augmented_images : np.ndarray
         Batch of augmented images (num_augmented_images, x, y, z, 1).
@@ -181,12 +199,15 @@ def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_pe
 
 
 
-def preprocess_nifti_images(image_folder, atlas_path,metadata, roi_ids=(165, 166)):
+def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
+
     """
+
     Processes NIFTI images by extracting a Z range containing specified ROIs,
     removing black voxels, and padding images to uniform size.
 
     Parameters:
+
     -----------
     image_folder : str
         Path to the folder containing NIFTI images.
@@ -196,6 +217,7 @@ def preprocess_nifti_images(image_folder, atlas_path,metadata, roi_ids=(165, 166
         Tuple of ROI IDs to include when determining Z range (default is (165, 166)).
 
     Returns:
+
     --------
     images : np.ndarray
         4D numpy array of preprocessed and padded 3D images ready for CNN input.
@@ -214,9 +236,7 @@ def preprocess_nifti_images(image_folder, atlas_path,metadata, roi_ids=(165, 166
         z_indices.extend(np.unique(np.where(atlas_data == roi)[2]))
     z_min, z_max = min(z_indices), max(z_indices)
 
-    # Load metadata (adjust path as necessary)
-    metadata_csv = pd.read_csv(metadata,  sep='\t')
-    meta_data = pd.DataFrame(metadata_csv)
+
 
     preprocessed_images = []
 
@@ -243,22 +263,37 @@ def preprocess_nifti_images(image_folder, atlas_path,metadata, roi_ids=(165, 166
             preprocessed_images.append(cropped_data)
 
     # Pad all images to the maximum shape
-    images_padded, max_shape = pad_images(preprocessed_images)
+    images_padded = pad_images(preprocessed_images)
     images = np.array(images_padded, dtype='float64')
 
     images = images[..., np.newaxis]
 
+
+    return images
+
+def preprocessed_images_group(image_folder, atlas_path, metadata, roi_ids=(165, 166)):
+
+    # Get preprocessed images
+    images = preprocessed_images(image_folder, atlas_path, roi_ids)
+
+    # Load metadata (adjust path as necessary)
+    metadata_csv = pd.read_csv(metadata,  sep='\t')
+    meta_data = pd.DataFrame(metadata_csv)
+
     # Extract group labels from metadata (assumed to be in the second column)
     group = meta_data.iloc[:, 1].map({'AD': 1, 'Normal': 0}).astype('float64').to_numpy()
-
+    
     return images, group
 
 
 def normalize_images_uniformly(images, global_min=None, global_max=None, min_val=0.0, max_val=1.0):
+
     """
+
     Normalize an array of images using a uniform range for all images.
 
     Parameters:
+
     -----------
 
     images : np.ndarray
@@ -273,7 +308,9 @@ def normalize_images_uniformly(images, global_min=None, global_max=None, min_val
         Maximum value of the normalized range (default 1.0).
 
     Returns:
+
     --------
+
     np.ndarray
         Normalized images in the same 4D format.
     float, float
@@ -301,10 +338,13 @@ def normalize_images_uniformly(images, global_min=None, global_max=None, min_val
 
 
 def split_data(images, group):
+
     """
+
     Splits the dataset into training, validation, and test sets.
 
     Parameters:
+
     -----------
     images : np.ndarray
         Array of images (e.g., DTI images).
@@ -312,6 +352,7 @@ def split_data(images, group):
         Corresponding array of labels.
 
     Returns:
+
     --------
     x_train, y_train : np.ndarray
         Training images and labels.
@@ -333,4 +374,56 @@ def split_data(images, group):
 
     return x_train, y_train, x_val, y_val, x_test, y_test
 
+def adjust_image_shape(image, target_shape):
+    """
+    Adjust the 4D image array to match the target shape by cropping or padding.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        4D array of shape (N, X, Y, Z, 1) where N is batch size.
+    target_shape : tuple
+        Desired spatial shape (X, Y, Z).
+
+    Returns
+    -------
+    np.ndarray
+        Adjusted image array with shape (N, *target_shape, 1).
+    """
+    adjusted_images = []
+    for img in image:
+        # Remove channel dim temporarily
+        img_3d = img[..., 0]
+
+        # Crop if too large
+        crop_slices = []
+        for dim_idx in range(3):
+            current_size = img_3d.shape[dim_idx]
+            desired_size = target_shape[dim_idx]
+            if current_size > desired_size:
+                start = (current_size - desired_size) // 2
+                end = start + desired_size
+                crop_slices.append(slice(start, end))
+            else:
+                crop_slices.append(slice(0, current_size))
+
+        img_cropped = img_3d[crop_slices[0], crop_slices[1], crop_slices[2]]
+
+        # Pad if too small
+        pad_width = []
+        for dim_idx in range(3):
+            current_size = img_cropped.shape[dim_idx]
+            desired_size = target_shape[dim_idx]
+            total_pad = max(desired_size - current_size, 0)
+            pad_before = total_pad // 2
+            pad_after = total_pad - pad_before
+            pad_width.append((pad_before, pad_after))
+
+        img_padded = np.pad(img_cropped, pad_width, mode='constant', constant_values=0)
+
+        # Add channel dim back
+        img_final = img_padded[..., np.newaxis]
+        adjusted_images.append(img_final)
+
+    return np.array(adjusted_images, dtype='float64')
 
