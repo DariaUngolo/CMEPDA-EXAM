@@ -41,6 +41,7 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     Formula
     -------
     error ≈ z * sqrt(p * (1 - p) / n)
+    
     """
     z = norm.ppf((1 + confidence_level) / 2.0)
     logger.debug(f"Computing binomial error: z={z:.4f}, metric_value={metric_value:.4f}, n_samples={n_samples}")
@@ -73,6 +74,7 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     -------
     dict
         A dictionary containing the metric scores and their associated error estimates.
+        
     """
     logger.info("Evaluating model performance...")
 
