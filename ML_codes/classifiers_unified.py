@@ -371,7 +371,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         graph = graphviz.Source(dot_data)
         graph.render(view= False) # Save the graph to a file without opening it
 
-    # ✅ Wrap feature selector + final estimator into a Pipeline
+    # Wrap feature selector + final estimator into a Pipeline
     pipeline_rfecv = Pipeline([
         ("selector", feature_selector),
         ("classifier", rf_selected_features.best_estimator_)
