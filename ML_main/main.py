@@ -335,9 +335,19 @@ def main():
     # === Step 5: Save the trained model ===
 
     if model is not None:
-        model_filename = "trained_model.joblib"
-        joblib.dump(model, model_filename)
-        logger.success(f" Trained model saved to '{model_filename}'")
+        if args.classifier == "rf":
+            if use_pca:
+                model_filename = "trained_model_rf_pca.joblib"
+            elif use_rfe:
+                model_filename = "trained_model_rf_rfecv.joblib"
+            else:
+                model_filename = "trained_model_rf.joblib"
+        elif args.classifier == "svm":
+            model_filename = f"trained_model_svm_{args.kernel}.joblib"
+        else:
+            model_filename = "trained_model.joblib"
+    joblib.dump(model, model_filename)
+    logger.success(f" Trained model saved to '{model_filename}'")
 
     # === Step 6: Classify the independent dataset ===
     # Ask user if they want to classify new images now
