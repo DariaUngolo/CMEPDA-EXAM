@@ -16,3 +16,4 @@ joblib
 keras
 tensorflow
 scikit-image
+tabulate
