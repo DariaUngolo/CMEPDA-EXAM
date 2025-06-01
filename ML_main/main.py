@@ -7,7 +7,7 @@ import argparse
 from pathlib import Path
 import matlab.engine
 from loguru import logger
-import joblib  
+import joblib
 from tabulate import tabulate
 
 
@@ -247,9 +247,9 @@ def main():
         python main.py --inference --subjects_dir ./new_subjects/ --atlas_path ./atlas.nii.gz --model_path ./model.joblib
     """
 
-    
+
     args = parse_arguments()
-  
+
     # === Step 0: Classification only mode ===
     if args.use_trained_model:
         logger.info("Using pre-trained model for classification.")
@@ -269,7 +269,7 @@ def main():
             results.append({
                 "Image": os.path.basename(image_path),
                 "Prediction": classification,
-                "Probability": f"{probability[0]:.2f}"
+                "Probability": f"{probability:.2f}"
             })
 
         # Display results in a table
@@ -278,7 +278,7 @@ def main():
 
         logger.success("Classification completed.")
         return
-    
+
     # === Step 1: Resample the atlas ===
     target_voxel = (1.5, 1.5, 1.5)
     logger.info(f" Resampling atlas to voxel size {target_voxel}...")

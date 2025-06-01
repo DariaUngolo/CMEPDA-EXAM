@@ -7,7 +7,8 @@ import logging
 from CNN_class import MyCNNModel
 from utilities import preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape
 import nibabel as nib
-
+import tensorflow as tf
+from tensorflow.python.client import device_lib
 
 # Setup logging
 logging.basicConfig(
@@ -97,7 +98,7 @@ def parse_arguments():
     # === Model parameters ===
 
     parser.add_argument(
-        '--epochs', type=int, default=400,
+        '--epochs', type=int, default=300,
         help="Number of training epochs (default: %(default)s)."
     )
     parser.add_argument(
@@ -135,10 +136,21 @@ def main(args):
         Parsed command-line arguments.
 
     """
+    # Stampa i dispositivi rilevati
+    print("Dispositivi disponibili:")
+    print(device_lib.list_local_devices())
+
+    # Verifica se TensorFlow sta utilizzando una GPU
+    if tf.config.list_physical_devices('GPU'):
+        print("TensorFlow sta utilizzando la GPU.")
+    else:
+        print("TensorFlow non sta utilizzando la GPU.")
+
     roi_ids=(165,166)
 
     # === Step 0: Classification only mode ===
     if args.use_trained_model:
+        logger.info("Using pre-trained model for classification.")
 
         if not args.trained_model_path:
             logger.error("Devi specificare --trained_model_path se usi --use_trained_model")
@@ -147,9 +159,9 @@ def main(args):
             logger.error("Devi specificare --nifti_image_path per classificare nuove immagini")
             sys.exit(1)
 
-        trained_model = MyCNNModel()    
-        trained_model.load_model(args.trained_model_path)
-        model_shape = trained_model.input_shape 
+        trained_model = tf.keras.models.load_model(args.trained_model_path)
+        model_shape = (121,145,47,1) 
+        
 
             
         # Load NIfTI image
@@ -173,10 +185,7 @@ def main(args):
     images, labels = preprocessed_images_group(args.image_folder, args.atlas_path, args.metadata, tuple(roi_ids))
     logger.debug(f"Preprocessed image dimensions: {images.shape}")
     logger.debug(f"Preprocessed label dimensions: {labels.shape}")
-    # Print first few labels
-    logger.info(f"Sample labels: {labels[:10]}")  # Print the first 10 labels
-    logger.info(f"Sample labels: {labels[-10:]}")  # Print the last 10 labels
-
+    
 
 
     target_shape = images.shape[1:4]

@@ -74,24 +74,51 @@ class MyCNNModel(tensorflow.keras.Model):
         super(MyCNNModel, self).__init__()
 
         #Define the model architecture
+        #self.model = Sequential([
+        #    Input(shape=input_shape),
+
+            # MaxPooling before first Conv3D
+         #   MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
+
+         #   Conv3D(16, (3, 3, 3), activation='relu', padding='same'),
+            #BatchNormalization(),
+
+
+
+          #  Conv3D(32, (3, 3, 3), activation='relu', padding='same'),
+            #BatchNormalization(),
+
+          #  Flatten(),
+
+           # Dropout(0.2),
+           # Dense(64, activation='relu'),
+           # Dense(1, activation='sigmoid')
+       # ])
+
         self.model = Sequential([
             Input(shape=input_shape),
 
-            # MaxPooling before first Conv3D
+            # First Conv3D block with MaxPooling
+            Conv3D(16, (3, 3, 3), activation='relu', padding='same'),
+            BatchNormalization(),
             MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
 
-            Conv3D(16, (3, 3, 3), activation='relu', padding='same'),
-            #BatchNormalization(),
-
-
-
+            # Second Conv3D block
             Conv3D(32, (3, 3, 3), activation='relu', padding='same'),
-            #BatchNormalization(),
+            BatchNormalization(),
+            MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
 
+            # Third Conv3D block
+            Conv3D(64, (3, 3, 3), activation='relu', padding='same'),
+            BatchNormalization(),
+            MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
+
+            # Flatten and Fully Connected layers
             Flatten(),
-
-            Dropout(0.2),
-            Dense(64, activation='relu'),
+            Dropout(0.4),  # Increased dropout for better regularization
+            Dense(128, activation='relu'),
+            BatchNormalization(),
+            Dropout(0.4),
             Dense(1, activation='sigmoid')
         ])
 
@@ -148,7 +175,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Compile the model
         self.compile(
-            optimizer=SGD(learning_rate=0.01),
+            optimizer=SGD(learning_rate=0.001),
             loss=BinaryCrossentropy(),
             metrics=['accuracy']
         )
