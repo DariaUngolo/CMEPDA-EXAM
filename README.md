@@ -102,8 +102,6 @@ The pipeline uses the `loguru` package for structured and user-friendly logging.
 
 This section lists all the software and libraries required to run the CMEPDA-EXAM pipeline smoothly.
 
----
-
 ### 🐍 Python Environment
 
 - **Python version:** 3.9 (recommended for compatibility with all packages)
@@ -161,7 +159,6 @@ The **MATLAB Engine API for Python** enables calling MATLAB functions directly f
 
 The `main.py` script supports **two execution modes**: Training mode and Inference mode.
 
----
 
 ### 1. Training Mode
 
@@ -240,8 +237,6 @@ python main.py \
 
 This project is structured around a modular **4-step pipeline**, combining feature extraction from brain MRI images (via MATLAB) and classification (via Python) for Alzheimer's Disease detection.
 
----
-
 ### 1. 🧪 Feature Extraction (via MATLAB)
 
 The core of the feature extraction process is implemented in MATLAB using the script `feature_extractor.m`. This script operates on brain images in **NIfTI format** (`.nii`, `.nii.gz`) and requires a compatible brain atlas that partitions the brain into **Regions of Interest (ROIs)**.
@@ -272,7 +267,6 @@ Supported classifiers:
 - Supports custom kernel selection (e.g., `--kernel rbf` or `--kernel linear`).
 - Works directly with the full feature set.
 
----
 
 ### 📊 3. Performance Metrics
 
@@ -344,7 +338,7 @@ After the script completes execution, the following outputs are generated:
 
 
 
-## Documentation
+## 📄 Documentation
 INSERIRE LINK DOCUMENTAZIONE
 
 --- 
