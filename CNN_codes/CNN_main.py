@@ -8,6 +8,20 @@ from CNN_class import MyCNNModel
 from utilities import preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape
 import nibabel as nib
 
+import tensorflow as tf
+
+# Enable verbose logging to see where ops run (GPU/CPU)
+tf.debugging.set_log_device_placement(True)
+
+# Check and log GPU availability
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    print(f"[INFO] {len(gpus)} GPU(s) detected:")
+    for gpu in gpus:
+        print(f"    -> {gpu}")
+else:
+    print("[WARNING] No GPU detected. Training will use CPU.")
+
 
 # Setup logging
 logging.basicConfig(
@@ -206,8 +220,14 @@ def main(args):
 
     # Model creation
     logger.info(f"Creating the model with input shape: {tuple(input_shape)}.")
+    # Optional: Force GPU usage explicitly (comment this out if TF handles it automatically)
+    with tf.device('/GPU:0'):
     model = MyCNNModel(tuple(input_shape))
-    logger.info("Model created successfully.")
+    logger.info("Model assigned to /GPU:0")
+
+    # Otherwise, just instantiate normally and log device info
+   #model = MyCNNModel(tuple(input_shape))
+   #logger.info("Model created successfully.")
 
     # Training
     logger.info("Starting model training.")
