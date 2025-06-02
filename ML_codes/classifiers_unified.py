@@ -41,7 +41,6 @@ param_dist = {
 
 
 def RFPipeline_noPCA(df1, df2, n_iter, cv):
-
     """
 
     Train a Random Forest model pipeline without PCA.
@@ -204,9 +203,8 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     """
 
 def RFPipeline_PCA(df1, df2, n_iter, cv):
-    
     """
-
+    
     Train a Random Forest model pipeline with PCA.
     
     This function incorporates Principal Component Analysis (PCA) for dimensionality reduction 
@@ -241,7 +239,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
-
+    
     """
 
 
@@ -338,9 +336,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     return pipeline_random_forest_PCA
     
 
-def RFPipeline_RFECV(df1, df2, n_iter, cv):
-
-    
+def RFPipeline_RFECV(df1, df2, n_iter, cv):  
     """
 
     Train a Random Forest model with recursive feature elimination and hyperparameter tuning.
@@ -531,8 +527,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 
 
 
-def SVM_simple(df1, df2, ker: str):
-    
+def SVM_simple(df1, df2, ker: str):    
     """
 
     Train an SVM model pipeline with hyperparameter optimization.
