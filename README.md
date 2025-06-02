@@ -158,6 +158,8 @@ The **MATLAB Engine API for Python** enables calling MATLAB functions directly f
 
 ## 🚀 How to Run
 
+> 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
+
 The `main.py` script supports **two execution modes**: Training mode and Inference mode.
 
 
@@ -335,6 +337,29 @@ After the script completes execution, the following outputs are generated:
 
 - **💾 Trained Model Persistence**
 The final classifier — including any dimensionality reduction steps (e.g., PCA or RFECV) — is serialized and saved in a .joblib file. Among all models trained during cross-validation, the one corresponding to the **median AUC** is selected and saved to ensure robust statistical performance. This file can later be reused for inference without repeating the entire training pipeline.
+
+- **🧠 Prediction Output**
+
+When applying a trained model to an independent test image (e.g., from an external dataset), the pipeline returns a **prediction table** with the following information for each subject:
+
+- **`Label`**: The predicted class, where:
+  - `0` indicates a healthy subject (control),
+  - `1` indicates a subject classified as having Alzheimer’s disease.
+
+- **`Probability`**: The confidence score (a float between 0 and 1) associated with the prediction. This represents the model's estimated probability that the predicted label is correct.
+
+The output allows for both binary classification and an assessment of prediction confidence, which can be used for thresholding or uncertainty-based analysis.
+
+
+| Subject ID | Label | Probability |
+|------------|-------|-------------|
+| sub-001    | 1     | 0.87        |
+
+
+- In this example:
+  - `sub-001` is predicted as having Alzheimer’s disease with high confidence.
+
+
 ---
 
 
