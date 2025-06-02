@@ -7,6 +7,35 @@ This project focuses on the development and implementation of a **binary classif
 The available data includes **3D brain MRI images in NIfTI format**, alongside **two different brain atlases** used to parcellate the brain into anatomically meaningful regions known as **Regions of Interest (ROIs)**. These atlases segment the brain into **56** and **246 ROIs**, respectively, providing different levels of spatial resolution.  
 Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the names of all ROIs along with their corresponding integer labels. This table is essential for identifying and interpreting each brain region during feature extraction and analysis.
 
+## 📂 Repository Tree
+
+```text
+.
+├── data/
+│   ├── test_subject_1/
+│   │   └── subject1.nii.gz
+│   ├── test_subject_2/
+│   │   └── subject2.nii.gz
+│   ├── lpba40_atlas.nii.gz
+│   ├── BN_atlas.nii.gz
+│   ├── lpba40_LUT.txt
+│   ├── BN_LUT.txt
+│   └── metadata.csv
+├── docs/
+│   └── ...documentation files...
+├── tests/
+│   └── ...unit tests...
+├── ML_codes/
+│   └── ...machine learning modules...
+├── CNN_codes/
+│   └── ...deep learning modules...
+├── ML_main/
+│   └── main.py  # Entry point for the ML pipeline
+├── CNN_main/
+│   └── main.py  # Entry point for the CNN pipeline
+└── README.md
+```
+
 ### Feature Extraction and Pipeline Overview
 
 Feature extraction is performed using **MATLAB**, which processes the MRI scans and atlas segmentations to compute descriptive statistics—such as mean intensity, standard deviation, and region volume—for each ROI. These features form the input data for the classification pipeline implemented in **Python**.
