@@ -1,9 +1,72 @@
+
 # 🧠 CMEPDA-EXAM
 
 **Brain MRI Classification Pipeline for Alzheimer’s Disease Detection**
 
-This repository implements an automatic pipeline for classifying brain MRI images (NIfTI format) between subjects with **Alzheimer’s Disease (AD)** and **healthy controls (CTRL)**. Feature extraction is performed in MATLAB, while classification is done in Python using various machine learning techniques.
+This project focuses on the development and implementation of a **binary classifier** aimed at distinguishing between subjects diagnosed with **Alzheimer’s Disease (AD)** and **healthy control subjects (CTRL)**. The dataset consists of brain MRI scans from a total of **333 subjects**, including **144 patients with AD** and **189 healthy controls**.
 
+The available data includes **3D brain MRI images in NIfTI format**, alongside **two different brain atlases** used to parcellate the brain into anatomically meaningful regions known as **Regions of Interest (ROIs)**. These atlases segment the brain into **56** and **246 ROIs**, respectively, providing different levels of spatial resolution.
+
+### Feature Extraction and Pipeline Overview
+
+Feature extraction is performed using **MATLAB**, which processes the MRI scans and atlas segmentations to compute descriptive statistics—such as mean intensity, standard deviation, and region volume—for each ROI. These features form the input data for the classification pipeline implemented in **Python**.
+
+### Classification Approaches
+
+The binary classification task is tackled using two complementary approaches:
+
+1. **Classical Machine Learning**, including:
+   - **Random Forest (RF)** classifier, with three variants:
+     - Standard Random Forest
+     - Random Forest combined with **Principal Component Analysis (PCA)** for dimensionality reduction
+     - Random Forest with **Recursive Feature Elimination (RFE)** for automated feature selection
+   - **Support Vector Machine (SVM)** with customizable kernels (e.g., linear, RBF)
+
+2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes.
+
+### Evaluation Methodology
+
+For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are averaged across runs and folds, and include:
+
+- Accuracy
+- Precision
+- Recall
+- F-1 score
+- Area Under the ROC Curve (AUC)
+
+Results are visualized through:
+
+- **ROC curves** summarizing classifier discrimination ability
+- **Bar charts** illustrating mean performance metrics along with their confidence intervals
+
+In the case of the **RFE-based Random Forest**, an additional **pie chart** is generated to display the **top 8 most relevant ROIs** contributing to the classification decision, along with their relative feature importances.
+
+### Advanced ROI-based Analysis
+
+The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
+
+[CONTINUARE CON LA CNN]
+
+### Execution Modes: Training vs. Inference
+
+The user can choose to run the pipeline in either **training mode** or **inference mode**, depending on the task:
+
+**Training Mode**
+
+- Executes the full pipeline described above:
+  - Feature extraction (via MATLAB)
+  - Model training using the selected classifier and parameters
+  - Performance evaluation with cross-validation and plotting of results
+- At the end of training, the entire trained pipeline (including preprocessing and classifier) is saved as a `.joblib` file.
+- After training completes, the user is prompted whether they want to classify **single MRI images** extracted from independent datasets, using the newly trained model.
+
+**Inference Mode**
+
+- Requires the user to provide the path to a **pre-trained model file** (`.joblib`) saved in a previous run.
+- The pipeline loads the saved model and uses it directly to classify **new individual MRI images** without retraining.
+- This mode is optimized for applying the classifier on unseen data efficiently.
+
+---
 ---
 
 ## ⚙️ Requirements
