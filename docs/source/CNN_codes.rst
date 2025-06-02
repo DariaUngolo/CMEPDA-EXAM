@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 CNN\_codes 
 =============
 
@@ -32,38 +32,3 @@ CNN\_codes.utilities
    :undoc-members:
    :show-inheritance:
 
-=======
-CNN\_codes 
-=============
-
-.. toctree::
-   :maxdepth: 4
-   :caption: Modules
-
-CNN\_codes.CNN\_main
-------------------------------------------
-
-.. automodule:: CNN_codes.CNN_main
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-CNN\_codes.CNN\_class
-------------------------------------------
-
-.. automodule:: CNN_codes.CNN_class
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-
-CNN\_codes.utilities
------------------------------------------
-
-.. automodule:: CNN_codes.utilities
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
->>>>>>> ea9c535a2914f47ec5290a3f96be4d3f0f412a5d
