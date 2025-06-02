@@ -1,11 +1,53 @@
+# 🧠 CMEPDA-EXAM: Scalable MRI-Based Classification of Alzheimer’s Disease with Classical and Deep Learning
 
-# 🧠 CMEPDA-EXAM
+## 📚 Table of Contents
+
+- [🧠 Project Title: CMEPDA-EXAM](#-project-title-cmepda-exam)
+- [🔎 Project Overview](#-project-overview)
+- [🗂️ Project Structure](#️-project-structure)
+- [🧪 Feature Extraction and Pipeline](#-feature-extraction-and-pipeline)
+  - [💡 Required Input Data](#-required-input-data)
+  - [🧰 ROI Extraction with MATLAB](#-roi-extraction-with-matlab)
+  - [📊 Feature Aggregation](#-feature-aggregation)
+- [🧠 Classification Models](#-classification-models)
+  - [🌲 Random Forest Pipelines](#-random-forest-pipelines)
+  - [📐 Feature Reduction (PCA & RFECV)](#-feature-reduction-pca--rfecv)
+  - [🧮 SVM with GridSearchCV](#-svm-with-gridsearchcv)
+- [📊 Evaluation Methodology](#-evaluation-methodology)
+  - [📈 Metrics Used](#-metrics-used)
+  - [📉 Visualizations and Plots](#-visualizations-and-plots)
+  - [📌 Confidence Interval Estimation](#-confidence-interval-estimation)
+- [🧠 Deep Learning Approach (CNN)](#-deep-learning-approach-cnn)
+  - [🧼 Preprocessing 3D MRI Data](#-preprocessing-3d-mri-data)
+  - [🔍 CNN Architecture Overview](#-cnn-architecture-overview)
+  - [🎯 Training and Evaluation](#-training-and-evaluation)
+- [🚀 Execution Modes](#-execution-modes)
+  - [🎓 Training Mode](#-training-mode)
+  - [🧪 Inference Mode](#-inference-mode)
+- [🧪 Unit Testing](#-unit-testing)
+  - [🧬 Available Tests](#-available-tests)
+  - [🧪 How to Run Tests](#-how-to-run-tests)
+- [📜 Logging and Debugging](#-logging-and-debugging)
+- [🧩 Configuration and CLI Usage](#-configuration-and-cli-usage)
+  - [📥 Input Arguments](#-input-arguments)
+  - [📤 Output Files and Logs](#-output-files-and-logs)
+- [⚙️ Requirements](#️-requirements)
+  - [📦 Python Dependencies](#-python-dependencies)
+  - [🧠 MATLAB Engine Setup](#-matlab-engine-setup)
+- [🧪 How to Run the Project](#-how-to-run-the-project)
+  - [▶️ Running the Main Script](#-running-the-main-script)
+  - [🧪 Example Commands](#-example-commands)
+- [🧭 Future Work](#-future-work)
+- [🤝 Contributions](#-contributions)
+- [📄 License](#-license)
+
 
 **Brain MRI Classification Pipeline for Alzheimer’s Disease Detection**
 
 This project focuses on the development and implementation of a **binary classifier** aimed at distinguishing between subjects diagnosed with **Alzheimer’s Disease (AD)** and **healthy control subjects (CTRL)**. The dataset consists of brain MRI scans from a total of **333 subjects**, including **144 patients with AD** and **189 healthy controls**.
 
-The available data includes **3D brain MRI images in NIfTI format**, alongside **two different brain atlases** used to parcellate the brain into anatomically meaningful regions known as **Regions of Interest (ROIs)**. These atlases segment the brain into **56** and **246 ROIs**, respectively, providing different levels of spatial resolution.
+The available data includes **3D brain MRI images in NIfTI format**, alongside **two different brain atlases** used to parcellate the brain into anatomically meaningful regions known as **Regions of Interest (ROIs)**. These atlases segment the brain into **56** and **246 ROIs**, respectively, providing different levels of spatial resolution.  
+Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the names of all ROIs along with their corresponding integer labels. This table is essential for identifying and interpreting each brain region during feature extraction and analysis.
 
 ### Feature Extraction and Pipeline Overview
 
@@ -26,17 +68,18 @@ The binary classification task is tackled using two complementary approaches:
      - Random Forest with **Recursive Feature Elimination (RFE)** for automated feature selection
    - **Support Vector Machine (SVM)** with customizable kernels (e.g., linear, RBF)
 
-2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes.
+2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes. [ESPANDERE]
 
 ### Evaluation Methodology
 
 For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are averaged across runs and folds, and include:
 
-- Accuracy
-- Precision
-- Recall
-- F-1 score
-- Area Under the ROC Curve (AUC)
+- *Accuracy*
+- *Precision*
+- *Recall*
+- *F1 score*
+- *Sensitivity*
+- *Area Under the ROC Curve (AUC)*
 
 Results are visualized through:
 
@@ -253,7 +296,7 @@ For each subject and for each ROI defined in the atlas, the script computes the 
 - **Standard Deviation**: variability of the intensity values within the region.
 - **Region Volume**: number of voxels (i.e., size) comprising the ROI.
 
-- ⚠️ Mean and Standard Deviation are set as "default figures of merit"
+- ⚠️ Mean and Standard Deviation are set as "default figures of merit" but one can switch to every other possible combination according to their preferences
 
 ### 2. 🤖 Classification (via Python)
 
@@ -306,20 +349,21 @@ The pipeline provides a comprehensive evaluation of the classification model usi
   TN / (TN + FP)
   
 
-- **AUC (Area Under the ROC Curve)**  
-  Represents the model's ability to distinguish between classes across all possible thresholds. A higher AUC indicates a better-performing classifier.
+- **AUC (Area Under the ROC Curve)**
+The AUC measures the probability that the classifier will rank a randomly chosen positive instance higher than a randomly chosen negative one. It summarizes the model’s ability to distinguish between classes across all classification thresholds. An AUC of 0.5 indicates no discriminative power (equivalent to random guessing), while an AUC of 1.0 indicates perfect discrimination. A higher AUC thus reflects a more effective and statistically robust classifier, especially in imbalanced classification tasks.
 
-- **Confidence Intervals**  
-  Each metric is reported along with a 95% confidence interval:
-  
-  - **Binomial-based intervals** for accuracy, precision, recall, and specificity.
-  - **Bootstrap-based intervals** for more complex metrics such as AUC and F1 score.
+- **Confidence Intervals**
+Each performance metric is reported along with a 95% confidence interval to provide a measure of statistical reliability and variability:
 
-These intervals are computed over multiple repetitions of cross-validation and help quantify the uncertainty of the model’s performance.
+  - **Binomial-based intervals** are used for metrics derived from count-based proportions (e.g., accuracy, precision, recall, specificity). These intervals are computed assuming a binomial distribution, and reflect the uncertainty due to the finite sample size.
+
+  - **Bootstrap-based intervals** are applied to metrics that are not simple proportions—such as AUC and F1 score—by repeatedly resampling the data with replacement and recalculating the metric. The resulting distribution allows for a non-parametric estimation of the confidence interval, making it more flexible and robust when analytical solutions are not available.
+
+These intervals help assess the stability and generalizability of the model's performance, rather than relying solely on point estimates.
 
 ---
 
-### 📦 4. Output Artifacts
+### 📦 4. Outputs
 
 After the script completes execution, the following outputs are generated:
 
@@ -338,9 +382,8 @@ After the script completes execution, the following outputs are generated:
      (Only available if using Random Forest with RFECV)  
      Visualizes the most relevant features selected by the Recursive Feature Elimination process, ranked by importance.
 
-- **💾 Trained Model Persistence**  
-  The final classifier, including any dimensionality reduction steps (e.g., PCA or RFECV), is serialized and saved in a `.joblib` file. This file can later be reused for inference without repeating the entire training pipeline.
-
+- **💾 Trained Model Persistence**
+The final classifier — including any dimensionality reduction steps (e.g., PCA or RFECV) — is serialized and saved in a .joblib file. Among all models trained during cross-validation, the one corresponding to the **median AUC** is selected and saved to ensure robust statistical performance. This file can later be reused for inference without repeating the entire training pipeline.
 ---
 
 
@@ -390,8 +433,10 @@ This project integrates insights, tools, and techniques from both the neuroimagi
 
 ### 🧠 Neuroimaging and Brain Atlases
 
-1. Glasser, M. F., et al. (2016). *A multi-modal parcellation of human cerebral cortex*. **Nature**, 536(7615), 171–178.  
-   [https://doi.org/10.1038/nature18933](https://doi.org/10.1038/nature18933)
+1. Retico, Alessandra, et al. (2015). *Predictive Models Based on Support Vector Machines:
+Whole-Brain versus Regional Analysis of Structural MRI
+in the Alzheimer’s Disease*. **J Neuroimaging**, 25:552-563.  
+   [DOI: 10.1111/jon.12163]
 
 2. Tzourio-Mazoyer, N., et al. (2002). *Automated anatomical labeling of activations in SPM using a macroscopic anatomical parcellation of the MNI MRI single-subject brain*. **NeuroImage**, 15(1), 273–289.  
    [https://doi.org/10.1006/nimg.2001.0978](https://doi.org/10.1006/nimg.2001.0978)
