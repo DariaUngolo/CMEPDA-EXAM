@@ -47,6 +47,65 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     return z * np.sqrt((metric_value * (1 - metric_value)) / n_samples)
 
 
+
+def roc_auc(y_true, y_proba, confidence_level=0.683):
+
+    # Compute ROC curve and AUC
+    fpr, tpr, _ = roc_curve(y_true, y_proba, pos_label=1)
+    roc_auc = auc(fpr, tpr)
+    logger.debug(f"ROC AUC: {roc_auc:.4f}")
+
+    # Estimate AUC error using Hanley & McNeil method
+    n1 = np.sum(y_true == 1)
+    n0 = np.sum(y_true == 0)
+    q1 = roc_auc / (2 - roc_auc)
+    q2 = 2 * roc_auc**2 / (1 + roc_auc)
+    z = norm.ppf((1 + confidence_level) / 2.0)
+    auc_err = z * np.sqrt(
+        (roc_auc * (1 - roc_auc) +
+         (n1 - 1) * (q1 - roc_auc ** 2) +
+         (n0 - 1) * (q2 - roc_auc ** 2)) / (n1 * n0)
+    )
+    logger.debug(f"AUC error estimated: ±{auc_err:.4f}")
+
+    return fpr, tpr, roc_auc, auc_err
+
+
+def plot_roc(fpr, tpr, roc_auc, auc_err):
+    # === PLOTS ===
+
+    # Configure matplotlib for IEEE-style plots
+    matplotlib.rcParams.update({
+        'font.size': 8,
+        'font.family': 'serif',
+        'axes.labelsize': 6,
+        'axes.titlesize': 7,
+        'legend.fontsize': 6,
+        'xtick.labelsize': 5,
+        'ytick.labelsize': 5,
+        'axes.grid': True,
+        'grid.alpha': 0.3,
+        'grid.linestyle': '--',
+        'lines.linewidth': 1.3,
+        'figure.dpi': 600
+    })
+    sns.set_palette("colorblind")
+
+    # Plot ROC curve
+    logger.info("Generating ROC curve plot...")
+    fig, ax = plt.subplots(figsize=(2.5, 2.0))
+    ax.plot(fpr, tpr, label=f'AUC = {roc_auc:.2f} ± {auc_err:.2f}', color='tab:blue')
+    ax.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.8)
+    ax.set_xlabel('False Positive Rate', fontsize=4, fontweight='semibold', labelpad=2)
+    ax.set_ylabel('True Positive Rate', fontsize=4, fontweight='semibold')
+    ax.set_title('ROC Curve', pad=4, fontsize=5, fontweight='bold')
+    ax.legend(loc='lower right', frameon=False, fontsize=5)
+    ax.tick_params(axis='both', labelsize=3.8)
+    sns.despine()
+    plt.tight_layout()
+    plt.show()
+
+
 def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     """
     Evaluate the performance of a classification model using various metrics.
@@ -102,55 +161,9 @@ def evaluate_model_performance(y_true, y_pred, y_proba, confidence_level=0.683):
     spec_err = compute_binomial_error(specificity, n, confidence_level)
 
     # Compute ROC curve and AUC
-    fpr, tpr, _ = roc_curve(y_true, y_proba, pos_label=1)
-    roc_auc = auc(fpr, tpr)
-    logger.debug(f"ROC AUC: {roc_auc:.4f}")
+    fpr, tpr, roc_auc, auc_err = roc_auc(y_true, y_proba)
+    #plot_roc(fpr, tpr, roc_auc, auc_err)
 
-    # Estimate AUC error using Hanley & McNeil method
-    n1 = np.sum(y_true == 1)
-    n0 = np.sum(y_true == 0)
-    q1 = roc_auc / (2 - roc_auc)
-    q2 = 2 * roc_auc**2 / (1 + roc_auc)
-    z = norm.ppf((1 + confidence_level) / 2.0)
-    auc_err = z * np.sqrt(
-        (roc_auc * (1 - roc_auc) +
-         (n1 - 1) * (q1 - roc_auc ** 2) +
-         (n0 - 1) * (q2 - roc_auc ** 2)) / (n1 * n0)
-    )
-    logger.debug(f"AUC error estimated: ±{auc_err:.4f}")
-
-    # === PLOTS ===
-
-    # Configure matplotlib for IEEE-style plots
-    matplotlib.rcParams.update({
-        'font.size': 8,
-        'font.family': 'serif',
-        'axes.labelsize': 6,
-        'axes.titlesize': 7,
-        'legend.fontsize': 6,
-        'xtick.labelsize': 5,
-        'ytick.labelsize': 5,
-        'axes.grid': True,
-        'grid.alpha': 0.3,
-        'grid.linestyle': '--',
-        'lines.linewidth': 1.3,
-        'figure.dpi': 600
-    })
-    sns.set_palette("colorblind")
-
-    # Plot ROC curve
-    logger.info("Generating ROC curve plot...")
-    fig, ax = plt.subplots(figsize=(2.5, 2.0))
-    ax.plot(fpr, tpr, label=f'AUC = {roc_auc:.2f} ± {auc_err:.2f}', color='tab:blue')
-    ax.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.8)
-    ax.set_xlabel('False Positive Rate', fontsize=4, fontweight='semibold', labelpad=2)
-    ax.set_ylabel('True Positive Rate', fontsize=4, fontweight='semibold')
-    ax.set_title('ROC Curve', pad=4, fontsize=5, fontweight='bold')
-    ax.legend(loc='lower right', frameon=False, fontsize=5)
-    ax.tick_params(axis='both', labelsize=3.8)
-    sns.despine()
-    plt.tight_layout()
-    plt.show()
 
     # Plot bar chart with error bars for each metric
     logger.info("Generating metrics bar plot...")

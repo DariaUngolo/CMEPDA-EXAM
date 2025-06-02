@@ -4,6 +4,7 @@ import os
 
 # Add the parent directory of the current working directory to the system path.
 sys.path.insert(0, str(Path(os.getcwd()).parent))
+import random 
 
 
 # Import essential libraries for Machine Learning
@@ -24,7 +25,7 @@ from sklearn.model_selection import RandomizedSearchCV, GridSearchCV, train_test
 from sklearn.tree import export_graphviz
 from sklearn.feature_selection import RFECV
 
-from ML_codes.performance_scores import compute_binomial_error, evaluate_model_performance # Importing a custom module for performance evaluation
+from ML_codes.performance_scores import compute_binomial_error, evaluate_model_performance, plot_roc, roc_auc  # Importing a custom module for performance evaluation
 
 from ML_codes.feature_extractor import feature_extractor
  # Importing a custom module to interact with MATLAB Engine
@@ -40,7 +41,6 @@ param_dist = {
 
 
 def RFPipeline_noPCA(df1, df2, n_iter, cv):
-
     """
 
     Train a Random Forest model pipeline without PCA.
@@ -77,6 +77,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     References
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+    
 
     """
 
@@ -188,6 +189,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+    
 
     """
 
@@ -281,6 +283,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+    
 
     """
 
@@ -415,6 +418,7 @@ def SVM_simple(df1, df2, ker: str):
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
     
+    
     """
 
     # Extract feature and target data as NumPy arrays
@@ -441,23 +445,63 @@ def SVM_simple(df1, df2, ker: str):
                 'class_weight': ['balanced', None],
                 'probability': [True]
             }
+            
+    results = []
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100) 
 
-    X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1, random_state=6) # 10% test data
-
-    # Create SVM classifier
-    # The kernel is specified based on the input parameter
-    classifier_svm = svm.SVC(kernel=ker, probability=True, class_weight='balanced')
-
-    grid_optimized = GridSearchCV(classifier_svm, param_grid, refit=True, scoring='roc_auc', cv=5)
-
-    # fitting the model for grid search
-    grid_optimized.fit(X_tr, y_tr)
-
-    y_pred = grid_optimized.predict(X_tst)
-    y_prob = grid_optimized.decision_function(X_tst)
-
-    # Compute performance scores based on predictions
-    metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
+    for _ in range(10):
+        # Genera un random state casuale
+        random_state = random.randint(0, 10000)
+    
+        X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1, random_state=random_state) # 10% test data
+    
+        # Create SVM classifier
+        # The kernel is specified based on the input parameter
+        classifier_svm = svm.SVC(kernel=ker, probability=True, class_weight='balanced')
+    
+        grid_optimized = GridSearchCV(classifier_svm, param_grid, refit=True, scoring='roc_auc', cv=20)
+    
+        # fitting the model for grid search
+        grid_optimized.fit(X_tr, y_tr)
+    
+        y_pred = grid_optimized.predict(X_tst)
+        y_prob = grid_optimized.decision_function(X_tst)
+    
+        # Compute performance scores based on predictions
+        metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
+        
+        # Aggiungi il risultato alla lista
+        results.append(metrics_scores)
+        
+        # Calcola ROC e AUC con la tua funzione
+        fpr, tpr, roc_auc_value, auc_err = roc_auc(y_tst, y_prob)
+    
+        # Interpola TPR per il vettore comune mean_fpr
+        interp_tpr = np.interp(mean_fpr, fpr, tpr)
+        interp_tpr[0] = 0.0  # ROC inizia sempre da 0
+        tprs.append(interp_tpr)
+        aucs.append(roc_auc_value)
+    
+    # Calcola media e deviazione standard
+    mean_tpr = np.mean(tprs, axis=0)
+    mean_tpr[-1] = 1.0
+    mean_auc = np.mean(aucs)
+    std_auc = np.std(aucs)
+    
+    # Calcola errore AUC medio (puoi usare std_auc o stimarlo con la tua funzione)
+    z = norm.ppf((1 + 0.683) / 2.0)
+    mean_auc_err = z * std_auc  # errore stimato dalla deviazione standard
+    
+    # Usa la tua funzione plot_roc per mostrare la ROC media
+    plot_roc(mean_fpr, mean_tpr, mean_auc, mean_auc_err)
+    
+    average_performance = {metric: np.mean([result[metric] for result in results]) for metric in results[0].keys()}
+    
+    print("\nAverage Performance over 10 iterations:")
+    for metric, value in average_performance.items():
+        print(f"{metric}: {value:.4f}")
 
     return grid_optimized
 
