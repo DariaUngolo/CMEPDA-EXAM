@@ -395,7 +395,7 @@ Follow these steps to propose your contribution:
 4. **Commit your changes with a clear and concise message:**
    ```bash
    git commit -am "Add feature: [short description]"
-  ```
+   ```
 5. **Push to your fork:**
     ```bash
       git push origin your-feature-name
