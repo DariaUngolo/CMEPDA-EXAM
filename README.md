@@ -135,7 +135,6 @@ This section lists all the software and libraries required to run the CMEPDA-EXA
 - **MATLAB-Python interface:**  
   `matlab.engine` module is required to run MATLAB scripts from Python for feature extraction.
 
----
 
 ### Installing Python dependencies
 
