@@ -86,9 +86,7 @@ You can execute the complete test suite from the root directory using the `unitt
 
 ```bash
 python -m unittest discover -s tests
-```
-
-This command will automatically detect and run all test files matching the `test_*.py` naming convention in the tests/ folder.
+``` This command will automatically detect and run all test files matching the `test_*.py` naming convention in the tests/ folder.
 ---
 
 ## ⚙️ Requirements
