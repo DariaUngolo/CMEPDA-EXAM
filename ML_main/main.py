@@ -250,7 +250,9 @@ def main():
 
     args = parse_arguments()
 
-    # === Step 0: Classification only mode ===
+
+    # === Step 0: Inference only mode ===
+
     if args.use_trained_model:
         logger.info("Using pre-trained model for classification.")
 
@@ -266,10 +268,18 @@ def main():
                 args.matlab_path
             )
             classification, probability = classify_independent_dataset(df_mean_std, args.trained_model_path)
+
+            if classification == 1:
+                    selected_probability = probability[1]
+            else:
+                    selected_probability = probability[0]
+
             results.append({
                 "Image": os.path.basename(image_path),
                 "Prediction": classification,
-                "Probability": f"{probability:.2f}"
+
+                "Probability": f"{selected_probability:.2f}"
+
             })
 
         # Display results in a table
@@ -354,6 +364,7 @@ def main():
     if model is not None:
         do_classify = ask_yes_no_prompt("Do you want to classify new images now? Y/N", default="N")
         if do_classify:
+            results = []
             while True:
                 image_path = prompt_for_valid_folder_path()
                 if image_path is None:
@@ -369,10 +380,23 @@ def main():
                     args.matlab_path
                 )
 
-                # We classify using df_mean_std as in training
-                classification, _ = classify_independent_dataset(df_mean_std, model_filename)
+                # We classify and get the classification and probability, then display the results
+                classification, probability = classify_independent_dataset(df_mean_std, model_filename)
+                #
+                if classification == 1:
+                    selected_probability = probability[1]
+                else:
+                    selected_probability = probability[0]
 
-                logger.success(f"Classification result for image '{image_path}': {classification}")
+                results.append({
+                "Image": os.path.basename(image_path),
+                "Prediction": classification,
+                "Probability": f"{selected_probability:.2f}"
+                })
+
+                # Display results in a table
+                print("\nClassification Results:")
+                print(tabulate(results, headers="keys", tablefmt="fancy_grid"))
 
                 continue_classify = ask_yes_no_prompt("Classify another image? Y/N", default="N")
                 if not continue_classify:

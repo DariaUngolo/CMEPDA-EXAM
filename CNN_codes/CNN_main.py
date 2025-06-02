@@ -7,8 +7,22 @@ import logging
 from CNN_class import MyCNNModel
 from utilities import preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape
 import nibabel as nib
+
+
 import tensorflow as tf
-from tensorflow.python.client import device_lib
+
+# Enable verbose logging to see where ops run (GPU/CPU)
+tf.debugging.set_log_device_placement(True)
+
+# Check and log GPU availability
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    print(f"[INFO] {len(gpus)} GPU(s) detected:")
+    for gpu in gpus:
+        print(f"    -> {gpu}")
+else:
+    print("[WARNING] No GPU detected. Training will use CPU.")
+
 
 # Setup logging
 logging.basicConfig(
@@ -160,12 +174,12 @@ def main(args):
             sys.exit(1)
 
         trained_model = tf.keras.models.load_model(args.trained_model_path)
-        model_shape = (121,145,47,1) 
-        
+        model_shape = (121,145,47,1)
 
-            
+
+
         # Load NIfTI image
-        nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids)) 
+        nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids))
         # Adatta dimensioni all'input shape
         nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
         images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
@@ -176,7 +190,7 @@ def main(args):
 
         return
 
-    
+
     num_augmented_per_image = 2
 
 
@@ -185,7 +199,7 @@ def main(args):
     images, labels = preprocessed_images_group(args.image_folder, args.atlas_path, args.metadata, tuple(roi_ids))
     logger.debug(f"Preprocessed image dimensions: {images.shape}")
     logger.debug(f"Preprocessed label dimensions: {labels.shape}")
-    
+
 
 
     target_shape = images.shape[1:4]
@@ -215,8 +229,14 @@ def main(args):
 
     # Model creation
     logger.info(f"Creating the model with input shape: {tuple(input_shape)}.")
+    # Optional: Force GPU usage explicitly (comment this out if TF handles it automatically)
+    with tf.device('/GPU:0'):
     model = MyCNNModel(tuple(input_shape))
-    logger.info("Model created successfully.")
+    logger.info("Model assigned to /GPU:0")
+
+    # Otherwise, just instantiate normally and log device info
+   #model = MyCNNModel(tuple(input_shape))
+   #logger.info("Model created successfully.")
 
     # Training
     logger.info("Starting model training.")
@@ -232,10 +252,10 @@ def main(args):
     if model is not None:
         do_classify = ask_yes_no_prompt("Do you want to classify new images now? Y/N", default="N")
         if do_classify:
-            model_shape = model.input_shape 
+            model_shape = model.input_shape
 
             # Load NIfTI image
-            nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids)) 
+            nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids))
             # Adatta dimensioni all'input shape
             nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
             images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
