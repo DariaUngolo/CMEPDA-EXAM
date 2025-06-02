@@ -87,6 +87,15 @@ You can execute the complete test suite from the root directory using the `unitt
 ```bash
 python -m unittest discover -s tests
 ```
+
+### 🧾 Logging and Debugging
+
+The pipeline uses the `loguru` package for structured and user-friendly logging. Logs include:
+
+- Information on each pipeline step (feature extraction, training, evaluation)
+- Warnings for misaligned input images or missing files
+- Errors with detailed traceback for debugging
+
 ---
 
 ## ⚙️ Requirements
@@ -375,6 +384,45 @@ Have questions or issues? Open an issue or contact:
 - 📧 [d.ungolo@studenti.unipi.it]
 
 ---
+## 📚 References
+
+This project integrates insights, tools, and techniques from both the neuroimaging and machine learning communities. Below is a curated list of key references that guided the design, development, and evaluation of the pipeline.
+
+### 🧠 Neuroimaging and Brain Atlases
+
+1. Glasser, M. F., et al. (2016). *A multi-modal parcellation of human cerebral cortex*. **Nature**, 536(7615), 171–178.  
+   [https://doi.org/10.1038/nature18933](https://doi.org/10.1038/nature18933)
+
+2. Tzourio-Mazoyer, N., et al. (2002). *Automated anatomical labeling of activations in SPM using a macroscopic anatomical parcellation of the MNI MRI single-subject brain*. **NeuroImage**, 15(1), 273–289.  
+   [https://doi.org/10.1006/nimg.2001.0978](https://doi.org/10.1006/nimg.2001.0978)
+
+3. Ashburner, J., & Friston, K. J. (2005). *Unified segmentation*. **NeuroImage**, 26(3), 839–851.  
+   [https://doi.org/10.1016/j.neuroimage.2005.02.018](https://doi.org/10.1016/j.neuroimage.2005.02.018)
+
+### 🤖 Machine Learning and Deep Learning
+
+4. Breiman, L. (2001). *Random Forests*. **Machine Learning**, 45(1), 5–32.  
+   [https://doi.org/10.1023/A:1010933404324](https://doi.org/10.1023/A:1010933404324)
+
+5. Cortes, C., & Vapnik, V. (1995). *Support-vector networks*. **Machine Learning**, 20, 273–297.  
+   [https://doi.org/10.1007/BF00994018](https://doi.org/10.1007/BF00994018)
+
+6. LeCun, Y., Bengio, Y., & Hinton, G. (2015). *Deep learning*. **Nature**, 521(7553), 436–444.  
+   [https://doi.org/10.1038/nature14539](https://doi.org/10.1038/nature14539)
+
+7. Abadi, M., et al. (2016). *TensorFlow: A system for large-scale machine learning*. In *12th USENIX Symposium on Operating Systems Design and Implementation (OSDI 16)*, 265–283.  
+   [https://www.usenix.org/conference/osdi16/technical-sessions/presentation/abadi](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/abadi)
+
+### 🧰 Tools and Frameworks
+
+8. Hunter, J. D. (2007). *Matplotlib: A 2D graphics environment*. **Computing in Science & Engineering**, 9(3), 90–95.  
+   [https://doi.org/10.1109/MCSE.2007.55](https://doi.org/10.1109/MCSE.2007.55)
+
+9. Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. **Journal of Machine Learning Research**, 12, 2825–2830.  
+   [http://jmlr.org/papers/v12/pedregosa11a.html](http://jmlr.org/papers/v12/pedregosa11a.html)
+
+10. Gorgolewski, K., et al. (2011). *Nipype: A flexible, lightweight and extensible neuroimaging data processing framework in Python*. **Frontiers in Neuroinformatics**, 5, 13.  
+    [https://doi.org/10.3389/fninf.2011.00013](https://doi.org/10.3389/fninf.2011.00013)
 
 ---
 
