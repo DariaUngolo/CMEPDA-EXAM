@@ -1,47 +1,5 @@
 # 🧠 CMEPDA-EXAM: Scalable MRI-Based Classification of Alzheimer’s Disease with Classical and Deep Learning
 
-## 📚 Table of Contents
-
-- [🧠 Project Title: CMEPDA-EXAM](#-project-title-cmepda-exam)
-- [🔎 Project Overview](#-project-overview)
-- [🗂️ Project Structure](#️-project-structure)
-- [🧪 Feature Extraction and Pipeline](#-feature-extraction-and-pipeline)
-  - [💡 Required Input Data](#-required-input-data)
-  - [🧰 ROI Extraction with MATLAB](#-roi-extraction-with-matlab)
-  - [📊 Feature Aggregation](#-feature-aggregation)
-- [🧠 Classification Models](#-classification-models)
-  - [🌲 Random Forest Pipelines](#-random-forest-pipelines)
-  - [📐 Feature Reduction (PCA & RFECV)](#-feature-reduction-pca--rfecv)
-  - [🧮 SVM with GridSearchCV](#-svm-with-gridsearchcv)
-- [📊 Evaluation Methodology](#-evaluation-methodology)
-  - [📈 Metrics Used](#-metrics-used)
-  - [📉 Visualizations and Plots](#-visualizations-and-plots)
-  - [📌 Confidence Interval Estimation](#-confidence-interval-estimation)
-- [🧠 Deep Learning Approach (CNN)](#-deep-learning-approach-cnn)
-  - [🧼 Preprocessing 3D MRI Data](#-preprocessing-3d-mri-data)
-  - [🔍 CNN Architecture Overview](#-cnn-architecture-overview)
-  - [🎯 Training and Evaluation](#-training-and-evaluation)
-- [🚀 Execution Modes](#-execution-modes)
-  - [🎓 Training Mode](#-training-mode)
-  - [🧪 Inference Mode](#-inference-mode)
-- [🧪 Unit Testing](#-unit-testing)
-  - [🧬 Available Tests](#-available-tests)
-  - [🧪 How to Run Tests](#-how-to-run-tests)
-- [📜 Logging and Debugging](#-logging-and-debugging)
-- [🧩 Configuration and CLI Usage](#-configuration-and-cli-usage)
-  - [📥 Input Arguments](#-input-arguments)
-  - [📤 Output Files and Logs](#-output-files-and-logs)
-- [⚙️ Requirements](#️-requirements)
-  - [📦 Python Dependencies](#-python-dependencies)
-  - [🧠 MATLAB Engine Setup](#-matlab-engine-setup)
-- [🧪 How to Run the Project](#-how-to-run-the-project)
-  - [▶️ Running the Main Script](#-running-the-main-script)
-  - [🧪 Example Commands](#-example-commands)
-- [🧭 Future Work](#-future-work)
-- [🤝 Contributions](#-contributions)
-- [📄 License](#-license)
-
-
 **Brain MRI Classification Pipeline for Alzheimer’s Disease Detection**
 
 This project focuses on the development and implementation of a **binary classifier** aimed at distinguishing between subjects diagnosed with **Alzheimer’s Disease (AD)** and **healthy control subjects (CTRL)**. The dataset consists of brain MRI scans from a total of **333 subjects**, including **144 patients with AD** and **189 healthy controls**.
