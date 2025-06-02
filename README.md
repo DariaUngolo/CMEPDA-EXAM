@@ -446,8 +446,10 @@ in the Alzheimer’s Disease*. **J Neuroimaging**, 25:552-563.
 2. Tzourio-Mazoyer, N., et al. (2002). *Automated anatomical labeling of activations in SPM using a macroscopic anatomical parcellation of the MNI MRI single-subject brain*. **NeuroImage**, 15(1), 273–289.  
    [https://doi.org/10.1006/nimg.2001.0978](https://doi.org/10.1006/nimg.2001.0978)
 
-3. Ashburner, J., & Friston, K. J. (2005). *Unified segmentation*. **NeuroImage**, 26(3), 839–851.  
-   [https://doi.org/10.1016/j.neuroimage.2005.02.018](https://doi.org/10.1016/j.neuroimage.2005.02.018)
+3. The **atlases** are:
+            - *BN_Atlas_246_2mm.nii.gz* from [https://atlas.brainnetome.org/]
+            - *lpba40_56_2mm.nii.gz* from [https://www.loni.usc.edu/research/atlases]
+
 
 ### 🤖 Machine Learning and Deep Learning
 
