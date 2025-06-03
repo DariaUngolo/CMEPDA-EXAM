@@ -11,7 +11,8 @@ This project offers two main scripts to run your analyses:
 
 ---
 
-### How to Run
+ How to Run
+---------------
 
 - To execute the machine learning classifiers, launch:
 
@@ -39,7 +40,8 @@ or
 
 ---
 
-### Modes of Operation
+Modes of Operation
+---------------------
 
 Both scripts support two modes:
 
@@ -52,7 +54,8 @@ Similarly, `CNN_main.py` allows you to switch between training and classificatio
 
 ---
 
-### Additional Resources
+Additional Resources
+------------------------
 
 - Check the API Reference section for detailed descriptions of functions and parameters.
 
