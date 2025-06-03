@@ -1,6 +1,8 @@
 ML\_codes 
 =============
 
+**ML_codes** contains implementations of machine learning classifiers designed for medical image analysis. The scripts support training new models, performing hyperparameter tuning, and applying pre-trained models for classification tasks, with flexible command-line options for user customization.
+
 .. toctree::
    :maxdepth: 4
    :caption: Modules
