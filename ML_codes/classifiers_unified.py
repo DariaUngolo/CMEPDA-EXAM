@@ -121,65 +121,46 @@ class MetricsLogger() :
 
 def RFPipeline_noPCA(df1, df2, n_iter, cv):
     """
-    
-    Train and evaluate a Random Forest classifier pipeline without PCA for dimensionality reduction.
+    Train and evaluate a Random Forest classifier pipeline without PCA.
 
-    This function performs the following steps:
-    
-    1. Converts input DataFrames into numpy arrays and maps categorical labels to binary (0 and 1).
-    
-    2. Defines a hyperparameter search space for the Random Forest classifier.
-    
-    3. For two iterations:
-        - Splits the data into training and test sets (90% train, 10% test).
-        - Defines a pipeline with RandomizedSearchCV to optimize Random Forest hyperparameters.
-        - Trains the pipeline on the training data.
-        - Predicts on the test set and computes predicted probabilities.
-        - Evaluates performance metrics (accuracy, precision, recall, F1, specificity).
-        - Computes ROC curve and AUC.
-        - Stores the metrics and model for later aggregation.
-    
-    4. Aggregates results from all iterations:
-        - Computes mean ROC curve and average AUC with confidence intervals.
-        - Plots mean ROC curve.
-        - Calculates mean and standard errors of all collected metrics.
-        - Plots performance metrics as bar charts with error bars.
-   
-    5. Selects and returns the trained model from the iteration with the median AUC.
+    The function performs two iterations of training and evaluation:
+    - Converts DataFrames to numpy arrays and encodes labels as binary (0, 1).
+    - Defines a hyperparameter search space for Random Forest.
+    - Splits data into train/test sets (90%/10%).
+    - Optimizes hyperparameters using RandomizedSearchCV.
+    - Computes performance metrics and ROC curves.
+    - Aggregates results and plots mean ROC and metrics.
+    - Returns the model from the iteration with median AUC.
 
     Parameters
     ----------
     df1 : pandas.DataFrame
-        Feature matrix containing independent variables.
-
+        Feature matrix with input variables.
     df2 : pandas.DataFrame
-        Target labels corresponding to df1, with categorical classes (e.g., 'Normal', 'AD').
-
+        Target labels with categorical classes (e.g., 'Normal', 'AD').
     n_iter : int
-        Number of hyperparameter combinations sampled in RandomizedSearchCV.
-
+        Number of parameter settings sampled by RandomizedSearchCV.
     cv : int
-        Number of cross-validation folds used during hyperparameter optimization.
+        Number of folds in cross-validation during hyperparameter tuning.
 
     Returns
     -------
     sklearn.pipeline.Pipeline
-        The trained Random Forest model pipeline from the iteration with median AUC.
+        Trained Random Forest pipeline from the iteration with median AUC.
 
     Notes
     -----
-    - This pipeline does not apply PCA; it uses the original feature set.
-    - Labels are mapped to binary format: 'Normal' -> 0, 'AD' -> 1.
-    - RandomForestClassifier uses balanced class weights to handle imbalance.
-    - The function performs two iterations of training and evaluation to reduce variance in performance estimation.
-    - Uses all available CPU cores for parallel processing during hyperparameter search.
+    - No PCA is applied; original features are used.
+    - Labels mapped as 'Normal' → 0, 'AD' → 1.
+    - Random Forest uses balanced class weights.
+    - Two iterations reduce variance in performance estimation.
+    - Parallel processing uses all CPU cores during hyperparameter search.
 
     References
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
-    
     """
 
     
