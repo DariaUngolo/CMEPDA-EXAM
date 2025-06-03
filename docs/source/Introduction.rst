@@ -1,11 +1,41 @@
 Introduction
 ============
 
-CMEPDA-EXAM is an advanced classification project aimed at distinguishing individuals with Alzheimer’s disease from healthy controls using brain imaging data. The dataset comprises 333 high-quality NIfTI MRI brain scans, providing a robust foundation for exploring neuroimaging and machine learning techniques.
+Overview
+--------
+This project focuses on the development and implementation of a **binary classifier** aimed at distinguishing between:
 
-To extract meaningful features, the project utilizes the BN_Atlas_246_LUT, a brain atlas located in the data folder, which segments the brain into specific Regions of Interest (ROIs). For each ROI, features such as the mean intensity and standard deviation were calculated. These features were then used as inputs for traditional machine learning models, including Random Forest (and its variants) and Support Vector Machines (SVM). The analysis revealed that ROIs associated with the hippocampus were the most critical for accurate classification, as identified through Feature Importance Ranking Extraction (FRE).
+- Subjects diagnosed with **Alzheimer’s Disease (AD)**.
+- **Healthy control subjects (CTRL)**.
 
-In addition to machine learning models, a Convolutional Neural Network (CNN) was implemented to leverage deep learning techniques. By focusing on MRI sections surrounding the hippocampus, the CNN reduces data complexity while maintaining high classification performance. This approach combines the precision of targeted feature extraction with the power of deep learning for automated diagnosis.
+The primary goal is to leverage **3D brain MRI scans** to build a robust classification model for early diagnosis and better understanding of Alzheimer’s Disease.
 
-All trained models are saved in the trained_model folder, ready for deployment. This project serves as a bridge between neuroimaging and machine learning, offering tools and insights to enhance diagnostic accuracy for Alzheimer’s disease.
+Dataset Description
+-------------------
+The dataset used in this project consists of:
 
+- A total of **333 subjects**, including:
+  - **144 patients with AD**.
+  - **189 healthy controls**.
+
+- **3D brain MRI images** in NIfTI format.
+
+- **Two brain atlases**, which parcellate the brain into anatomically meaningful **Regions of Interest (ROIs)**:
+  - Atlas 1: Divides the brain into **56 ROIs**.
+  - Atlas 2: Divides the brain into **246 ROIs**, providing higher spatial resolution.
+
+Key Components
+--------------
+- **Look-Up Tables (LUTs)**:
+  Each atlas is accompanied by a LUT, listing:
+  - The names of all ROIs.
+  - Their corresponding integer labels.
+
+These tables are crucial for interpreting the ROIs during feature extraction and analysis.
+
+- **Regions of Interest (ROIs)**:
+  The ROIs provide anatomically meaningful divisions of the brain, essential for extracting relevant features.
+
+Conclusion
+----------
+The project aims to utilize this rich dataset and associated tools to create a highly accurate classifier, offering insights into the neuroanatomical distinctions between Alzheimer’s patients and healthy controls.
