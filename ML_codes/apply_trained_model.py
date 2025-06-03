@@ -10,12 +10,14 @@ from loguru import logger
 
 def feature_extractor_independent_dataset(nifti_image_path, atlas_file, atlas_txt, matlab_feature_extractor_path):
     """
-    Extracts statistical features from a NIfTI image using a MATLAB-based pipeline.
-
-    This function calls a MATLAB feature extraction function to compute mean intensity,
-    standard deviation, and volume metrics for regions of interest (ROIs) defined by an atlas.
-    The extracted features are returned as multiple pandas DataFrames combining these statistics.
-
+    Extract statistical features from a NIfTI image using a MATLAB-based pipeline.
+    
+    The function performs the following steps:
+    
+        - Calls a MATLAB feature extraction function to compute mean intensity, standard deviation,
+          and volume metrics for regions of interest (ROIs) defined by an atlas.
+        - Returns multiple pandas DataFrames combining these statistics in various ways.
+    
     Parameters
     ----------
     nifti_image_path : str
@@ -26,7 +28,7 @@ def feature_extractor_independent_dataset(nifti_image_path, atlas_file, atlas_tx
         Path to the atlas labels text file listing ROI names.
     matlab_feature_extractor_path : str
         Path to the MATLAB directory or script containing the feature extraction function.
-
+    
     Returns
     -------
     df_mean : pandas.DataFrame
@@ -43,7 +45,7 @@ def feature_extractor_independent_dataset(nifti_image_path, atlas_file, atlas_tx
         DataFrame combining standard deviation and volume features.
     df_mean_std_volume : pandas.DataFrame
         DataFrame combining mean, standard deviation, and volume features.
-
+    
     Notes
     -----
     - The input NIfTI image and atlas must be spatially aligned.
@@ -51,6 +53,7 @@ def feature_extractor_independent_dataset(nifti_image_path, atlas_file, atlas_tx
     - The MATLAB feature extraction function is expected to return matrices of features.
     - ROI labels are extracted from the provided atlas text file to name DataFrame columns.
     """
+
     logger.info("Starting MATLAB engine.")
     eng = matlab.engine.start_matlab()
 
@@ -143,14 +146,22 @@ def feature_extractor_independent_dataset(nifti_image_path, atlas_file, atlas_tx
 
 def classify_independent_dataset(data_frame, model_path):
     """
-    Classifies a new data sample using a previously trained machine learning model.
-
-    Parameters:
-        data_frame (pd.DataFrame): DataFrame containing the features for classification.
-        model_path (str): Path to the saved model file (joblib format).
-
-    Returns:
-        Tuple[int, np.ndarray]: Predicted class label and class probabilities.
+    Classify a new data sample using a previously trained machine learning model.
+    
+    The function loads the saved model and applies it to the input features to predict
+    the class label and class probabilities.
+    
+    Parameters
+    ----------
+    data_frame : pd.DataFrame
+        DataFrame containing the features for classification.
+    model_path : str
+        Path to the saved model file (joblib format).
+    
+    Returns
+    -------
+    tuple[int, np.ndarray]
+        Predicted class label and array of class probabilities.
     """
     
     logger.info(f"Loading trained model from: {model_path}")

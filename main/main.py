@@ -28,7 +28,6 @@ def ask_yes_no_prompt(prompt_message, default="N"):
 
     Parameters
     ----------
-
     prompt_message : str
         The message or question to display to the user.
     default : str, optional, default='N'
@@ -37,17 +36,14 @@ def ask_yes_no_prompt(prompt_message, default="N"):
 
     Returns
     -------
-
     bool
         True if the user selects 'Y' (yes), False if the user selects 'N' (no).
 
     Notes
     -----
-
     The user can input 'Y'/'y' for yes or 'N'/'n' for no.
     If no input is given, the default value is used.
     Prompts repeatedly until a valid response is provided.
-
     """
 
     while True:
@@ -219,74 +215,61 @@ def parse_arguments():
 
 def main():
     """
-    Executes the full pipeline for brain MRI classification using region-based features.
+    Brain MRI classification pipeline using region-based features.
 
-    Supports two execution modes: training and inference.
+    This function runs the full pipeline for brain MRI classification with two modes: training and inference.
 
     Parameters
     ----------
-    None
+    --train : bool, optional
+        If specified, runs the pipeline in training mode.
+    --inference : bool, optional
+        If specified, runs the pipeline in inference mode.
+    --subjects_dir : str
+        Path to the directory containing subject NIfTI images.
+    --atlas_path : str
+        Path to the brain atlas NIfTI file.
+    --clinical_data : str, optional
+        Path to the CSV file with clinical labels or metadata. Required in training mode.
+    --model_path : str
+        Path to save the trained model (training mode) or load the model (inference mode).
+    --classifier : {'rf', 'svm'}, optional
+        Classifier type: "rf" (Random Forest) or "svm" (Support Vector Machine). Default is "rf".
+    --resample : bool, optional
+        If set, the atlas will be resampled to each subject's MRI resolution.
+    --matlab_function : str, optional
+        MATLAB function name for feature extraction. Defaults to a predefined function.
 
     Returns
     -------
     None
+        In training mode, saves the trained classifier model to disk.
+        In inference mode, prints classification results and probabilities in a tabular format.
+
+    Raises
+    ------
+    FileNotFoundError
+        If any specified file or directory path does not exist.
+    ValueError
+        If incompatible or missing arguments are provided (e.g., missing clinical_data in training).
 
     Notes
     -----
-    Modes:
-        1. Training mode (--train):
-           - Resamples the input brain atlas to the resolution of each subject's MRI.
-           - Extracts features from NIfTI images using a MATLAB script.
-           - Trains a classifier (Random Forest or SVM) on the extracted features.
-           - Saves the trained model to disk.
-
-        2. Inference mode (--inference):
-           - Loads a pre-trained classifier model from disk.
-           - Extracts features from new subjects using the same MATLAB pipeline.
-           - Applies the loaded model to predict classes (e.g., Alzheimer's or control).
-           - Displays classification results and prediction probabilities in tabular format.
-
-    Command-line Arguments
-    ----------------------
-    --train : bool
-        Activate training mode.
-    --inference : bool
-        Activate inference mode.
-    --subjects_dir : str
-        Path to folder with subject NIfTI images.
-    --atlas_path : str
-        Path to brain atlas in NIfTI format.
-    --clinical_data : str
-        Path to CSV file with clinical labels or metadata.
-    --model_path : str
-        Path to save the trained model (training) or load a model (inference).
-    --classifier : str, optional
-        Classifier type: "rf" (Random Forest) or "svm" (Support Vector Machine). Default is "rf".
-    --resample : bool, optional
-        If set, resample the atlas to subject space.
-    --matlab_function : str, optional
-        Name of the MATLAB function used for feature extraction.
-
-    Requirements
-    ------------
-    - MATLAB installed and MATLAB Engine API for Python configured.
-    - Subject NIfTI images must be preprocessed and compatible with the atlas.
-    - For inference, model_path must point to a valid `.joblib` file.
-
-    Outputs
-    -------
-    - Training mode: trained classifier saved to disk.
-    - Inference mode: tabulated predictions with class probabilities.
+    - MATLAB and MATLAB Engine API for Python must be installed and configured.
+    - All subject NIfTI images must be preprocessed and compatible with the specified atlas.
+    - For inference, the model_path must point to a valid `.joblib` file.
+    - Feature extraction relies on a MATLAB pipeline invoked from Python.
 
     Examples
     --------
-    Train a model:
+    Training:
 
     >>> python main.py --train --subjects_dir ./data/ --atlas_path ./atlas.nii.gz --clinical_data ./labels.csv --model_path ./model.joblib
 
-    Run inference:
+    Inference:
 
     >>> python main.py --inference --subjects_dir ./new_subjects/ --atlas_path ./atlas.nii.gz --model_path ./model.joblib
+
     """
 
 
@@ -388,17 +371,21 @@ def main():
     # === Step 5: Save the trained model ===
 
     if model is not None:
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        model_dir = os.path.join(base_dir, "trained_model")  # o "trained_model" se la cartella è minuscola
+
         if args.classifier == "rf":
             if use_pca:
-                model_filename = "trained_model_rf_pca.joblib"
+                model_filename = os.path.join(model_dir, "trained_model_rf_pca.joblib")
             elif use_rfe:
-                model_filename = "trained_model_rf_rfecv.joblib"
+                model_filename = os.path.join(model_dir, "trained_model_rf_rfecv.joblib")
             else:
-                model_filename = "trained_model_rf.joblib"
+                model_filename = os.path.join(model_dir, "trained_model_rf.joblib")
         elif args.classifier == "svm":
-            model_filename = f"trained_model_svm_{args.kernel}.joblib"
+            model_filename = os.path.join(model_dir, f"trained_model_svm_{args.kernel}.joblib")
         else:
-            model_filename = "trained_model.joblib"
+            model_filename = os.path.join(model_dir, "trained_model.joblib")
+
     joblib.dump(model, model_filename)
     logger.success(f" Trained model saved to '{model_filename}'")
 
