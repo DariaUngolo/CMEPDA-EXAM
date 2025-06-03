@@ -124,7 +124,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     
     Train and evaluate a Random Forest classifier pipeline without PCA.
 
-    The function performs two iterations of training and evaluation:
+    The function performs 10 iterations of training and evaluation:
 
         - Converts DataFrames to numpy arrays and encodes labels as binary (0, 1).
         - Defines a hyperparameter search space for Random Forest.
