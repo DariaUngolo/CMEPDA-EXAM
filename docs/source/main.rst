@@ -8,8 +8,8 @@ This folder contains the main scripts used to run the classification pipelines.
 These scripts manage data input, model selection, training, and evaluation workflows.
 
 .. toctree::
-   :maxdepth: 7
-   :caption: main
+   :maxdepth: 2
+   :caption: main codes
 
 ML\_main
 --------------------
