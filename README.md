@@ -2,7 +2,8 @@
 
 **Brain MRI Classification Pipeline for Alzheimer’s Disease Detection**
 
-This project focuses on the development and implementation of a **binary classifier** aimed at distinguishing between subjects diagnosed with **Alzheimer’s Disease (AD)** and **healthy control subjects (CTRL)**. The dataset consists of brain MRI scans from a total of **333 subjects**, including **144 patients with AD** and **189 healthy controls**.
+This project focuses on the development and implementation of a **binary classifier** aimed at distinguishing between subjects diagnosed with **Alzheimer’s Disease (AD)** and **healthy control subjects (CTRL)**. The dataset used to train the ready-to-use models included **333 brain MRI scans**, comprising **144 subjects diagnosed with Alzheimer's Disease (AD)** and **189 healthy control subjects (CTRL)**.
+However, users are free to use **any other dataset** for training or inference, as long as it conforms to the **expected input format and structure** (e.g., NIfTI images and compatible metadata for classification).
 
 The available data includes **3D brain MRI images in NIfTI format**, alongside **two different brain atlases** used to parcellate the brain into anatomically meaningful regions known as **Regions of Interest (ROIs)**. These atlases segment the brain into **56** and **246 ROIs**, respectively, providing different levels of spatial resolution.  
 Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the names of all ROIs along with their corresponding integer labels. This table is essential for identifying and interpreting each brain region during feature extraction and analysis.
@@ -21,18 +22,26 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 │   ├── lpba40_LUT.txt
 │   ├── BN_LUT.txt
 │   └── metadata.csv
+│
 ├── docs/
 │   └── ...documentation files...
+│
 ├── tests/
 │   └── ...unit tests...
+│
 ├── ML_codes/
 │   └── ...machine learning modules...
+│
 ├── CNN_codes/
 │   └── ...deep learning modules...
-├── ML_main/
-│   └── main.py  # Entry point for the ML pipeline
-├── CNN_main/
-│   └── main.py  # Entry point for the CNN pipeline
+│
+├── main/
+│   ├── ML_main.py  # Entry point for the ML pipeline
+│   └── CNN_main.py
+│
+├── trained_models/
+│   └── trained_model*.py  #one for each type of classifier
+│
 └── README.md
 ```
 
