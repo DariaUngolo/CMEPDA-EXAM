@@ -1,19 +1,62 @@
 User Guide
 ==========
 
-Once the CMEPDA-EXAM project is set up, you can start using it with the following steps:
+This project offers two main scripts to run your analyses:
 
-1. Run the main script to launch the application:
-   .. code-block:: bash
+1. **main.py**  
+   Use this script to run the traditional machine learning classifiers.
 
-       python main.py
+2. **CNN_main.py**  
+   Use this script to train and deploy the convolutional neural network (CNN).
 
-2. The script will process the NIfTI images from the specified input directory and output classification results.
+---
 
-3. You can customize the classification model used by editing the configuration file (`config.json`) in the root directory.
+### How to Run
 
-4. For detailed usage of the implemented models and pipelines:
-   - Refer to the **API Reference** section for a breakdown of available functions and their parameters.
-   - Explore the example scripts in the `examples/` directory for practical use cases.
+- To execute the machine learning classifiers, launch:
 
-If you encounter any issues, consult the **Contributing** section to report them.
+  .. code-block:: bash
+
+      python main.py
+
+- To work with the CNN model, launch:
+
+  .. code-block:: bash
+
+      python CNN_main.py
+
+For both scripts, you can get a list of available options and required inputs by running:
+
+.. code-block:: bash
+
+    python main.py --help
+
+or
+
+.. code-block:: bash
+
+    python CNN_main.py --help
+
+---
+
+### Modes of Operation
+
+Both scripts support two modes:
+
+- **Training mode:** train a new model using your dataset.
+- **Classification mode:** use an already trained model to classify new images.
+
+When running `main.py`, you can specify which machine learning classifier to use and choose the desired mode directly from the command line.
+
+Similarly, `CNN_main.py` allows you to switch between training and classification modes via command-line arguments.
+
+---
+
+### Additional Resources
+
+- Check the API Reference section for detailed descriptions of functions and parameters.
+
+If you run into any issues, please refer to the Contributing section for reporting guidelines.
+
+
+
