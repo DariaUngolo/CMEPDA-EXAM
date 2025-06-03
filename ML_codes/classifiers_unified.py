@@ -121,6 +121,7 @@ class MetricsLogger() :
 
 def RFPipeline_noPCA(df1, df2, n_iter, cv):
     """
+    
     Train and evaluate a Random Forest classifier pipeline without PCA.
 
     The function performs two iterations of training and evaluation:
@@ -161,6 +162,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
+    
     """
 
     
