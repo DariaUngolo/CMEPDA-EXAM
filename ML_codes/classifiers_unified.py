@@ -263,54 +263,45 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     """
     
     Train and evaluate a Random Forest classifier pipeline with PCA for dimensionality reduction.
-
-    This function performs the following steps:
-    1. Converts input DataFrames into numpy arrays and maps categorical labels to binary (0 and 1).
-    2. Defines a hyperparameter search space for the Random Forest classifier.
-    3. For two iterations:
-        - Splits the data into training and test sets (90% train, 10% test).
-        - Defines a pipeline that first applies PCA to reduce feature dimensions, followed by RandomizedSearchCV
-          for hyperparameter optimization of the Random Forest classifier.
+    
+    The function performs 10 iterations of training and evaluation:
+    
+        - Converts input DataFrames into numpy arrays and maps categorical labels to binary (0, 1).
+        - Defines a hyperparameter search space for the Random Forest classifier.
+        - Splits data into train/test sets (90%/10%) for each iteration.
+        - Defines a pipeline applying PCA followed by RandomizedSearchCV for hyperparameter tuning.
         - Trains the pipeline on the training data.
         - Predicts on the test set and computes predicted probabilities.
-        - Evaluates performance metrics (accuracy, precision, recall, F1, specificity).
+        - Computes performance metrics (accuracy, precision, recall, F1, specificity).
         - Computes ROC curve and AUC.
         - Logs the number of PCA components used.
-        - Stores the metrics and model for later aggregation.
-    4. Aggregates results from all iterations:
-        - Computes mean ROC curve and average AUC with confidence intervals.
-        - Plots mean ROC curve.
-        - Calculates mean and standard errors of all collected metrics.
-        - Plots performance metrics as bar charts with error bars.
-    5. Selects and returns the trained model from the iteration with the median AUC.
-
+        - Aggregates results and plots mean ROC and performance metrics.
+        - Returns the model from the iteration with median AUC.
+    
     Parameters
     ----------
     df1 : pandas.DataFrame
         Feature matrix containing independent variables.
-
     df2 : pandas.DataFrame
         Target labels corresponding to df1, with categorical classes (e.g., 'Normal', 'AD').
-
     n_iter : int
         Number of hyperparameter combinations sampled in RandomizedSearchCV.
-
     cv : int
         Number of cross-validation folds used during hyperparameter optimization.
-
+    
     Returns
     -------
     sklearn.pipeline.Pipeline
         The trained pipeline including PCA and Random Forest classifier from the iteration with median AUC.
-
+    
     Notes
     -----
     - PCA reduces dimensionality before classification, which can improve model performance on high-dimensional data.
     - Labels are mapped to binary format: 'Normal' -> 0, 'AD' -> 1.
-    - RandomForestClassifier uses balanced class weights to handle imbalance.
-    - The function performs two iterations of training and evaluation to reduce variance in performance estimation.
+    - RandomForestClassifier uses balanced class weights to handle class imbalance.
+    - The function performs multiple iterations of training and evaluation to reduce variance in performance estimation.
     - Uses all available CPU cores for parallel processing during hyperparameter search.
-
+    
     References
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
@@ -318,6 +309,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     - https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
     
     """
+    
 
 
     X = df1.values
