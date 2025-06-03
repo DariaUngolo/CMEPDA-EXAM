@@ -12,7 +12,7 @@ This documentation provides a comprehensive guide to the CMEPDA-EXAM project, in
 
 .. toctree::
    :maxdepth: 3
-   :caption: 
+   :caption: Table of Contents
 
    Introduction
    Installation

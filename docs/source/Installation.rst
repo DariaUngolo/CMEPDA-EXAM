@@ -6,7 +6,7 @@ Follow these steps to set up the CMEPDA-EXAM project on your system:
 1. Clone the repository:
    .. code-block:: bash
 
-       git clone https://github.com/YourUsername/CMEPDA-EXAM.git
+       git clone https://github.com/DariaUngolo/CMEPDA-EXAM.git
 
 2. Navigate to the project directory:
    .. code-block:: bash
