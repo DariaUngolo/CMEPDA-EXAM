@@ -11,7 +11,7 @@ This project offers two main scripts to run your analyses:
 
 ---
 
- How to Run
+How to Run
 ---------------
 
 - To execute the machine learning classifiers, launch:
