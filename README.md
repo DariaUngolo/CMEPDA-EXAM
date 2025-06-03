@@ -327,7 +327,7 @@ python main.py \
 | `--atlas_file`         | Original brain atlas in `.nii` or `.nii.gz`     | Training & Inference |
 | `--atlas_file_resized` | Resampled atlas aligned with image dimensions   | Training & Inference |
 | `--atlas_txt`          | Text file with ROI labels (one per line)        | Training & Inference |
-| `--metadata_csv`       | CSV file with subject IDs and diagnosis labels  | Training & Inference |
+| `--metadata_csv`       | CSV file with subject IDs and diagnosis labels  | Training only        |
 | `--matlab_path`        | Folder containing MATLAB scripts                | Training & Inference |
 | `--classifier`         | Classifier type: `rf` (Random Forest) or `svm`  | Training only        |
 | `--n_iter`             | Number of combinations for parameters search    | Training only        |

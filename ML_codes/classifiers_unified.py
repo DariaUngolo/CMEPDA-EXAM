@@ -27,6 +27,8 @@ from sklearn.feature_selection import RFECV
 
 import logging
 
+
+
 # Setup basic logging configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -48,12 +50,12 @@ param_dist = {
 
 
 
-class MetricsLogger() :
+class MetricsLogger:
     """
     A class to log and compute metrics for model evaluation.
 
-    Attributes:
-    -----------
+    Attributes
+    ----------
     mean_fpr : np.ndarray
         Array of evenly spaced false positive rates for ROC computation.
 
@@ -68,9 +70,13 @@ class MetricsLogger() :
 
     model_auc_pairs : list
         List of tuples containing models and their corresponding AUC values.
+
+    selected_rois_list : list
+        (Optional) List of selected ROI feature names corresponding to each model.
+        If not provided, entry is set to None.
     """
-    def __init__(self, mean_fpr) :
-    
+
+    def __init__(self, mean_fpr):
         self.mean_fpr = mean_fpr
         self.accuracy_list = []
         self.precision_list = []
@@ -80,13 +86,14 @@ class MetricsLogger() :
         self.auc_list = []
         self.tpr_list = []
         self.model_auc_pairs = []
+        self.selected_rois_list = []  # Optional ROI names per model
 
-    def append_metrics(self, metrics_scores, y_tst, y_prob, model) :
+    def append_metrics(self, metrics_scores, y_tst, y_prob, model, selected_rois=None):
         """
         Append metrics, compute ROC/AUC, and store model information.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         metrics_scores : dict
             Dictionary containing evaluation metrics (e.g., accuracy, precision).
 
@@ -98,21 +105,32 @@ class MetricsLogger() :
 
         model : sklearn estimator
             The trained model to be logged.
+
+        selected_rois : list or np.ndarray, optional
+            List of ROI feature names used for training the model.
+            If not applicable, pass None (default).
         """
         self.accuracy_list.append(metrics_scores['Accuracy'])
         self.precision_list.append(metrics_scores['Precision'])
         self.recall_list.append(metrics_scores['Recall'])
         self.f1_list.append(metrics_scores['F1-score'])
         self.specificity_list.append(metrics_scores['Specificity'])
-        
+
+        # Compute ROC and AUC
         fpr, tpr, roc_auc, auc_err = compute_roc_and_auc(y_tst, y_prob)
         self.auc_list.append(roc_auc)
 
+        # Interpolate TPR for mean ROC computation
         interp_tpr = np.interp(self.mean_fpr, fpr, tpr)
         interp_tpr[0] = 0.0
         self.tpr_list.append(interp_tpr)
 
+        # Save model and AUC
         self.model_auc_pairs.append((model, roc_auc))
+
+        # Save selected ROI names if provided
+        self.selected_rois_list.append(selected_rois)
+
 
        
 
@@ -173,7 +191,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     mean_fpr = np.linspace(0, 1, 100) 
     logger = MetricsLogger(mean_fpr)
 
-    for iteration in range(2):
+    for iteration in range(1):
         
         logging.info(f"Iteration {iteration + 1} - Splitting data into train and test sets.")
         
@@ -471,9 +489,9 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         
         # Extract feature importances
         importances = rf_selected_features.best_estimator_.feature_importances_
-        sorted_idx = np.argsort(importances)[::-1]  # Indices of features sorted by importance
-        top2_ROIs = selected_ROIs[sorted_idx[:2]]  # Get the top 2 ROI names
-        top2_importances = importances[sorted_idx[:2]]  # Get the top 2 importances
+        sorted_idx_iteration = np.argsort(importances)[::-1]  # Indices of features sorted by importance
+        top2_ROIs = selected_ROIs[sorted_idx_iteration[:2]]  # Get the top 2 ROI names
+        top2_importances = importances[sorted_idx_iteration[:2]]  # Get the top 2 importances
     
         logging.info(f"Top 2 important ROIs for iteration {iteration + 1}: {top2_ROIs} with importances {top2_importances}")
 
@@ -485,12 +503,10 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         ("classifier", rf_selected_features.best_estimator_)
         ])
 
-        logger.append_metrics(metrics_scores, y_tst, y_prob, pipeline_rfecv)
-        
-        
+        logger.append_metrics(metrics_scores, y_tst, y_prob, pipeline_rfecv, selected_rois=selected_ROIs)
 
 
-    
+
     # Calculate mean ROC curve and AUC with confidence intervals
     mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
     
@@ -514,42 +530,44 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         
     plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
 
-    # Sort models by AUC and return the one with median AUC
+    # Sort models by AUC and select the one with the median value
     logger.model_auc_pairs.sort(key=lambda x: x[1])
-    
-    pipeline_rfecv_medianAUC = logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][0]
 
-    # Extract feature importances for the selected features
+    # Get index of model with median AUC
+    median_index = len(logger.model_auc_pairs) // 2
+    pipeline_rfecv_medianAUC = logger.model_auc_pairs[median_index][0]
+    selected_ROIs_median = logger.selected_rois_list[median_index]
+    selected_ROIs_median = np.array(selected_ROIs_median) 
+    
+
+    # Extract top 8 feature importances for selected ROIs
     importances = pipeline_rfecv_medianAUC.named_steps['classifier'].feature_importances_
-    sorted_idx = np.argsort(importances)[::-1][:8]  # indices of top 10 ROIs
-    n_top = min(8, len(selected_ROIs))
+    n_top = min(8, len(importances), len(selected_ROIs_median))
     sorted_idx = np.argsort(importances)[::-1][:n_top]
-    top8_ROIs = selected_ROIs[sorted_idx]
+    top8_ROIs = selected_ROIs_median[sorted_idx]
     top8_importances = importances[sorted_idx]
 
-        
-
-    # Visualize feature importances with a pie chart
+    # Plot pie chart
     plt.figure(figsize=(8, 8))
-    colors = plt.cm.tab20.colors  # IEEE-like color palette
+    colors = plt.cm.tab20.colors  # IEEE-like palette
     patches, texts, autotexts = plt.pie(
-            top8_importances,
-            labels=top8_ROIs,
-            autopct='%1.1f%%',
-            startangle=140,
-            colors=colors[:8],
-            textprops={'fontsize': 3, 'weight': 'bold'},
-            radius=0.80,  # Adjust radius for better visibility
+        top8_importances,
+        labels=top8_ROIs,
+        autopct='%1.1f%%',
+        startangle=140,
+        colors=colors[:n_top],
+        textprops={'fontsize': 3, 'weight': 'bold'},
+        radius=0.80
     )
     plt.title("Importance of the 8 best ROIs for the model with the median AUC", fontsize=6, weight='bold')
     plt.tight_layout()
-        
     plt.show()
-    # Log information about the selected model
-    logging.success(
+
+    logging.info(
         f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
         "has been selected and saved for further use."
     )
+
 
    
     return pipeline_rfecv_medianAUC

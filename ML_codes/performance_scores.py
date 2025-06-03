@@ -132,37 +132,54 @@ def plot_roc_curve(fpr, tpr, roc_auc, roc_auc_error):
 
     """
 
-    # Configure matplotlib for IEEE-style plots
+    # Update matplotlib configuration for high-quality, compact plots
     matplotlib.rcParams.update({
-        'font.size': 8,
+        'font.size': 6,
         'font.family': 'serif',
-        'axes.labelsize': 6,
-        'axes.titlesize': 7,
-        'legend.fontsize': 6,
-        'xtick.labelsize': 5,
-        'ytick.labelsize': 5,
+        'axes.labelsize': 5,
+        'axes.titlesize': 6,
+        'legend.fontsize': 4,
+        'xtick.labelsize': 4,
+        'ytick.labelsize': 4,
         'axes.grid': True,
-        'grid.alpha': 0.3,
+        'grid.alpha': 0.2,
         'grid.linestyle': '--',
-        'lines.linewidth': 1.3,
-        'figure.dpi': 600
+        'lines.linewidth': 0.8,
+        'figure.dpi': 600,
+        'savefig.dpi': 600
     })
+
+    # Use colorblind-safe palette
     sns.set_palette("colorblind")
 
-    # Plot ROC curve
     logger.info("Generating ROC curve plot...")
-    fig, ax = plt.subplots(figsize=(2.5, 2.0))
-    ax.plot(fpr, tpr, label=f'AUC = {roc_auc:.2f} ± {roc_auc_error:.2f}', color='tab:blue')
-    ax.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.8)
-    ax.set_xlabel('False Positive Rate', fontsize=4, fontweight='semibold', labelpad=2)
-    ax.set_ylabel('True Positive Rate', fontsize=4, fontweight='semibold')
-    ax.set_title('ROC Curve', pad=4, fontsize=5, fontweight='bold')
-    ax.legend(loc='lower right', frameon=False, fontsize=5)
-    ax.tick_params(axis='both', labelsize=3.8)
-    sns.despine()
+    
+    # Create the figure
+    fig, ax = plt.subplots(figsize=(2, 1.4))
+    
+    # Plot ROC curve
+    ax.plot(fpr, tpr, color='tab:blue', label=f'AUC = {roc_auc:.2f} ± {roc_auc_error:.2f}', linewidth=0.8)
+    
+    # Diagonal line for random performance
+    ax.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.6)
+
+    # Axis labels and title
+    ax.set_xlabel('False Positive Rate', labelpad=2, fontweight='semibold')
+    ax.set_ylabel('True Positive Rate', labelpad=2, fontweight='semibold')
+    ax.set_title('Receiver Operating Characteristic (ROC)', fontweight='bold', pad=4)
+    ax.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
+    
+    # Legend
+    ax.legend(loc='lower right', frameon=False)
+
+    # Improve layout and aesthetics
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.05])
+    ax.tick_params(axis='both', direction='in', length=2, width=0.3)
+    sns.despine(trim=True)
+
     plt.tight_layout()
     plt.show()
-
 
 def compute_average_auc(tpr_list, auc_list):
     """
@@ -410,53 +427,53 @@ def plot_performance_bar_chart(accuracy, precision, recall, f1, specificity, roc
 
     """
 
-    # Configure matplotlib for IEEE-style plots
+    # Style settings for professional-IEEE plots
     matplotlib.rcParams.update({
-        'font.size': 8,
+        'font.size': 6,
         'font.family': 'serif',
-        'axes.labelsize': 6,
-        'axes.titlesize': 7,
-        'legend.fontsize': 6,
-        'xtick.labelsize': 5,
-        'ytick.labelsize': 5,
+        'axes.labelsize': 4,
+        'axes.titlesize': 4,
+        'legend.fontsize': 4,
+        'xtick.labelsize': 4,
+        'ytick.labelsize': 4,
         'axes.grid': True,
-        'grid.alpha': 0.3,
+        'grid.alpha': 0.2,
         'grid.linestyle': '--',
-        'lines.linewidth': 1.3,
-        'figure.dpi': 600
+        'lines.linewidth': 0.8,
+        'figure.dpi': 600,
+        'savefig.dpi': 600
     })
+
     sns.set_palette("colorblind")
+    logger.info("Generating performance metrics bar plot...")
 
-
-    # Plot bar chart with error bars for each metric
-    logger.info("Generating metrics bar plot...")
-
-    # Metrics and associated data for plotting
+    # Metrics and values
     metrics = ['Accuracy', 'Precision', 'Recall', 'F1-score', 'Specificity', 'AUC']
     values = [accuracy, precision, recall, f1, specificity, roc_auc]
     errors = [acc_err, prec_err, rec_err, f1_err, spec_err, auc_err]
+    colors = sns.color_palette("colorblind", n_colors=len(metrics))
 
-
-    colors = ['#4C72B0', '#55A868', '#C44E52', '#8172B2', '#CCB974', '#64B5CD']
-
-    # Create figure and axis for the bar chart
-    fig, ax = plt.subplots(figsize=(2.5, 2.0))
+    # Create figure
+    fig, ax = plt.subplots(figsize=(3.2, 2.0))  # Wider for better label spacing
 
     # Plot bars with error bars
-    bars = ax.bar(metrics, values, yerr=errors, capsize=4,
-                  color=colors, edgecolor='black', linewidth=0.6)
+    bars = ax.bar(metrics, values, yerr=errors, capsize=5,
+                  color=colors, edgecolor='black', linewidth=0.7)
 
+    # Aesthetics
+    ax.set_ylim(0.0, 1.05)
+    ax.set_ylabel("Score", fontweight='semibold')
+    ax.set_title("Classification Metrics (± CI)", fontweight='bold', pad=5)
+    ax.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
 
-    # Customize plot aesthetics
-    ax.set_ylim(0, 1.0)
-    ax.set_ylabel("Score", fontsize=6, fontweight='semibold')
-    ax.set_title("Classification Metrics with Confidence Intervals", fontsize=4, fontweight='bold', pad=6)
-    ax.grid(axis='y', linestyle='--', linewidth=0.6, alpha=0.5)
-    ax.bar_label(bars, fmt="%.2f", padding=2, fontsize=4, fontweight='semibold')
-    plt.xticks(fontsize=4, fontweight='semibold', rotation=12, ha='right')
-    plt.yticks(fontsize=5, fontweight='semibold')
+    # Add value labels on top of bars
+    ax.bar_label(bars, fmt="%.2f", padding=3, fontsize=4, fontweight='semibold')
+
+    # Tick formatting
+    ax.tick_params(axis='x', labelrotation=0)
+    ax.tick_params(axis='both', direction='in', length=3, width=0.5)
+
     sns.despine(bottom=True)
-    plt.subplots_adjust(bottom=0.18, left=0.10, right=0.98, top=0.90)
     plt.tight_layout()
     plt.show()
 

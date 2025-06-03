@@ -108,7 +108,7 @@ def parse_arguments():
 
     # === Input paths ===
     parser.add_argument(
-        "--folder_path", required=True, type=str,
+        "--folder_path", required= False, type=str,
         help="""Path to the folder containing subject NIfTI images to be analyzed.
         Each file should represent one subject. Supported formats: .nii, .nii.gz"""
     )
@@ -132,7 +132,7 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--metadata_csv", required=True, type=str,
+        "--metadata_csv",required= False, type=str,
         help="""TSV file containing subject metadata and diagnostic labels.
         It must include: subject ID and diagnosis label (e.g., 'Normal', 'AD')."""
     )
@@ -146,7 +146,7 @@ def parse_arguments():
 
     # === Classifier configuration ===
     parser.add_argument(
-        "--classifier", required=True,
+        "--classifier",
         choices=["rf", "svm"],
         help="""Classifier to use:
         - 'rf': Random Forest .
@@ -168,7 +168,7 @@ def parse_arguments():
         help="Kernel type to use for SVM (only applicable if classifier is 'svm')."
     )
 
-    # === Classification option: use pre-trained model for classification mode ===
+    # === Inference option: use pre-trained model for classification mode ===
     parser.add_argument(
         "--use_trained_model", action="store_true",
         help="Skip training; classify images with a saved model."
@@ -184,13 +184,35 @@ def parse_arguments():
 
     return parser.parse_args()
 
+    # === Argument validation ===
     if args.use_trained_model:
-        if not args.trained_model_path or not args.nifti_image_path:
-            parser.error("--trained_model_path and --nifti_image_path are required when --use_trained_model is set.")
+        missing = []
+        if not args.trained_model_path:
+            missing.append("--trained_model_path")
+        if not args.nifti_image_path:
+            missing.append("--nifti_image_path")
+        if not args.atlas_file_resized:
+            missing.append("--atlas_file_resized")
+        if not args.atlas_txt:
+            missing.append("--atlas_txt")
+        if not args.matlab_path:
+            missing.append("--matlab_path")
+        if missing:
+            parser.error(f"The following arguments are required when using --use_trained_model: {', '.join(missing)}")
     else:
-        required_for_training = [args.folder_path, args.atlas_file, args.atlas_file_resized, args.atlas_txt, args.metadata_csv, args.classifier]
-        if not all(required_for_training):
-            parser.error("For training, --folder_path, --atlas_file, --atlas_file_resized, --atlas_txt, --metadata_csv and --classifier are required.")
+        # Training mode: check all training-related arguments
+        required = {
+            "--folder_path": args.folder_path,
+            "--atlas_file": args.atlas_file,
+            "--atlas_file_resized": args.atlas_file_resized,
+            "--atlas_txt": args.atlas_txt,
+            "--metadata_csv": args.metadata_csv,
+            "--matlab_path": args.matlab_path,
+            "--classifier": args.classifier,
+        }
+        missing = [k for k, v in required.items() if v is None]
+        if missing:
+            parser.error(f"The following arguments are required for training: {', '.join(missing)}")
 
     return args
 
