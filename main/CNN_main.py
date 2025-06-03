@@ -4,8 +4,8 @@ import os
 import argparse
 import logging
 
-from CNN_class import MyCNNModel
-from utilities import preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape
+from CNN_codes.CNN_class import MyCNNModel
+from CNN_codes.utilities import preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape
 import nibabel as nib
 
 

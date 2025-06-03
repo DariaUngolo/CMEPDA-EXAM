@@ -25,13 +25,18 @@ from sklearn.model_selection import RandomizedSearchCV, GridSearchCV, train_test
 from sklearn.tree import export_graphviz
 from sklearn.feature_selection import RFECV
 
+import logging
 
-from ML_codes.performance_scores import compute_binomial_error, evaluate_model_performance, compute_roc_auc, plot_roc, compute_average_auc, compute_mean_std_metric, bar_chart_performances # Importing a custom module for performance evaluation
+# Setup basic logging configuration
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+from ML_codes.performance_scores import compute_binomial_error, evaluate_model_performance, compute_roc_and_auc, plot_roc_curve, compute_average_auc, compute_mean_std_metric, plot_performance_bar_chart # Importing a custom module for performance evaluation
 
+# Importing a custom module to interact with MATLAB EnginE
 from ML_codes.feature_extractor import feature_extractor
- # Importing a custom module to interact with MATLAB Engine
 
+
+# Hyperparameter distributions for RandomizedSearchCV
 param_dist = {
     'n_estimators': randint(50, 500),  # number of trees
     'max_depth': randint(5, 50),        # maximum depth of the tree
@@ -42,6 +47,77 @@ param_dist = {
 }
 
 
+
+class MetricsLogger() :
+    """
+    A class to log and compute metrics for model evaluation.
+
+    Attributes:
+    -----------
+    mean_fpr : np.ndarray
+        Array of evenly spaced false positive rates for ROC computation.
+
+    accuracy_list, precision_list, recall_list, f1_list, specificity_list : list
+        Lists to store metric values for each iteration.
+
+    auc_list : list
+        List to store AUC values for each iteration.
+
+    tpr_list : list
+        List to store interpolated true positive rates for mean ROC computation.
+
+    model_auc_pairs : list
+        List of tuples containing models and their corresponding AUC values.
+    """
+    def __init__(self, mean_fpr) :
+    
+        self.mean_fpr = mean_fpr
+        self.accuracy_list = []
+        self.precision_list = []
+        self.recall_list = []
+        self.f1_list = []
+        self.specificity_list = []
+        self.auc_list = []
+        self.tpr_list = []
+        self.model_auc_pairs = []
+
+    def append_metrics(self, metrics_scores, y_tst, y_prob, model) :
+        """
+        Append metrics, compute ROC/AUC, and store model information.
+
+        Parameters:
+        -----------
+        metrics_scores : dict
+            Dictionary containing evaluation metrics (e.g., accuracy, precision).
+
+        y_tst : np.ndarray
+            Ground truth labels for the test set.
+
+        y_prob : np.ndarray
+            Predicted probabilities for the test set.
+
+        model : sklearn estimator
+            The trained model to be logged.
+        """
+        self.accuracy_list.append(metrics_scores['Accuracy'])
+        self.precision_list.append(metrics_scores['Precision'])
+        self.recall_list.append(metrics_scores['Recall'])
+        self.f1_list.append(metrics_scores['F1-score'])
+        self.specificity_list.append(metrics_scores['Specificity'])
+        
+        fpr, tpr, roc_auc, auc_err = compute_roc_and_auc(y_tst, y_prob)
+        self.auc_list.append(roc_auc)
+
+        interp_tpr = np.interp(self.mean_fpr, fpr, tpr)
+        interp_tpr[0] = 0.0
+        self.tpr_list.append(interp_tpr)
+
+        self.model_auc_pairs.append((model, roc_auc))
+
+       
+
+
+    
 
 def RFPipeline_noPCA(df1, df2, n_iter, cv):
     """
@@ -85,30 +161,29 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     """
 
     
-    # Extract feature and target data as NumPy arrays
+    # Convert features and labels to numpy arrays
     X = df1.values
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values # convert labels to binary
 
 
     # Get column names to be used as feature names for visualization
     region = list(df1.columns.values)
-    # Initialize lists to store performance metrics
-    # These will be used to store the results of multiple iterations 
-    accuracies, precisions, recalls, f1_scores = [], [], [], []
-    specificities, auc_values, tprs = [], [], []
-
-    model_auc_pairs = []
+    
 
     mean_fpr = np.linspace(0, 1, 100) 
+    logger = MetricsLogger(mean_fpr)
 
-    for _ in range(2):
+    for iteration in range(2):
+        
+        logging.info(f"Iteration {iteration + 1} - Splitting data into train and test sets.")
+        
         # Split data into training and test sets (10% test data)
         X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=0.1)
 
         # Define a pipeline with a hyperparameter optimization step using RandomizedSearchCV
         pipeline_random_forest_simple = Pipeline(
             steps=[ (  
-                    "hyper_opt",                           #"hyper_opt" is the name of the step in the pipeline
+                    "hyper_opt",                           
                     RandomizedSearchCV(                    
                         RandomForestClassifier(class_weight='balanced'),          
                         param_distributions=param_dist,    
@@ -120,91 +195,63 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
             ]
         )
 
-        # Train the pipeline on the training data
-        pipeline_random_forest_simple.fit(X_tr, y_tr) 
+        logging.info("Fitting Random Forest pipeline with RandomizedSearchCV.")
+        pipeline_random_forest_simple.fit(X_tr, y_tr)
 
         # Predict labels and probabilities for the test set
         y_pred = pipeline_random_forest_simple.predict(X_tst)
-        y_prob = pipeline_random_forest_simple.predict_proba(X_tst)
+        y_prob = pipeline_random_forest_simple.predict_proba(X_tst)[:, 1]
         
-        #print("labels for the test set  ",pipeline_random_forest_simple.predict(X_tst))
-
-
-        #print("Predictions:", y_pred) # Print the predicted labels
-        #print("Probabilities:", y_prob) # Print the predicted probabilities
-
-        # Compute performance scores based on predictions
-        metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
-
-        # Aggiungi il risultato alla lista
-        accuracies.append(metrics_scores['Accuracy'])
-        precisions.append(metrics_scores['Precision'])
-        recalls.append(metrics_scores['Recall'])
-        f1_scores.append(metrics_scores['F1-score'])
-        specificities.append(metrics_scores['Specificity'])
         
-        # Calcola ROC e AUC con la tua funzione
-        fpr, tpr, roc_auc, auc_err = compute_roc_auc(y_tst, y_prob)
+        # Evaluate model performance
+        metrics_scores = evaluate_model_performance(y_tst, y_pred,y_prob)
+        
+        model = pipeline_random_forest_simple.named_steps['hyper_opt'].best_estimator_
 
-        auc_values.append(roc_auc)
-    
-        # Interpola TPR per il vettore comune mean_fpr
-        interp_tpr = np.interp(mean_fpr, fpr, tpr)
-        interp_tpr[0] = 0.0  # ROC inizia sempre da 0
-        tprs.append(interp_tpr)
+        
+        logger.append_metrics(metrics_scores, y_tst, y_prob, model)
+        
+        
 
-        model_auc_pairs.append((pipeline_random_forest_simple, roc_auc))
+        
 
+    # Calculate mean ROC curve and AUC with confidence intervals
+    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
+    
+    # Plot mean ROC curve
+    plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    #PROBLEMA
 
+    # Calculate mean and standard deviation for each metric's list 
+    (
+        mean_acc,  # Mean accuracy
+        mean_prec,  # Mean precision
+        mean_rec,   # Mean recall
+        mean_f1,    # Mean F1-score
+        mean_spec,  # Mean specificity
+        err_acc,    # Standard error for accuracy
+        err_prec,   # Standard error for precision
+        err_rec,    # Standard error for recall
+        err_f1,     # Standard error for F1-score
+        err_spec    # Standard error for specificity
+    ) = compute_mean_std_metric(logger.accuracy_list, logger.precision_list, logger.recall_list, logger.f1_list, logger.specificity_list)
+        
+        
+    plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
 
-    # Calcola media e deviazione standard e stampa le performance
-    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(tprs, auc_values)
-    
-    # Usa la tua funzione plot_roc per mostrare la ROC media
-    plot_roc(mean_fpr, mean_tpr, mean_auc, mean_auc_err)
-    
-    mean_accuracy, mean_precision, mean_recall, mean_f1, mean_specificity, acc_err, prec_err, rec_err, f1_err, spec_err = compute_mean_std_metric(accuracies, precisions, recalls, f1_scores, specificities)
-    
-    bar_chart_performances(mean_accuracy, mean_precision, mean_recall, mean_f1, mean_specificity, mean_auc, acc_err, prec_err, rec_err, f1_err, spec_err, mean_auc_err)
-    
     # Sort models by AUC and return the one with median AUC
-    model_auc_pairs.sort(key=lambda x: x[1])
-    pipeline_medianAUC_random_forest_simple = model_auc_pairs[len(model_auc_pairs) // 2][0]
+    logger.model_auc_pairs.sort(key=lambda x: x[1])
+    pipeline_medianAUC_random_forest_simple = logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][0]
+
+    # Log information about the selected model
+    logging.info(
+        f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
+        "has been selected and saved for further use."
+    )
 
     # Return the trained pipeline
     return pipeline_medianAUC_random_forest_simple
 
 
-
-
-
-
-    """
-    # Save and visualize the first three decision trees in the forest
-    best_estimator = pipeline_random_forest_simple["hyper_opt"].best_estimator_
-
-    print(best_estimator.classes_) # Print the class labels of the best estimator
-
-    for i, tree in enumerate(best_estimator.estimators_[:1]): 
-
-        dot_data = export_graphviz(
-    
-            tree,                  
-            feature_names=region, 
-            
-            filled=True,          # Fill nodes with color based on the class they predict
-            impurity=False,        # Do not display impurity measures
-            proportion=True,       # Display proportions of samples in each node
-            class_names=["CN", "AD"],  
-        )
-
-
-        graph = graphviz.Source(dot_data) # Convert the dot data to a graph
-        graph.render(view= False)  
-
-    # Return the trained pipeline
-    return pipeline_random_forest_simple
-    """
 
 def RFPipeline_PCA(df1, df2, n_iter, cv):
     """
@@ -251,18 +298,18 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values
     region = list(df1.columns.values)
 
-    accuracies, precisions, recalls, f1_scores = [], [], [], []
-    specificities, auc_values, tprs = [], [], []
-
-    model_auc_pairs = []
-
-
+    
     mean_fpr = np.linspace(0, 1, 100) 
+    logger = MetricsLogger(mean_fpr)
 
-    for _ in range(2):
+    for iteration in range(2):
+        
+        logging.info(f"Iteration {iteration + 1} - Splitting data into train and test sets.")
+        
+        # Split the data into training and test sets (10% test data)
         X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1)
 
-        
+        # Define a pipeline with PCA and RandomizedSearchCV
         pipeline_random_forest_PCA = Pipeline(steps=[("dim_reduction", PCA()),
                                     ("hyper_opt", RandomizedSearchCV(RandomForestClassifier(class_weight='balanced'),
                                                                         param_distributions=param_dist,
@@ -271,73 +318,67 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
                                                                         n_jobs=-1))
                                     ]
                                 )
-
+        logging.info("Fitting Random Forest pipeline with PCA and RandomizedSearchCV.")
         pipeline_random_forest_PCA.fit(X_tr, y_tr)
 
+         # Predict labels and probabilities for the test set
         y_pred = pipeline_random_forest_PCA.predict(X_tst)
-        y_prob = pipeline_random_forest_PCA.predict_proba(X_tst)
+        y_prob = pipeline_random_forest_PCA.predict_proba(X_tst)[:, 1]
 
+        # Evaluate model performance
         metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
 
-        print("Components shape is:", np.shape(pipeline_random_forest_PCA["dim_reduction"].components_)[0])
-
-        # Aggiungi il risultato alla lista
-        accuracies.append(metrics_scores['Accuracy'])
-        precisions.append(metrics_scores['Precision'])
-        recalls.append(metrics_scores['Recall'])
-        f1_scores.append(metrics_scores['F1-score'])
-        specificities.append(metrics_scores['Specificity'])
+        # Log the number of PCA components
+        n_components = pipeline_random_forest_PCA["dim_reduction"].n_components_
+        logging.info(f"Number of PCA components used: {n_components}")
         
-        # Calcola ROC e AUC con la tua funzione
-        fpr, tpr, roc_auc, auc_err = compute_roc_auc(y_tst, y_prob)
+        model = pipeline_random_forest_PCA.named_steps['hyper_opt'].best_estimator_
 
-        auc_values.append(roc_auc)
+        
+        logger.append_metrics(metrics_scores, y_tst, y_prob, model)
+        
+        
+
+
+
+    # Calculate mean ROC curve and AUC with confidence intervals
+    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
     
-        # Interpola TPR per il vettore comune mean_fpr
-        interp_tpr = np.interp(mean_fpr, fpr, tpr)
-        interp_tpr[0] = 0.0  # ROC inizia sempre da 0
-        tprs.append(interp_tpr)
+    # Plot mean ROC curve
+    plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    
 
-        model_auc_pairs.append((pipeline_random_forest_PCA, roc_auc))
+    # Calculate mean and standard deviation for each metric's list 
+    (
+        mean_acc,  # Mean accuracy
+        mean_prec,  # Mean precision
+        mean_rec,   # Mean recall
+        mean_f1,    # Mean F1-score
+        mean_spec,  # Mean specificity
+        err_acc,    # Standard error for accuracy
+        err_prec,   # Standard error for precision
+        err_rec,    # Standard error for recall
+        err_f1,     # Standard error for F1-score
+        err_spec    # Standard error for specificity
+    ) = compute_mean_std_metric(logger.accuracy_list, logger.precision_list, logger.recall_list, logger.f1_list, logger.specificity_list)
+        
+        
+    plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
 
-
-    # Calcola media e deviazione standard e stampa le performance
-    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(tprs, auc_values)
+    # Sort models by AUC and return the one with median AUC
+    logger.model_auc_pairs.sort(key=lambda x: x[1])
     
-    # Usa la tua funzione plot_roc per mostrare la ROC media
-    plot_roc(mean_fpr, mean_tpr, mean_auc, mean_auc_err)
-    
-    mean_accuracy, mean_precision, mean_recall, mean_f1, mean_specificity, acc_err, prec_err, rec_err, f1_err, spec_err = compute_mean_std_metric(accuracies, precisions, recalls, f1_scores, specificities)
-    
-    bar_chart_performances(mean_accuracy, mean_precision, mean_recall, mean_f1, mean_specificity, mean_auc, acc_err, prec_err, rec_err, f1_err, spec_err, mean_auc_err)
-    
+    pipeline_medianAUC_random_forest_PCA = logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][0]
+
+    # Log information about the selected model
+    logging.info(
+        f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
+        "has been selected and saved for further use."
+    )
 
 
-    '''
-     # Save and visualize the first decision tree in the forest
-    best_estimator = pipeline_random_forest_PCA["hyper_opt"].best_estimator_
 
-    print(best_estimator.classes_) # Print the class labels of the best estimator
-
-    for i, tree in enumerate(best_estimator.estimators_[:1]): 
-
-        dot_data = export_graphviz(
-    
-            tree,                  
-            feature_names=region, 
-            
-            filled=True,          # Fill nodes with color based on the class they predict
-            impurity=False,        # Do not display impurity measures
-            proportion=True,       # Display proportions of samples in each node
-            class_names=["CN", "AD"],  
-        )
-
-
-        graph = graphviz.Source(dot_data) # Convert the dot data to a graph
-        graph.render(view= False)
-    '''
-
-    return pipeline_random_forest_PCA
+    # Return the trained pipeline
+    return pipeline_medianAUC_random_forest_PCA
     
 
 def RFPipeline_RFECV(df1, df2, n_iter, cv):  
@@ -381,41 +422,38 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 
     """
 
-    
-
+    # Convert features and labels to numpy arrays
     X = df1.values
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values
     roi_names = np.array(df1.columns.values)
     
-    accuracies, precisions, recalls, f1_scores = [], [], [], []
-    specificities, auc_values, tprs = [], [], []
-
-    model_auc_pairs = []
+    
 
 
     mean_fpr = np.linspace(0, 1, 100) 
+    logger = MetricsLogger(mean_fpr)
 
-    for _ in range(2):
+
+    for iteration in range(2):  
+        logging.info(f"Iteration {iteration + 1} - Splitting data into train and test sets.")
 
         # Split data into training and test sets (10% test data)
         X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=0.1)
 
-        # feature selection (RFECV) only on the training set to avoid data leakage
+        # Perform RFECV for feature selection
         rf_base = RandomForestClassifier(n_estimators=200, class_weight='balanced')
-        feature_selector = RFECV(estimator=rf_base, step=2, cv=cv, scoring='recall', n_jobs=-1, min_features_to_select=20) 
+        feature_selector = RFECV(estimator=rf_base, step=2, cv=cv, scoring='recall', min_features_to_select=20) 
         feature_selector.fit(X_tr, y_tr)
 
-        # Mask and selected ROI names
-        selected_mask = feature_selector.get_support() # Get the mask of selected features
+        # Get selected features and transform datasets
+        selected_mask = feature_selector.get_support() 
         selected_ROIs = roi_names[selected_mask]
-
-        # reduce dataset to selected features
         X_training_selected = feature_selector.transform(X_tr)
         X_test_selected = feature_selector.transform(X_tst)
 
-        print("ROI selezionate da RFECV:", selected_ROIs)
+        logging.info(f"Selected features: {selected_ROIs}")
 
-        # Random Forest optimization on selected features
+        # Optimize Random Forest on selected features
         rf_selected_features = RandomizedSearchCV(
             RandomForestClassifier(class_weight='balanced'),
             param_distributions=param_dist,
@@ -425,50 +463,74 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         )
         rf_selected_features.fit(X_training_selected, y_tr)
 
-        # prediction
+        # Predict and evaluate model performance
         y_pred = rf_selected_features.predict(X_test_selected)
         y_prob = rf_selected_features.predict_proba(X_test_selected)
-
-        # Scores
         metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
 
-        #Aggiungi il risultato alla lista
-        accuracies.append(metrics_scores['Accuracy'])
-        precisions.append(metrics_scores['Precision'])
-        recalls.append(metrics_scores['Recall'])
-        f1_scores.append(metrics_scores['F1-score'])
-        specificities.append(metrics_scores['Specificity'])
         
-        # Calcola ROC e AUC con la tua funzione
-        fpr, tpr, roc_auc, auc_err = compute_roc_auc(y_tst, y_prob)
-
-        auc_values.append(roc_auc)
+        # Extract feature importances
+        importances = rf_selected_features.best_estimator_.feature_importances_
+        sorted_idx = np.argsort(importances)[::-1]  # Indices of features sorted by importance
+        top2_ROIs = selected_ROIs[sorted_idx[:2]]  # Get the top 2 ROI names
+        top2_importances = importances[sorted_idx[:2]]  # Get the top 2 importances
     
-        # Interpola TPR per il vettore comune mean_fpr
-        interp_tpr = np.interp(mean_fpr, fpr, tpr)
-        interp_tpr[0] = 0.0  # ROC inizia sempre da 0
-        tprs.append(interp_tpr)
+        logging.info(f"Top 2 important ROIs for iteration {iteration + 1}: {top2_ROIs} with importances {top2_importances}")
 
-        # extract feature importance of selected features
-        best_rf = rf_selected_features.best_estimator_
-        importances = best_rf.feature_importances_
-        sorted_idx = np.argsort(importances)[::-1][:8]  # indices of top 10 ROIs
-        top8_ROIs = selected_ROIs[sorted_idx]
-        top8_importances = importances[sorted_idx]
 
-        # print the complete ranking of ROIs
-        '''
-        print("\nROIs complete ranking (importance):")
-        ranking_ROIs = sorted(zip(selected_ROIs, importances), key=lambda x: x[1], reverse=True)
-        for rank, (roi, importance) in enumerate(ranking_ROIs, 1):
-            print(f"{rank}. ROI: {roi}, Importance: {importance:.4f}")
 
-        '''
+        # Create a pipeline with the feature selector and classifier
+        pipeline_rfecv = Pipeline([
+        ("selector", feature_selector),
+        ("classifier", rf_selected_features.best_estimator_)
+        ])
 
-        # --- PIE CHART IEEE STYLE FOR TOP 8 ROIs ---
-        plt.figure(figsize=(8, 8))
-        colors = plt.cm.tab20.colors  # IEEE-like color palette
-        patches, texts, autotexts = plt.pie(
+        logger.append_metrics(metrics_scores, y_tst, y_prob, rf_selected_features.best_estimator_)
+        
+        
+
+
+    
+    # Calculate mean ROC curve and AUC with confidence intervals
+    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
+    
+    # Plot mean ROC curve
+    plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    
+
+    # Calculate mean and standard deviation for each metric's list 
+    (
+        mean_acc,  # Mean accuracy
+        mean_prec,  # Mean precision
+        mean_rec,   # Mean recall
+        mean_f1,    # Mean F1-score
+        mean_spec,  # Mean specificity
+        err_acc,    # Standard error for accuracy
+        err_prec,   # Standard error for precision
+        err_rec,    # Standard error for recall
+        err_f1,     # Standard error for F1-score
+        err_spec    # Standard error for specificity
+    ) = compute_mean_std_metric(logger.accuracy_list, logger.precision_list, logger.recall_list, logger.f1_list, logger.specificity_list)
+        
+        
+    plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
+
+    # Sort models by AUC and return the one with median AUC
+    logger.model_auc_pairs.sort(key=lambda x: x[1])
+    
+    pipeline_rfecv_medianAUC = logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][0]
+
+    # Extract feature importances for the selected features
+    importances = pipeline_rfecv_medianAUC.named_steps['classifier'].feature_importances_
+    sorted_idx = np.argsort(importances)[::-1][:8]  # indices of top 10 ROIs
+    top8_ROIs = selected_ROIs[sorted_idx]
+    top8_importances = importances[sorted_idx]
+
+        
+
+        # Visualize feature importances with a pie chart
+    plt.figure(figsize=(8, 8))
+    colors = plt.cm.tab20.colors  # IEEE-like color palette
+    patches, texts, autotexts = plt.pie(
             top8_importances,
             labels=top8_ROIs,
             autopct='%1.1f%%',
@@ -476,59 +538,21 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
             colors=colors[:8],
             textprops={'fontsize': 3, 'weight': 'bold'},
             radius=0.80,  # Adjust radius for better visibility
-        )
-        plt.title("Importance of the 8 best ROIs", fontsize=6, weight='bold')
-        plt.tight_layout()
-        #plt.legend(top8_ROIs, title="ROI", loc="center left", bbox_to_anchor=(1, 0.5), fontsize=12)
-        #plt.savefig("top8_ROI_piechart.png", dpi=300, bbox_inches='tight')
-        plt.show()
+    )
+    plt.title("Importance of the 8 best ROIs for the model with the median AUC", fontsize=6, weight='bold')
+    plt.tight_layout()
+        
+    plt.show()
+    # Log information about the selected model
+    logging.succes(
+        f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
+        "has been selected and saved for further use."
+    )
 
-        # Wrap feature selector + final estimator into a Pipeline
-        pipeline_rfecv = Pipeline([
-        ("selector", feature_selector),
-        ("classifier", rf_selected_features.best_estimator_)
-        ])
+   
+    return pipeline_rfecv_medianAUC
+    
 
-        model_auc_pairs.append((pipeline_rfecv, roc_auc))
-
-
-
-    # Calcola media e deviazione standard e stampa le performance
-    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(tprs, auc_values)
-    
-    # Usa la tua funzione plot_roc per mostrare la ROC media
-    plot_roc(mean_fpr, mean_tpr, mean_auc, mean_auc_err)
-    
-    mean_accuracy, mean_precision, mean_recall, mean_f1, mean_specificity, acc_err, prec_err, rec_err, f1_err, spec_err = compute_mean_std_metric(accuracies, precisions, recalls, f1_scores, specificities)
-    
-    bar_chart_performances(mean_accuracy, mean_precision, mean_recall, mean_f1, mean_specificity, mean_auc, acc_err, prec_err, rec_err, f1_err, spec_err, mean_auc_err)
-    
-    model_auc_pairs.sort(key=lambda x: x[1])
-    pipeline_rfecv_medianAUC = model_auc_pairs[len(model_auc_pairs) // 2][0]
-    
-    '''
-    # visualize best tree
-    for i, tree in enumerate(best_rf.estimators_[:1]):
-        dot_data = export_graphviz(
-            tree,
-            feature_names=selected_ROIs,
-            filled=True,
-            impurity=False,
-            proportion=True,
-            class_names=["CN", "AD"]
-        )
-        graph = graphviz.Source(dot_data)
-        graph.render(view= False) # Save the graph to a file without opening it
-
-    # Wrap feature selector + final estimator into a Pipeline
-    pipeline_rfecv = Pipeline([
-        ("selector", feature_selector),
-        ("classifier", rf_selected_features.best_estimator_)
-    ])
-    '''
-    
-    return pipeline_rfecv
-    #return rf_selected_features
 
 
 
@@ -573,10 +597,6 @@ def SVM_simple(df1, df2, ker: str):
     y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values # convert labels to binary
 
     # Define the parameter grid for SVM
-    # The parameters are defined based on the kernel type
-    # If the kernel is 'linear', we don't need to specify 'gamma'
-    # If the kernel is 'rbf', we need to specify 'gamma'
-    # The 'class_weight' parameter is set to 'balanced' to handle class imbalance
     if ker == 'linear':
         param_grid = {
                 'C': np.logspace(-3, 3, 10),
@@ -594,161 +614,78 @@ def SVM_simple(df1, df2, ker: str):
             }
             
 
-   
-    mean_fpr = np.linspace(0, 1, 100) 
+  
 
+    # Initialize metrics storage
 
-    # Initialize lists to store performance metrics
-    # These will be used to store the results of multiple iterations 
-    accuracies, precisions, recalls, f1_scores = [], [], [], []
-    specificities, auc_values, tprs = [], [], []
+    mean_fpr = np.linspace(0, 1, 100)
+    logger = MetricsLogger(mean_fpr) 
 
-    model_auc_pairs = []
+    for iteration in range(2):
+        logging.info(f"Iteration {iteration + 1}: splitting data into train/test sets.")
 
-    mean_fpr = np.linspace(0, 1, 100) 
-
-    for _ in range(2):
-        
-    
+        # Split dataset
         X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1)
 
-        # Create SVM classifier
-        # The kernel is specified based on the input parameter
+        # Initialize classifier and GridSearchCV
         classifier_svm = svm.SVC(kernel=ker, probability=True, class_weight='balanced')
     
-        grid_optimized = GridSearchCV(classifier_svm, param_grid, refit=True, scoring='roc_auc', cv=20)
+        pipeline_SVM_grid_optimazed = GridSearchCV(
+                    classifier_svm,
+                    param_grid,
+                    cv=20,
+                    scoring='roc_auc',
+                    refit=True,
+                    n_jobs=-1
+                )
+        # Train model
+        pipeline_SVM_grid_optimazed.fit(X_tr, y_tr)
     
-        # fitting the model for grid search
-        grid_optimized.fit(X_tr, y_tr)
+        # Predictions and probabilities
+        y_pred = pipeline_SVM_grid_optimazed.predict(X_tst)
+        y_prob = pipeline_SVM_grid_optimazed.predict_proba(X_tst)[:, 1]
     
-        y_pred = grid_optimized.predict(X_tst)
-        y_prob = grid_optimized.decision_function(X_tst)
-    
-        # Compute performance scores based on predictions
+        # Evaluate model performance 
         metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
         
-        # Aggiungi il risultato alla lista
-
-        accuracies.append(metrics_scores['Accuracy'])
-        precisions.append(metrics_scores['Precision'])
-        recalls.append(metrics_scores['Recall'])
-        f1_scores.append(metrics_scores['F1-score'])
-        specificities.append(metrics_scores['Specificity'])
-        
-        # Calcola ROC e AUC con la tua funzione
-        fpr, tpr, roc_auc, auc_err = compute_roc_auc(y_tst, y_prob)
-
-        auc_values.append(roc_auc)
-
-    
-        # Interpola TPR per il vettore comune mean_fpr
-        interp_tpr = np.interp(mean_fpr, fpr, tpr)
-        interp_tpr[0] = 0.0  # ROC inizia sempre da 0
-        tprs.append(interp_tpr)
-
-
-        model_auc_pairs.append((grid_optimized, roc_auc))
-
+        logger.append_metrics(metrics_scores, y_tst, y_prob, pipeline_SVM_grid_optimazed.best_estimator_)
         
 
-        
+    # Calculate mean ROC curve and AUC with confidence intervals
+    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
     
-    # Calcola media e deviazione standard e stampa le performance
-    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(tprs, auc_values)
+    # Plot mean ROC curve
+    plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    
 
-    
-    # Usa la tua funzione plot_roc per mostrare la ROC media
-    plot_roc(mean_fpr, mean_tpr, mean_auc, mean_auc_err)
-    
-    mean_accuracy, mean_precision, mean_recall, mean_f1, mean_specificity, acc_err, prec_err, rec_err, f1_err, spec_err = compute_mean_std_metric(accuracies, precisions, recalls, f1_scores, specificities)
-    
-    bar_chart_performances(mean_accuracy, mean_precision, mean_recall, mean_f1, mean_specificity, mean_auc, acc_err, prec_err, rec_err, f1_err, spec_err, mean_auc_err)
-    
+    # Calculate mean and standard deviation for each metric's list 
+    (
+        mean_acc,  # Mean accuracy
+        mean_prec,  # Mean precision
+        mean_rec,   # Mean recall
+        mean_f1,    # Mean F1-score
+        mean_spec,  # Mean specificity
+        err_acc,    # Standard error for accuracy
+        err_prec,   # Standard error for precision
+        err_rec,    # Standard error for recall
+        err_f1,     # Standard error for F1-score
+        err_spec    # Standard error for specificity
+    ) = compute_mean_std_metric(logger.accuracy_list, logger.precision_list, logger.recall_list, logger.f1_list, logger.specificity_list)
+        
+        
+    plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
+
     # Sort models by AUC and return the one with median AUC
-    model_auc_pairs.sort(key=lambda x: x[1])
-    grid_optimized_medianAUC = model_auc_pairs[len(model_auc_pairs) // 2][0]
-
-    return grid_optimized_medianAUC
-
-
-"""
-def SVM_simple(df1, df2, ker: str):
+    logger.model_auc_pairs.sort(key=lambda x: x[1])
     
+    pipeline_SVM_medianAUC = logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][0]
 
-    Train an SVM model pipeline with hyperparameter optimization.
-    
-    This function splits the dataset into training and test sets, performs hyperparameter optimization 
-    using GridSearchCV, and trains a Support Vector Machine (SVM) model.
-    
-    Parameters
-    ----------
-    df1 : pandas.DataFrame
-        Feature dataset containing independent variables.
-        
-    df2 : pandas.DataFrame
-        Target dataset containing dependent variables (labels).
-        
-    ker : str
-        Kernel type for the SVM (e.g., 'linear', 'rbf').
-    
-    Returns
-    -------
-    sklearn.model_selection.GridSearchCV
-        A fitted GridSearchCV object containing the best SVM model.
-    
-    Notes
-    -----
-    - The kernel type (`ker`) determines the decision boundary; 'linear' and 'rbf' are common choices.
-    - GridSearchCV optimizes hyperparameters such as `C` (regularization) and `gamma` (for non-linear kernels).
-    
-    References
-    ----------
-    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
-    
-    
+    # Log information about the selected model
+    logging.info(
+        f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
+        "has been selected and saved for further use."
+    )
 
-    # Extract feature and target data as NumPy arrays
-    X = df1.values
-    y = df2.loc[df1.index].map({'Normal': 0, 'AD': 1}).values # convert labels to binary
 
-    # Define the parameter grid for SVM
-    # The parameters are defined based on the kernel type
-    # If the kernel is 'linear', we don't need to specify 'gamma'
-    # If the kernel is 'rbf', we need to specify 'gamma'
-    # The 'class_weight' parameter is set to 'balanced' to handle class imbalance
-    if ker == 'linear':
-        param_grid = {
-                'C': np.logspace(-3, 3, 10),
-                'kernel': [ker],
-                'class_weight': ['balanced', None],
-                'probability': [True]
-            }
-    else:
-        param_grid = {
-                'C': np.logspace(-3, 3, 10),
-                'gamma': np.logspace(-4, 2, 10),
-                'kernel': [ker],
-                'class_weight': ['balanced', None],
-                'probability': [True]
-            }
+    return pipeline_SVM_medianAUC
 
-    X_tr, X_tst, y_tr, y_tst = train_test_split(X, y, test_size=.1) # 10% test data
 
-    # Create SVM classifier
-    # The kernel is specified based on the input parameter
-    classifier_svm = svm.SVC(kernel=ker, probability=True, class_weight='balanced')
-
-    grid_optimized = GridSearchCV(classifier_svm, param_grid, refit=True, scoring='roc_auc', cv=20, n_jobs=-1)
-
-    # fitting the model for grid search
-    grid_optimized.fit(X_tr, y_tr)
-
-    y_pred = grid_optimized.predict(X_tst)
-    y_prob = grid_optimized.decision_function(X_tst)
-
-    # Compute performance scores based on predictions
-    metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
-
-    return grid_optimized
-
-"""
