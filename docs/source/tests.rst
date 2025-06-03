@@ -1,7 +1,7 @@
 tests package
 =================
 
-tests.test\_atlas\_resampling module
+test\_atlas\_resampling 
 ------------------------------------------
 
 .. automodule:: tests.test_atlas_resampling
@@ -9,7 +9,7 @@ tests.test\_atlas\_resampling module
    :undoc-members:
    :show-inheritance:
 
-tests.test\_classifiers module
+test\_classifiers 
 -----------------------------------
 
 .. automodule:: tests.test_classifiers
@@ -17,7 +17,7 @@ tests.test\_classifiers module
    :undoc-members:
    :show-inheritance:
 
-tests.test\_feature\_extractor\_mocked module
+test\_feature\_extractor\_mocked 
 ----------------------------------------------------
 
 
@@ -26,7 +26,7 @@ tests.test\_feature\_extractor\_mocked module
    :undoc-members:
    :show-inheritance:
 
-tests.test\_performance\_scores module
+test\_performance\_scores 
 ------------------------------------------
 
 .. automodule:: tests.test_performance_scores
