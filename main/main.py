@@ -349,17 +349,21 @@ def main():
     # === Step 5: Save the trained model ===
 
     if model is not None:
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        model_dir = os.path.join(base_dir, "trained_model")  # o "trained_model" se la cartella è minuscola
+
         if args.classifier == "rf":
             if use_pca:
-                model_filename = "trained_model_rf_pca.joblib"
+                model_filename = os.path.join(model_dir, "trained_model_rf_pca.joblib")
             elif use_rfe:
-                model_filename = "trained_model_rf_rfecv.joblib"
+                model_filename = os.path.join(model_dir, "trained_model_rf_rfecv.joblib")
             else:
-                model_filename = "trained_model_rf.joblib"
+                model_filename = os.path.join(model_dir, "trained_model_rf.joblib")
         elif args.classifier == "svm":
-            model_filename = f"trained_model_svm_{args.kernel}.joblib"
+            model_filename = os.path.join(model_dir, f"trained_model_svm_{args.kernel}.joblib")
         else:
-            model_filename = "trained_model.joblib"
+            model_filename = os.path.join(model_dir, "trained_model.joblib")
+
     joblib.dump(model, model_filename)
     logger.success(f" Trained model saved to '{model_filename}'")
 
