@@ -482,6 +482,7 @@ The intellectual property of this work remains with the authors and contributors
 - Any results or publications derived from the use of this project must cite the original authors appropriately.
 
 By using this repository, you agree to comply with the terms outlined above. For clarification or collaboration inquiries, please contact the repository maintainers and authors.
+
 ---
 
 ## 👤 Authors
@@ -508,8 +509,7 @@ Whole-Brain versus Regional Analysis of Structural MRI
 in the Alzheimer’s Disease*. **J Neuroimaging**, 25:552-563.  
    [DOI: 10.1111/jon.12163]
 
-2. Tzourio-Mazoyer, N., et al. (2002). *Automated anatomical labeling of activations in SPM using a macroscopic anatomical parcellation of the MNI MRI single-subject brain*. **NeuroImage**, 15(1), 273–289.  
-   [https://doi.org/10.1006/nimg.2001.0978](https://doi.org/10.1006/nimg.2001.0978)
+2. Sarraf, S, et al. (2017). *DeepAD: Alzheimer’s Disease Classification via Deep Convolutional Neural Networks using MRI and fMRI*. **BioRxiv preprint**, 1-32. [DOI: https://doi.org/10.1101/070441]
 
 3. The **atlases** are: *BN_Atlas_246_2mm.nii.gz* from [https://atlas.brainnetome.org/] & *lpba40_56_2mm.nii.gz* from [https://www.loni.usc.edu/research/atlases]
 
@@ -525,19 +525,15 @@ in the Alzheimer’s Disease*. **J Neuroimaging**, 25:552-563.
 6. LeCun, Y., Bengio, Y., & Hinton, G. (2015). *Deep learning*. **Nature**, 521(7553), 436–444.  
    [https://doi.org/10.1038/nature14539](https://doi.org/10.1038/nature14539)
 
-7. Abadi, M., et al. (2016). *TensorFlow: A system for large-scale machine learning*. In *12th USENIX Symposium on Operating Systems Design and Implementation (OSDI 16)*, 265–283.  
-   [https://www.usenix.org/conference/osdi16/technical-sessions/presentation/abadi](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/abadi)
 
 ### 🧰 Tools and Frameworks
 
-8. Hunter, J. D. (2007). *Matplotlib: A 2D graphics environment*. **Computing in Science & Engineering**, 9(3), 90–95.  
+7. Hunter, J. D. (2007). *Matplotlib: A 2D graphics environment*. **Computing in Science & Engineering**, 9(3), 90–95.  
    [https://doi.org/10.1109/MCSE.2007.55](https://doi.org/10.1109/MCSE.2007.55)
 
-9. Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. **Journal of Machine Learning Research**, 12, 2825–2830.  
+8. Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. **Journal of Machine Learning Research**, 12, 2825–2830.  
    [http://jmlr.org/papers/v12/pedregosa11a.html](http://jmlr.org/papers/v12/pedregosa11a.html)
 
-10. Gorgolewski, K., et al. (2011). *Nipype: A flexible, lightweight and extensible neuroimaging data processing framework in Python*. **Frontiers in Neuroinformatics**, 5, 13.  
-    [https://doi.org/10.3389/fninf.2011.00013](https://doi.org/10.3389/fninf.2011.00013)
 
 ---
 
