@@ -8,7 +8,7 @@ CNN\_codes
    :caption: Modules
 
 
-.CNN\_class
+CNN\_class
 ------------------------------------------
 
 .. automodule:: CNN_codes.CNN_class
@@ -24,6 +24,7 @@ utilities
    :members:
    :undoc-members:
    :show-inheritance:
+
 
 apply\_trained\_model
 -----------------------------------------
