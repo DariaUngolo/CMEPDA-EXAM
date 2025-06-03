@@ -15,7 +15,7 @@ package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')
 
 sys.path.insert(0, package_root)
 sys.path.insert(0, os.path.join(package_root, 'ML_codes'))
-sys.path.insert(0, os.path.join(package_root, 'ML_main'))
+sys.path.insert(0, os.path.join(package_root, 'main'))
 sys.path.insert(0, os.path.join(package_root, 'CNN_codes'))
 
 autodoc_mock_imports = [
