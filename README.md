@@ -36,13 +36,78 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 └── README.md
 ```
 
-### Feature Extraction and Pipeline Overview
+### Images and Atlas Description 
 
-Feature extraction is performed using **MATLAB**, which processes the MRI scans and atlas segmentations to compute descriptive statistics—such as mean intensity, standard deviation, and region volume—for each ROI. These features form the input data for the classification pipeline implemented in **Python**.
+The MRI scans used in this project are stored in the **NIfTI format** (`.nii` or `.nii.gz`), which is a widely adopted standard for medical imaging. This format preserves 3D anatomical structure and supports spatial metadata (e.g., voxel dimensions, orientation, and affine transforms), making it ideal for neuroimaging analysis.
 
-To ensure consistency in spatial alignment, the pipeline automatically verifies whether the input atlas has the same resolution and spatial dimensions as the MRI images. If a mismatch is detected, the atlas is **resampled** to match the image geometry. This operation ensures correct anatomical correspondence between regions and voxel intensities. The newly resampled atlas is then saved to disk and used for all subsequent feature extraction steps.
+The images have been **preprocessed and segmented** using the **SMWC1** method, which stands for:
 
-This alignment step is essential for preserving anatomical accuracy and avoiding artifacts in ROI-level statistics. Once the features are extracted, they serve as the input to the classification stage of the pipeline, implemented in Python.
+> **Segmented, Modulated, and warped Gray Matter Class 1**
+
+This segmentation process is commonly performed via **SPM (Statistical Parametric Mapping)** and involves the following steps:
+- **Segmentation**: Identifies gray matter (GM), white matter (WM), and cerebrospinal fluid (CSF) tissue classes.
+- **Modulation**: Preserves original volume information by adjusting voxel intensities according to local deformation during spatial normalization.
+- **Warping**: Aligns individual subjects' anatomy into a common reference space (e.g., MNI152), enabling group-level comparisons.
+
+The resulting `smwc1*.nii` image contains **gray matter tissue probability maps**, where each voxel value represents the **likelihood (between 0 and 1)** of being gray matter, adjusted for individual brain volume and spatial normalization.
+
+##### 🔍 Visualization
+
+These NIfTI images can be viewed using any neuroimaging viewer that supports 3D volumes, such as:
+
+- [**Mango**](http://ric.uthscsa.edu/mango/)
+- **MRIcron**
+- **FSLeyes**
+- **ITK-SNAP**
+
+These tools allow you to inspect the anatomical structure, overlay atlas labels, and verify alignment and ROI masking.
+
+##### 🖼️ Example [valutare se inserirle]
+
+Below is a sample slice from an `smwc1` image showing gray matter segmentation in MNI space, overlayed with atlas-based ROIs:
+
+![Example gray matter segmentation](path/to/your/example_image.png)
+
+#### 🧠 Available Atlases
+
+The pipeline supports **multiple brain atlases** to perform ROI-based feature extraction. Each atlas defines a **parcellation scheme** over the brain, assigning each voxel to a specific anatomical or functional region. These parcellations are critical for aggregating voxel-level data (e.g., intensity values) into meaningful region-level statistics used in machine learning.
+
+Two atlases are currently supported and included in the `data/` folder:
+
+1. **LONI Probabilistic Brain Atlas (LPBA40)**
+   - **Regions**: 56 anatomical regions  
+   - **Format**: Probabilistic, converted to a maximum-probability label map  
+   - **Origin**: Developed at the Laboratory of Neuro Imaging (LONI)  
+   - **Purpose**: Suitable for coarse anatomical feature aggregation  
+   - **Space**: Already coregistered to the MNI152 template space
+
+2. **Brainnetome Atlas**
+   - **Regions**: 246 fine-grained regions (210 cortical + 36 subcortical)  
+   - **Origin**: Developed by the Chinese Academy of Sciences  
+   - **Purpose**: Provides high-resolution parcellation ideal for detecting subtle changes in specific brain circuits  
+   - **Space**: Aligned with the MNI152 coordinate system
+
+Both atlases are distributed in **NIfTI (.nii.gz)** format and are compatible with the T1-weighted input scans. Since the atlases are pre-aligned to the **MNI152 standard space**, they ensure anatomical consistency with most neuroimaging datasets without requiring additional registration steps.
+
+**Automatic Resampling**
+
+If the atlas resolution does not match the input image (e.g., different voxel sizes or matrix dimensions), the pipeline automatically **resamples the atlas** to match the subject's MRI geometry using nearest-neighbor interpolation. This guarantees voxelwise correspondence and preserves the integrity of region labels.
+
+The resampled atlas is saved in the output directory and reused in subsequent runs to avoid redundant computation.
+
+### Feature Extraction
+
+Feature extraction is performed using **MATLAB**, which processes the MRI scans and atlas-based segmentations to compute region-level statistics for each ROI. Specifically, the extraction pipeline calculates:
+
+- **Mean intensity**
+- **Standard deviation**
+- **Region volume** (i.e., number of voxels)
+
+These features serve as the input to the classification pipeline implemented in **Python**.
+
+The atlas is overlaid on the input MRI as a **binary mask**, and statistics are computed **only within voxels labeled as part of each ROI**. To reduce the impact of background noise or interpolation artifacts, a small intensity **threshold of 10⁻⁶** is applied: any voxel with an intensity value below this threshold is ignored during feature computation.
+
+This masking and thresholding step ensures that the extracted features are robust, biologically meaningful, and not corrupted by out-of-brain or near-zero intensity values.
 
 ### Classification Approaches
 
