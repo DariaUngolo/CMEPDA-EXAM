@@ -1,7 +1,7 @@
 
 CNN\_codes 
 =============
-
+**CNN_codes** contains all the scripts and functions needed to build, train, and evaluate convolutional neural network models for image classification tasks. This module supports loading data, defining CNN architectures, training procedures, and inference on new images
 .. toctree::
    :maxdepth: 4
    :caption: Modules
