@@ -199,53 +199,74 @@ def main():
     """
     Executes the full pipeline for brain MRI classification using region-based features.
 
-    This script supports two execution modes: training and inference.
+    Supports two execution modes: training and inference.
 
-    Modes:
-    ------
-    1. Training mode (--train):
-       - Resamples the input brain atlas to the resolution of each subject's MRI.
-       - Extracts features from NIfTI images using a MATLAB script.
-       - Trains a classifier (Random Forest or SVM) using the extracted features.
-       - Saves the trained model to a specified path for later use.
+    Parameters
+    ----------
+    None
 
-    2. Inference mode (--inference):
-       - Loads a pre-trained classifier model from disk.
-       - Extracts features from new subjects using the same MATLAB pipeline.
-       - Applies the loaded model to predict the class (e.g., Alzheimer's or control).
-       - Displays classification results and prediction probabilities in tabular format using `tabulate`.
-
-    Command-line arguments:
-    -----------------------
-    --train                  : Activates training mode.
-    --inference              : Activates inference mode.
-    --subjects_dir <path>    : Path to the folder containing subject NIfTI images.
-    --atlas_path <path>      : Path to the brain atlas in NIfTI format.
-    --clinical_data <path>   : Path to a CSV file containing clinical labels or metadata.
-    --model_path <path>      : Path to save the trained model (in training mode), or to load a model (in inference mode).
-    --classifier <str>       : Classifier type, either "rf" (Random Forest) or "svm" (Support Vector Machine). Default is "rf".
-    --resample               : If set, the atlas will be resampled to subject space.
-    --matlab_function <name> : Name of the MATLAB function to use for feature extraction.
-
-    Requirements:
-    -------------
-    - MATLAB must be installed and the MATLAB Engine API for Python must be properly configured.
-    - All subject NIfTI images must be preprocessed and compatible with the chosen atlas.
-    - For inference, ensure that the provided model path points to a valid `.joblib` file.
-
-    Output:
+    Returns
     -------
-    - Trained classifier saved to disk (training mode).
-    - Tabulated predictions with class probabilities (inference mode).
+    None
 
-    Example usage:
-    --------------
+    Notes
+    -----
+    Modes:
+        1. Training mode (--train):
+           - Resamples the input brain atlas to the resolution of each subject's MRI.
+           - Extracts features from NIfTI images using a MATLAB script.
+           - Trains a classifier (Random Forest or SVM) on the extracted features.
+           - Saves the trained model to disk.
+
+        2. Inference mode (--inference):
+           - Loads a pre-trained classifier model from disk.
+           - Extracts features from new subjects using the same MATLAB pipeline.
+           - Applies the loaded model to predict classes (e.g., Alzheimer's or control).
+           - Displays classification results and prediction probabilities in tabular format.
+
+    Command-line Arguments
+    ----------------------
+    --train : bool
+        Activate training mode.
+    --inference : bool
+        Activate inference mode.
+    --subjects_dir : str
+        Path to folder with subject NIfTI images.
+    --atlas_path : str
+        Path to brain atlas in NIfTI format.
+    --clinical_data : str
+        Path to CSV file with clinical labels or metadata.
+    --model_path : str
+        Path to save the trained model (training) or load a model (inference).
+    --classifier : str, optional
+        Classifier type: "rf" (Random Forest) or "svm" (Support Vector Machine). Default is "rf".
+    --resample : bool, optional
+        If set, resample the atlas to subject space.
+    --matlab_function : str, optional
+        Name of the MATLAB function used for feature extraction.
+
+    Requirements
+    ------------
+    - MATLAB installed and MATLAB Engine API for Python configured.
+    - Subject NIfTI images must be preprocessed and compatible with the atlas.
+    - For inference, model_path must point to a valid `.joblib` file.
+
+    Outputs
+    -------
+    - Training mode: trained classifier saved to disk.
+    - Inference mode: tabulated predictions with class probabilities.
+
+    Examples
+    --------
     Train a model:
-        python main.py --train --subjects_dir ./data/ --atlas_path ./atlas.nii.gz --clinical_data ./labels.csv --model_path ./model.joblib
+
+    >>> python main.py --train --subjects_dir ./data/ --atlas_path ./atlas.nii.gz --clinical_data ./labels.csv --model_path ./model.joblib
 
     Run inference:
-        python main.py --inference --subjects_dir ./new_subjects/ --atlas_path ./atlas.nii.gz --model_path ./model.joblib
+
+    >>> python main.py --inference --subjects_dir ./new_subjects/ --atlas_path ./atlas.nii.gz --model_path ./model.joblib
     """
+
 
 
     args = parse_arguments()
