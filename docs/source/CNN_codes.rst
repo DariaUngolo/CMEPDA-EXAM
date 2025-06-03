@@ -26,10 +26,3 @@ utilities
    :show-inheritance:
 
 
-apply\_trained\_model
------------------------------------------
-
-.. automodule:: CNN_codes.apply_trained_model
-   :members:
-   :undoc-members:
-   :show-inheritance:
