@@ -1,11 +1,13 @@
 ML\_codes 
 =============
 
+**ML_codes** contains implementations of machine learning classifiers designed for medical image analysis. The scripts support training new models, performing hyperparameter tuning, and applying pre-trained models for classification tasks, with flexible command-line options for user customization.
+
 .. toctree::
    :maxdepth: 4
    :caption: Modules
 
-ML\_codes.classifiers\_unified module
+classifiers\_unified
 ------------------------------------------
 
 .. automodule:: ML_codes.classifiers_unified
@@ -13,7 +15,7 @@ ML\_codes.classifiers\_unified module
    :undoc-members:
    :show-inheritance:
 
-ML\_codes.feature\_extractor module
+feature\_extractor 
 ------------------------------------------
 
 .. automodule:: ML_codes.feature_extractor
@@ -23,7 +25,7 @@ ML\_codes.feature\_extractor module
 
 
 
-ML\_codes.performance\_scores module
+performance\_scores
 -----------------------------------------
 
 .. automodule:: ML_codes.performance_scores
@@ -31,7 +33,7 @@ ML\_codes.performance\_scores module
    :undoc-members:
    :show-inheritance:
 
-ML\_codes.atlas\_resampling module
+atlas\_resampling
 -----------------------------------------
 
 .. automodule:: ML_codes.atlas_resampling
