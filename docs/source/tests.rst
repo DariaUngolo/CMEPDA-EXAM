@@ -7,7 +7,6 @@ test\_atlas\_resampling
 ------------------------------------------
 
 .. automodule:: tests.test_atlas_resampling
-   :toctree: _autosummary
    :members:
    :undoc-members:
    :show-inheritance:
