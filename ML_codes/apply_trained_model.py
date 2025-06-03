@@ -11,23 +11,55 @@ from loguru import logger
 def feature_extractor_independent_dataset(nifti_image_path, atlas_file, atlas_txt, matlab_feature_extractor_path):
     """
     Extracts features (mean, standard deviation, volume) from a NIfTI image using a MATLAB function
-    and returns several combinations of feature DataFrames.
-
-    Parameters:
-        nifti_image_path (str): Path to the NIfTI image file.
-        atlas_file (str): Path to the atlas NIfTI file.
-        atlas_txt (str): Path to the atlas labels text file.
-        matlab_feature_extractor_path (str): Path to the MATLAB function for feature extraction.
-
-    Returns:
-        Tuple[pd.DataFrame]: DataFrames containing:
-            - df_mean: Mean values for each ROI.
-            - df_std: Standard deviation values for each ROI.
-            - df_volume: Volume values for each ROI.
-            - df_mean_std: Mean + std features.
-            - df_mean_volume: Mean + volume features.
-            - df_std_volume: Std + volume features.
-            - df_mean_std_volume: Mean + std + volume features.
+    and organizes them into DataFrames. Additionally, it reads an atlas file and corresponding labels
+    to identify Regions of Interest (ROIs).
+    
+    Parameters
+    ----------
+    nifti_image_path : str
+        Path to the NIfTI image file to be processed.
+        
+    atlas_file : str
+        Path to the atlas NIfTI file that defines regions for feature extraction.
+        
+    atlas_txt : str
+        Path to the atlas labels text file containing region names or identifiers.
+        
+    matlab_feature_extractor_path : str
+        Path to the MATLAB script or function used for feature extraction.
+    
+    Returns
+    -------
+    tuple
+        A tuple of pandas DataFrames representing extracted features, organized as follows:
+        
+        - df_mean : pd.DataFrame
+            Mean intensity values for each ROI defined by the atlas.
+        
+        - df_std : pd.DataFrame
+            Standard deviation of intensity values for each ROI.
+        
+        - df_volume : pd.DataFrame
+            Volume of each ROI as defined by the atlas.
+        
+        - df_mean_std : pd.DataFrame
+            Combined features containing both mean and standard deviation for each ROI.
+        
+        - df_mean_volume : pd.DataFrame
+            Combined features containing both mean and volume for each ROI.
+        
+        - df_std_volume : pd.DataFrame
+            Combined features containing both standard deviation and volume for each ROI.
+        
+        - df_mean_std_volume : pd.DataFrame
+            Combined features containing mean, standard deviation, and volume for each ROI.
+    
+    Notes
+    -----
+    - The NIfTI image and atlas must be aligned in the same space for accurate feature extraction.
+    - The MATLAB function should be configured to read the image and atlas paths, perform computation,
+      and output the results in a structured format.
+    - Make sure to install the required Python-MATLAB interface package to enable interaction.
     """
 
     logger.info("Starting MATLAB engine.")
