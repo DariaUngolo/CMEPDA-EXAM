@@ -402,31 +402,35 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
 def RFPipeline_RFECV(df1, df2, n_iter, cv):  
     """
     
-    Train a Random Forest model using Recursive Feature Elimination with Cross-Validation (RFECV) 
+    Train a Random Forest model using Recursive Feature Elimination with Cross-Validation (RFECV)
     combined with hyperparameter tuning via RandomizedSearchCV.
-
-    The function performs feature selection by recursively eliminating less important features 
-    based on cross-validation performance (using recall as scoring metric). Then it performs 
-    randomized hyperparameter search to optimize the Random Forest classifier on the selected 
-    features. This process is repeated over multiple train-test splits to assess model stability.
-
+    
+    The function performs the following steps over multiple iterations:
+    
+        - Maps categorical labels in df2 to binary values (0 and 1).
+        - Recursively eliminates less important features using RFECV with recall as scoring metric.
+        - Performs randomized hyperparameter search to optimize the Random Forest classifier on selected features.
+        - Repeats the process across multiple train-test splits to assess model stability.
+        - Logs and visualizes feature importance from the best estimator.
+        - Computes performance metrics including accuracy, precision, recall, F1-score, specificity, and AUC.
+        - Plots mean ROC curves with confidence intervals and bar charts of metrics.
+        - Selects and returns the pipeline corresponding to the iteration with the median AUC score.
+        - Visualizes the top 8 feature importances as a pie chart.
+    
     Parameters
     ----------
     df1 : pandas.DataFrame
         DataFrame containing the independent variables (features). Rows correspond to samples 
         and columns correspond to features.
-    
     df2 : pandas.DataFrame
-        DataFrame containing the dependent variable (target labels). The function expects labels 
-        to be categorical strings such as 'Normal' and 'AD', which will be mapped internally to 0 and 1.
-    
+        DataFrame containing the dependent variable (target labels). Labels are categorical strings 
+        such as 'Normal' and 'AD', mapped internally to 0 and 1.
     n_iter : int
         Number of iterations (samples) for the RandomizedSearchCV to sample hyperparameter combinations.
-    
     cv : int
         Number of cross-validation folds used both in RFECV for feature selection and in RandomizedSearchCV 
         for hyperparameter tuning.
-
+    
     Returns
     -------
     sklearn.pipeline.Pipeline
@@ -434,30 +438,26 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
           - The RFECV feature selector fit on training data,
           - The optimized Random Forest classifier fit on the selected features.
         The returned pipeline corresponds to the model from the iteration with the median AUC score.
-
+    
     Raises
     ------
     ValueError
-        If input dataframes have mismatched indices or incompatible shapes.
-
+        If input DataFrames have mismatched indices or incompatible shapes.
+    
     Notes
     -----
-    - The labels in df2 are mapped to binary values {0, 1} internally.
     - RFECV uses recall as the scoring metric and eliminates features in steps of 2, 
       retaining at least 20 features.
-    - The Random Forest classifier uses balanced class weights to account for class imbalance.
-    - Feature importance from the best estimator is logged and visualized.
-    - Performance metrics collected include accuracy, precision, recall, F1-score, specificity, and AUC.
-    - The function plots mean ROC curves with confidence intervals and bar charts for metrics.
-    - The median-AUC model is selected to reduce bias from single splits.
-    - Visualizations of top 8 feature importances are shown as a pie chart.
-
+    - Random Forest classifier uses balanced class weights to handle class imbalance.
+    - Median-AUC model selection reduces bias from single train-test splits.
+    
     References
     ----------
-    - scikit-learn RFECV: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html
-    - RandomizedSearchCV: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
-    
+    - https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html
+    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+   
     """
+
 
     # Convert features and labels to numpy arrays
     X = df1.values
