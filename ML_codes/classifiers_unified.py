@@ -125,8 +125,11 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     Train and evaluate a Random Forest classifier pipeline without PCA for dimensionality reduction.
 
     This function performs the following steps:
+    
     1. Converts input DataFrames into numpy arrays and maps categorical labels to binary (0 and 1).
+    
     2. Defines a hyperparameter search space for the Random Forest classifier.
+    
     3. For two iterations:
         - Splits the data into training and test sets (90% train, 10% test).
         - Defines a pipeline with RandomizedSearchCV to optimize Random Forest hyperparameters.
@@ -135,11 +138,13 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
         - Evaluates performance metrics (accuracy, precision, recall, F1, specificity).
         - Computes ROC curve and AUC.
         - Stores the metrics and model for later aggregation.
+    
     4. Aggregates results from all iterations:
         - Computes mean ROC curve and average AUC with confidence intervals.
         - Plots mean ROC curve.
         - Calculates mean and standard errors of all collected metrics.
         - Plots performance metrics as bar charts with error bars.
+   
     5. Selects and returns the trained model from the iteration with the median AUC.
 
     Parameters
