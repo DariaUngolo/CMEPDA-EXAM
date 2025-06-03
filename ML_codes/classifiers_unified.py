@@ -599,38 +599,42 @@ def SVM_simple(df1, df2, ker: str):
     """
     
     Train a Support Vector Machine (SVM) classifier with hyperparameter tuning via GridSearchCV.
-
-    The function splits the input dataset into training and test sets, performs hyperparameter 
-    optimization on the SVM parameters (including kernel type, regularization parameter `C`, 
-    and `gamma` for RBF kernels), and evaluates model performance over multiple random splits.
-    It returns the model pipeline with the median AUC score.
-
+    
+    The function performs the following steps over multiple iterations:
+    
+        - Splits the input dataset into training and test sets.
+        - Maps categorical target labels to binary integers (0 and 1).
+        - Performs hyperparameter optimization on SVM parameters (kernel type, C, and gamma for RBF).
+        - Enables probability estimates for AUC calculation.
+        - Evaluates model performance using accuracy, precision, recall, F1-score, specificity, and AUC.
+        - Repeats training and evaluation over multiple random splits to assess stability.
+        - Selects and returns the SVM model pipeline with the median AUC score.
+        - Produces visual outputs including ROC curves and bar charts of performance metrics.
+    
     Parameters
     ----------
     df1 : pandas.DataFrame
         DataFrame of independent variables (features) where rows are samples and columns are features.
-    
     df2 : pandas.DataFrame
-        DataFrame of dependent variable (target labels). Expected labels are categorical strings 
-        (e.g., 'Normal', 'AD') which are mapped internally to binary integers {0, 1}.
-    
+        DataFrame of dependent variable (target labels). Labels are categorical strings (e.g., 'Normal', 'AD') 
+        mapped internally to binary integers {0, 1}.
     ker : str
         Kernel type for the SVM. Common choices are:
           - 'linear' : linear kernel,
           - 'rbf' : radial basis function (Gaussian) kernel.
         The choice affects which hyperparameters are tuned and model behavior.
-
+    
     Returns
     -------
     sklearn.svm.SVC
         The best SVM model (fitted estimator) found by GridSearchCV, selected based on median AUC 
-        performance across the multiple iterations.
-
+        performance across multiple iterations.
+    
     Raises
     ------
     ValueError
-        If an unsupported kernel type is provided or if input dataframes have mismatched indices.
-
+        If an unsupported kernel type is provided or if input DataFrames have mismatched indices.
+    
     Notes
     -----
     - For 'linear' kernel, hyperparameters tuned are `C` and class_weight.
@@ -640,11 +644,11 @@ def SVM_simple(df1, df2, ker: str):
     - Model evaluation metrics include accuracy, precision, recall, F1-score, specificity, and AUC.
     - The median-AUC model is returned to ensure robustness over random splits.
     - Visual outputs include ROC curve plots and bar charts of performance metrics.
-
+    
     References
     ----------
-    - GridSearchCV: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
-    - SVM classifier: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
+    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
+    - https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
     
     """
 
