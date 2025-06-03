@@ -121,43 +121,60 @@ class MetricsLogger() :
 
 def RFPipeline_noPCA(df1, df2, n_iter, cv):
     """
+    
+    Train and evaluate a Random Forest classifier pipeline without PCA for dimensionality reduction.
 
-    Train a Random Forest model pipeline without PCA.
-    
-    This function splits the dataset into training and test sets, performs hyperparameter optimization 
-    using RandomizedSearchCV, and trains a Random Forest model. The trained pipeline is returned for 
-    further evaluation or use.
-    
+    This function performs the following steps:
+    1. Converts input DataFrames into numpy arrays and maps categorical labels to binary (0 and 1).
+    2. Defines a hyperparameter search space for the Random Forest classifier.
+    3. For two iterations:
+        - Splits the data into training and test sets (90% train, 10% test).
+        - Defines a pipeline with RandomizedSearchCV to optimize Random Forest hyperparameters.
+        - Trains the pipeline on the training data.
+        - Predicts on the test set and computes predicted probabilities.
+        - Evaluates performance metrics (accuracy, precision, recall, F1, specificity).
+        - Computes ROC curve and AUC.
+        - Stores the metrics and model for later aggregation.
+    4. Aggregates results from all iterations:
+        - Computes mean ROC curve and average AUC with confidence intervals.
+        - Plots mean ROC curve.
+        - Calculates mean and standard errors of all collected metrics.
+        - Plots performance metrics as bar charts with error bars.
+    5. Selects and returns the trained model from the iteration with the median AUC.
+
     Parameters
     ----------
     df1 : pandas.DataFrame
-        Feature dataset containing independent variables.
-    
+        Feature matrix containing independent variables.
+
     df2 : pandas.DataFrame
-        Target dataset containing dependent variables (labels).
-    
+        Target labels corresponding to df1, with categorical classes (e.g., 'Normal', 'AD').
+
     n_iter : int
-        Number of parameter combinations sampled during RandomizedSearchCV.
-    
+        Number of hyperparameter combinations sampled in RandomizedSearchCV.
+
     cv : int
-        Number of cross-validation folds used for hyperparameter tuning.
-    
+        Number of cross-validation folds used during hyperparameter optimization.
+
     Returns
     -------
     sklearn.pipeline.Pipeline
-        A fitted pipeline with a trained Random Forest model and optimized hyperparameters.
-    
+        The trained Random Forest model pipeline from the iteration with median AUC.
+
     Notes
     -----
-    - PCA is not applied in this pipeline.
-    - The pipeline optimizes key parameters of the Random Forest classifier (e.g., number of trees, depth).
-    - This method is suitable when dimensionality reduction is not required.
-    
+    - This pipeline does not apply PCA; it uses the original feature set.
+    - Labels are mapped to binary format: 'Normal' -> 0, 'AD' -> 1.
+    - RandomForestClassifier uses balanced class weights to handle imbalance.
+    - The function performs two iterations of training and evaluation to reduce variance in performance estimation.
+    - Uses all available CPU cores for parallel processing during hyperparameter search.
+
     References
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+    - https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
+    - https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
     
-
     """
 
     
@@ -256,41 +273,61 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
 def RFPipeline_PCA(df1, df2, n_iter, cv):
     """
     
-    Train a Random Forest model pipeline with PCA.
-    
-    This function incorporates Principal Component Analysis (PCA) for dimensionality reduction 
-    before training a Random Forest classifier. Hyperparameter optimization is performed using 
-    RandomizedSearchCV.
-    
+    Train and evaluate a Random Forest classifier pipeline with PCA for dimensionality reduction.
+
+    This function performs the following steps:
+    1. Converts input DataFrames into numpy arrays and maps categorical labels to binary (0 and 1).
+    2. Defines a hyperparameter search space for the Random Forest classifier.
+    3. For two iterations:
+        - Splits the data into training and test sets (90% train, 10% test).
+        - Defines a pipeline that first applies PCA to reduce feature dimensions, followed by RandomizedSearchCV
+          for hyperparameter optimization of the Random Forest classifier.
+        - Trains the pipeline on the training data.
+        - Predicts on the test set and computes predicted probabilities.
+        - Evaluates performance metrics (accuracy, precision, recall, F1, specificity).
+        - Computes ROC curve and AUC.
+        - Logs the number of PCA components used.
+        - Stores the metrics and model for later aggregation.
+    4. Aggregates results from all iterations:
+        - Computes mean ROC curve and average AUC with confidence intervals.
+        - Plots mean ROC curve.
+        - Calculates mean and standard errors of all collected metrics.
+        - Plots performance metrics as bar charts with error bars.
+    5. Selects and returns the trained model from the iteration with the median AUC.
+
     Parameters
     ----------
     df1 : pandas.DataFrame
-        Feature dataset containing independent variables.
-    
+        Feature matrix containing independent variables.
+
     df2 : pandas.DataFrame
-        Target dataset containing dependent variables (labels).
-    
+        Target labels corresponding to df1, with categorical classes (e.g., 'Normal', 'AD').
+
     n_iter : int
-        Number of parameter combinations sampled during RandomizedSearchCV.
-    
+        Number of hyperparameter combinations sampled in RandomizedSearchCV.
+
     cv : int
-        Number of cross-validation folds used for hyperparameter tuning.
-    
+        Number of cross-validation folds used during hyperparameter optimization.
+
     Returns
     -------
     sklearn.pipeline.Pipeline
-        A fitted pipeline that includes PCA and a trained Random Forest model.
-    
+        The trained pipeline including PCA and Random Forest classifier from the iteration with median AUC.
+
     Notes
     -----
-    - PCA reduces the feature space, which can improve model performance for high-dimensional datasets.
-    - Optimal hyperparameters for the Random Forest are identified using RandomizedSearchCV.
-    
+    - PCA reduces dimensionality before classification, which can improve model performance on high-dimensional data.
+    - Labels are mapped to binary format: 'Normal' -> 0, 'AD' -> 1.
+    - RandomForestClassifier uses balanced class weights to handle imbalance.
+    - The function performs two iterations of training and evaluation to reduce variance in performance estimation.
+    - Uses all available CPU cores for parallel processing during hyperparameter search.
+
     References
     ----------
     - https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
     - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
-
+    - https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
+    
     """
 
 
@@ -383,43 +420,62 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
 
 def RFPipeline_RFECV(df1, df2, n_iter, cv):  
     """
+    
+    Train a Random Forest model using Recursive Feature Elimination with Cross-Validation (RFECV) 
+    combined with hyperparameter tuning via RandomizedSearchCV.
 
-    Train a Random Forest model with recursive feature elimination and hyperparameter tuning.
-    
-    This function performs Recursive Feature Elimination with Cross-Validation (RFECV) to select the most important features.
-    It then trains a Random Forest classifier using RandomizedSearchCV for hyperparameter optimization.
-    
+    The function performs feature selection by recursively eliminating less important features 
+    based on cross-validation performance (using recall as scoring metric). Then it performs 
+    randomized hyperparameter search to optimize the Random Forest classifier on the selected 
+    features. This process is repeated over multiple train-test splits to assess model stability.
+
     Parameters
     ----------
     df1 : pandas.DataFrame
-        Feature dataset containing independent variables.
+        DataFrame containing the independent variables (features). Rows correspond to samples 
+        and columns correspond to features.
     
     df2 : pandas.DataFrame
-        Target dataset containing dependent variables (labels).
+        DataFrame containing the dependent variable (target labels). The function expects labels 
+        to be categorical strings such as 'Normal' and 'AD', which will be mapped internally to 0 and 1.
     
     n_iter : int
-        Number of hyperparameter combinations sampled during RandomizedSearchCV.
+        Number of iterations (samples) for the RandomizedSearchCV to sample hyperparameter combinations.
     
     cv : int
-        Number of cross-validation folds for RFECV and hyperparameter search.
-    
+        Number of cross-validation folds used both in RFECV for feature selection and in RandomizedSearchCV 
+        for hyperparameter tuning.
+
     Returns
     -------
-    sklearn.ensemble.RandomForestClassifier
-        Trained Random Forest model with optimized hyperparameters and selected features.
-    
+    sklearn.pipeline.Pipeline
+        A pipeline consisting of:
+          - The RFECV feature selector fit on training data,
+          - The optimized Random Forest classifier fit on the selected features.
+        The returned pipeline corresponds to the model from the iteration with the median AUC score.
+
+    Raises
+    ------
+    ValueError
+        If input dataframes have mismatched indices or incompatible shapes.
+
     Notes
     -----
-    - RFECV recursively eliminates less important features to improve model performance.
-    - Feature selection is done only on the training set to avoid data leakage.
-    - The function ranks and prints feature importance, and saves a visualization of the best decision tree.
-    
+    - The labels in df2 are mapped to binary values {0, 1} internally.
+    - RFECV uses recall as the scoring metric and eliminates features in steps of 2, 
+      retaining at least 20 features.
+    - The Random Forest classifier uses balanced class weights to account for class imbalance.
+    - Feature importance from the best estimator is logged and visualized.
+    - Performance metrics collected include accuracy, precision, recall, F1-score, specificity, and AUC.
+    - The function plots mean ROC curves with confidence intervals and bar charts for metrics.
+    - The median-AUC model is selected to reduce bias from single splits.
+    - Visualizations of top 8 feature importances are shown as a pie chart.
+
     References
     ----------
-    - https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html
-    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
+    - scikit-learn RFECV: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html
+    - RandomizedSearchCV: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html
     
-
     """
 
     # Convert features and labels to numpy arrays
@@ -560,37 +616,54 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 
 def SVM_simple(df1, df2, ker: str):    
     """
+    
+    Train a Support Vector Machine (SVM) classifier with hyperparameter tuning via GridSearchCV.
 
-    Train an SVM model pipeline with hyperparameter optimization.
-    
-    This function splits the dataset into training and test sets, performs hyperparameter optimization 
-    using GridSearchCV, and trains a Support Vector Machine (SVM) model.
-    
+    The function splits the input dataset into training and test sets, performs hyperparameter 
+    optimization on the SVM parameters (including kernel type, regularization parameter `C`, 
+    and `gamma` for RBF kernels), and evaluates model performance over multiple random splits.
+    It returns the model pipeline with the median AUC score.
+
     Parameters
     ----------
     df1 : pandas.DataFrame
-        Feature dataset containing independent variables.
-        
-    df2 : pandas.DataFrame
-        Target dataset containing dependent variables (labels).
-        
-    ker : str
-        Kernel type for the SVM (e.g., 'linear', 'rbf').
+        DataFrame of independent variables (features) where rows are samples and columns are features.
     
+    df2 : pandas.DataFrame
+        DataFrame of dependent variable (target labels). Expected labels are categorical strings 
+        (e.g., 'Normal', 'AD') which are mapped internally to binary integers {0, 1}.
+    
+    ker : str
+        Kernel type for the SVM. Common choices are:
+          - 'linear' : linear kernel,
+          - 'rbf' : radial basis function (Gaussian) kernel.
+        The choice affects which hyperparameters are tuned and model behavior.
+
     Returns
     -------
-    sklearn.model_selection.GridSearchCV
-        A fitted GridSearchCV object containing the best SVM model.
-    
+    sklearn.svm.SVC
+        The best SVM model (fitted estimator) found by GridSearchCV, selected based on median AUC 
+        performance across the multiple iterations.
+
+    Raises
+    ------
+    ValueError
+        If an unsupported kernel type is provided or if input dataframes have mismatched indices.
+
     Notes
     -----
-    - The kernel type (`ker`) determines the decision boundary; 'linear' and 'rbf' are common choices.
-    - GridSearchCV optimizes hyperparameters such as `C` (regularization) and `gamma` (for non-linear kernels).
-    
+    - For 'linear' kernel, hyperparameters tuned are `C` and class_weight.
+    - For 'rbf' kernel, hyperparameters tuned include `C`, `gamma`, and class_weight.
+    - Probability estimates are enabled for AUC calculation.
+    - Class weights are balanced by default during fitting.
+    - Model evaluation metrics include accuracy, precision, recall, F1-score, specificity, and AUC.
+    - The median-AUC model is returned to ensure robustness over random splits.
+    - Visual outputs include ROC curve plots and bar charts of performance metrics.
+
     References
     ----------
-    - https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
-    
+    - GridSearchCV: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
+    - SVM classifier: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
     
     """
 
