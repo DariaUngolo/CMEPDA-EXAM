@@ -28,7 +28,6 @@ def ask_yes_no_prompt(prompt_message, default="N"):
 
     Parameters
     ----------
-
     prompt_message : str
         The message or question to display to the user.
     default : str, optional, default='N'
@@ -37,17 +36,14 @@ def ask_yes_no_prompt(prompt_message, default="N"):
 
     Returns
     -------
-
     bool
         True if the user selects 'Y' (yes), False if the user selects 'N' (no).
 
     Notes
     -----
-
     The user can input 'Y'/'y' for yes or 'N'/'n' for no.
     If no input is given, the default value is used.
     Prompts repeatedly until a valid response is provided.
-
     """
 
     while True:
