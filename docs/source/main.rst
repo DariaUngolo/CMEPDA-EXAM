@@ -14,7 +14,7 @@ These scripts manage data input, model selection, training, and evaluation workf
 ML\_main
 --------------------
 
-.. automodule:: ML_main.main
+.. automodule:: main.main
    :members:
    :undoc-members:
    :show-inheritance:
@@ -22,7 +22,7 @@ ML\_main
 CNN\_main
 --------------------
 
-.. automodule:: CNN_codes.CNN_main
+.. automodule:: main.CNN_main
    :members:
    :undoc-members:
    :show-inheritance:
