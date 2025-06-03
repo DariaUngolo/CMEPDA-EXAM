@@ -1,5 +1,7 @@
 tests package
 =================
+All core scripts in this project are accompanied by dedicated unit tests located in the `tests/` directory. These tests are designed to ensure the correctness, robustness, and stability of the pipeline's components,
+
 
 test\_atlas\_resampling 
 ------------------------------------------
