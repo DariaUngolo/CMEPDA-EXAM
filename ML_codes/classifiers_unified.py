@@ -485,7 +485,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         ("classifier", rf_selected_features.best_estimator_)
         ])
 
-        logger.append_metrics(metrics_scores, y_tst, y_prob, rf_selected_features.best_estimator_)
+        logger.append_metrics(metrics_scores, y_tst, y_prob, pipeline_rfecv)
         
         
 
@@ -522,12 +522,14 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     # Extract feature importances for the selected features
     importances = pipeline_rfecv_medianAUC.named_steps['classifier'].feature_importances_
     sorted_idx = np.argsort(importances)[::-1][:8]  # indices of top 10 ROIs
+    n_top = min(8, len(selected_ROIs))
+    sorted_idx = np.argsort(importances)[::-1][:n_top]
     top8_ROIs = selected_ROIs[sorted_idx]
     top8_importances = importances[sorted_idx]
 
         
 
-        # Visualize feature importances with a pie chart
+    # Visualize feature importances with a pie chart
     plt.figure(figsize=(8, 8))
     colors = plt.cm.tab20.colors  # IEEE-like color palette
     patches, texts, autotexts = plt.pie(
@@ -544,7 +546,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         
     plt.show()
     # Log information about the selected model
-    logging.succes(
+    logging.success(
         f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
         "has been selected and saved for further use."
     )

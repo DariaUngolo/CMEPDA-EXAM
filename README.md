@@ -511,7 +511,7 @@ in the Alzheimer’s Disease*. **J Neuroimaging**, 25:552-563.
 
 2. Sarraf, S, et al. (2017). *DeepAD: Alzheimer’s Disease Classification via Deep Convolutional Neural Networks using MRI and fMRI*. **BioRxiv preprint**, 1-32. [DOI: https://doi.org/10.1101/070441]
 
-3. The **atlases** are: *BN_Atlas_246_2mm.nii.gz* from [https://atlas.brainnetome.org/] & *lpba40_56_2mm.nii.gz* from [https://www.loni.usc.edu/research/atlases]
+3. The **atlases** are: *BN_Atlas_246_2mm.nii.gz* from [https://atlas.brainnetome.org/] & *lpba40_56.nii.gz* from [https://www.loni.usc.edu/research/atlases]
 
 
 ### 🤖 Machine Learning and Deep Learning
