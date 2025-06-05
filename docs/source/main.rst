@@ -14,7 +14,7 @@ These scripts manage data input, model selection, training, and evaluation workf
 ML\_main
 --------------------
 
-.. automodule:: main.main
+.. automodule:: main.ML_main
    :members:
    :undoc-members:
    :show-inheritance:

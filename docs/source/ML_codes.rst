@@ -7,10 +7,10 @@ ML\_codes
    :maxdepth: 4
    :caption: Modules
 
-classifiers\_unified
+classifiers
 ------------------------------------------
 
-.. automodule:: ML_codes.classifiers_unified
+.. automodule:: ML_codes.classifiers
    :members:
    :undoc-members:
    :show-inheritance:
