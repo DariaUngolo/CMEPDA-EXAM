@@ -133,7 +133,7 @@ The binary classification task is tackled using two complementary approaches:
 
 ### Evaluation Methodology
 
-For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are averaged across runs and folds, and include:
+For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are **averaged across runs and folds**, and include:
 
 - *Accuracy*
 - *Precision*
@@ -409,8 +409,6 @@ Each performance metric is reported along with a 95% confidence interval to prov
   - **Bootstrap-based intervals** are applied to metrics that are not simple proportions—such as AUC and F1 score—by repeatedly resampling the data with replacement and recalculating the metric. The resulting distribution allows for a non-parametric estimation of the confidence interval, making it more flexible and robust when analytical solutions are not available.
 
 These intervals help assess the stability and generalizability of the model's performance, rather than relying solely on point estimates.
-
----
 
 ### 📦 4. Outputs
 
