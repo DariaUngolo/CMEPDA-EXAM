@@ -410,7 +410,14 @@ Each performance metric is reported along with a 95% confidence interval to prov
 
 These intervals help assess the stability and generalizability of the model's performance, rather than relying solely on point estimates.
 
-The results are displayed as in the table below:
+
+### 📦 4. Outputs
+
+After the script completes execution, the following outputs are generated:
+
+- **📋 Tabulated Metrics Summary**  
+  A table summarizing all key metrics for each iteration is printed in the terminal. This allows transparent comparison across runs.
+  The results are displayed as in the table below:
 
 | **Metric**    | **Score** | **± Error** |
 |---------------|-----------|-------------|
@@ -420,14 +427,6 @@ The results are displayed as in the table below:
 | F1-score      | 0.77      | ±0.07       |
 | Specificity   | 0.78      | ±0.07       |
 | AUC           | 0.84      | ±0.08       |
-
-
-### 📦 4. Outputs
-
-After the script completes execution, the following outputs are generated:
-
-- **📋 Tabulated Metrics Summary**  
-  A table summarizing all key metrics for each iteration is printed in the terminal. This allows transparent comparison across runs.
 
 - **📈 Visualization Outputs**
 
