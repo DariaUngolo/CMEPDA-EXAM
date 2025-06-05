@@ -9,10 +9,6 @@ from loguru import logger
 import matplotlib
 import seaborn as sns
 
-# Configure Loguru for debugging and tracking
-logger.add("debug.log", level="DEBUG", format="{time} - {level} - {message}")
-
-
 
 def compute_binomial_error(metric_value, n_samples, confidence_level):
     """
