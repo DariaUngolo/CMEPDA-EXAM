@@ -12,7 +12,7 @@ from tabulate import tabulate
 
 
 from ML_codes.feature_extractor import feature_extractor
-from ML_codes.classifiers_unified import (
+from ML_codes.classifiers import (
     RFPipeline_noPCA,
     RFPipeline_PCA,
     RFPipeline_RFECV,
