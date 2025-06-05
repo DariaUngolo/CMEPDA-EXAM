@@ -6,7 +6,7 @@ from unittest.mock import patch
 import sys
 import atexit
 
-from classifiers_unified import RFPipeline_noPCA, RFPipeline_PCA, RFPipeline_RFECV, SVM_simple
+from classifiers import RFPipeline_noPCA, RFPipeline_PCA, RFPipeline_RFECV, SVM_simple
 
 # -------------------------------
 # GLOBAL PATCH: Disable all plot saving/showing (matplotlib) during testing
@@ -127,7 +127,7 @@ class TestClassifiers(unittest.TestCase):
 
         """
         logger.info("Testing SVM_simple with linear kernel...")
-        model = SVM_simple(self.X, self.y, ker='linear')
+        model = SVM_simple(self.X, self.y, ker='linear', cv=2)
         self.assertIsNotNone(model)
         self.assertTrue(hasattr(model, "predict"))
         preds = model.predict(self.X.values)
@@ -144,7 +144,7 @@ class TestClassifiers(unittest.TestCase):
 
         """
         logger.info("Testing SVM_simple with rbf kernel...")
-        model = SVM_simple(self.X, self.y, ker='rbf')
+        model = SVM_simple(self.X, self.y, ker='rbf', cv=2)
         self.assertIsNotNone(model)
         self.assertTrue(hasattr(model, "predict"))
         preds = model.predict(self.X.values)

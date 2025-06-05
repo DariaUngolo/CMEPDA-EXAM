@@ -613,7 +613,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 
 
 
-def SVM_simple(df1, df2, ker: str):    
+def SVM_simple(df1, df2, ker: str, cv: int):    
     """
     
     Train a Support Vector Machine (SVM) classifier with hyperparameter tuning via GridSearchCV.
@@ -711,7 +711,7 @@ def SVM_simple(df1, df2, ker: str):
         pipeline_SVM_grid_optimazed = GridSearchCV(
                     classifier_svm,
                     param_grid,
-                    cv=20,
+                    cv=cv,
                     scoring='roc_auc',
                     refit=True,
                     n_jobs=-1

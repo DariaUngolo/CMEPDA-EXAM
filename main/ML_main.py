@@ -344,7 +344,7 @@ def main():
 
     elif args.classifier == "svm":
         logger.info(" Applying Support Vector Machine...")
-        model = SVM_simple(df_mean_std, diagnostic_group_labels, ker=args.kernel)
+        model = SVM_simple(df_mean_std, diagnostic_group_labels, ker=args.kernel, cv=args.cv)
 
     # === Step 5: Save the trained model ===
 
