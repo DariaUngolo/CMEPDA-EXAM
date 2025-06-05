@@ -410,6 +410,18 @@ Each performance metric is reported along with a 95% confidence interval to prov
 
 These intervals help assess the stability and generalizability of the model's performance, rather than relying solely on point estimates.
 
+The results are displayed as in the table below:
+
+| **Metric**    | **Score** | **± Error** |
+|---------------|-----------|-------------|
+| Accuracy      | 0.82      | ±0.07       |
+| Precision     | 0.67      | ±0.08       |
+| Recall        | 0.91      | ±0.05       |
+| F1-score      | 0.77      | ±0.07       |
+| Specificity   | 0.78      | ±0.07       |
+| AUC           | 0.84      | ±0.08       |
+
+
 ### 📦 4. Outputs
 
 After the script completes execution, the following outputs are generated:
