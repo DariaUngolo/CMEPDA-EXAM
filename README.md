@@ -289,7 +289,6 @@ Uses a previously trained model to classify new independent NIfTI images, skippi
 
 ```bash
 python main.py \
-  --atlas_file "/path/to/original_atlas.nii.gz" \
   --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
   --atlas_txt "/path/to/atlas_labels.txt" \
   --matlab_path "/path/to/MATLAB_folder" \
