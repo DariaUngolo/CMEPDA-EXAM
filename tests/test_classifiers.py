@@ -6,8 +6,6 @@ from unittest.mock import patch
 import sys
 import atexit
 
-from classifiers import RFPipeline_noPCA, RFPipeline_PCA, RFPipeline_RFECV, SVM_simple
-
 # -------------------------------
 # GLOBAL PATCH: Disable all plot saving/showing (matplotlib) during testing
 # -------------------------------
@@ -18,10 +16,22 @@ patches = [
     patch('matplotlib.pyplot.show', return_value=None),
     patch('matplotlib.figure.Figure.savefig', return_value=None),
     patch('matplotlib.figure.Figure.show', return_value=None),
+    patch('ML_codes.performance_scores.plot_performance_bar_chart', lambda *a, **kw: None),
+    patch('ML_codes.performance_scores.evaluate_model_performance', lambda *a, **kw: {
+    'Accuracy': 1,
+    'Precision': 1,
+    'Recall': 1,
+    'F1': 1,
+    'F1-score': 1,
+    'Specificity': 1,
+    'AUC': 1
+})
 ]
 for p in patches:
     p.start()
     sys.modules[__name__].__dict__.setdefault('_patches', []).append(p)
+
+from classifiers import RFPipeline_noPCA, RFPipeline_PCA, RFPipeline_RFECV, SVM_simple
 
 
 class TestClassifiers(unittest.TestCase):
