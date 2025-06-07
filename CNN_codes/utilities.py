@@ -1,7 +1,7 @@
 import os
 import sys
 from pathlib import Path
-import logging
+from loguru import logger
 
 import nibabel as nib
 import numpy as np
@@ -12,31 +12,25 @@ from keras.layers import RandomRotation, RandomZoom, RandomCrop, RandomContrast
 import numpy as np
 from scipy.ndimage import rotate, zoom
 from skimage import exposure
+import tensorflow as tf
 
-# Setup logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(levelname)s] %(message)s'
-)
-logger = logging.getLogger(__name__)
+# Configure loguru logger
+logger.remove()  # Remove default handler
+logger.add(sys.stdout, level="DEBUG", format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | {message}")
+
 
 def pad_images(images):
-
     """
 
     Pads a list of 3D images to the same shape by adding zero-padding.
 
     Parameters:
-
     -----------
-
     images : list of np.ndarray
         List of 3D numpy arrays with varying shapes.
 
     Returns:
-
     --------
-
     padded_images : np.ndarray
         4D numpy array where each 3D image is padded to the maximum shape.
     max_shape : tuple
@@ -56,7 +50,7 @@ def pad_images(images):
             pad_before = diff // 2
             pad_after = diff - pad_before
             padding.append((pad_before, pad_after))
-        # Apply zero padding using np.pad
+        # Apply zero padding
         padded_img = np.pad(img, padding, mode='constant', constant_values=0)
         padded_images.append(padded_img)
 
@@ -65,98 +59,152 @@ def pad_images(images):
     return np.array(padded_images)
 
 
-def random_rotate(volume):
+def random_rotate_tf(volume):
+    """
+    Applies random 3D rotation to a volume using TensorFlow.
+
+    Parameters
+    ----------
+    volume : tf.Tensor
+        A 3D volume tensor (x, y, z).
+
+    Returns
+    -------
+    tf.Tensor
+        Randomly rotated 3D volume.
 
     """
 
-    Randomly rotates a 3D volume around the x, y, z axes.
+    def rotate_fn(volume):
+        """
+        Helper function to perform rotation.
 
-    Parameters:
+        """
+        # Random angles for each axis
+        angles = np.random.uniform(-0.1, 0.1 , size=3)
 
-    -----------
+        rotated = rotate(volume, angles[0], axes=(1, 2), reshape=False)
+        rotated = rotate(rotated, angles[1], axes=(0, 2), reshape=False)
+        rotated = rotate(rotated, angles[2], axes=(0, 1), reshape=False)
+        return rotated
 
-    volume : np.ndarray
-        3D volume (x, y, z).
+    volume = tf.numpy_function(rotate_fn, [volume], tf.float32)
+    return volume
 
-    Returns:
 
-    --------
 
-    np.ndarray
-        Rotated volume.
-
+def random_zoom_and_crop_tf(volume, target_shape, zoom_range=(0.98, 1.01)):
     """
 
-    angles = np.random.uniform(-0.5, 0.5, size=3)
-    rotated = rotate(volume, angles[0], axes=(1, 2), reshape=False)
-    rotated = rotate(rotated, angles[1], axes=(0, 2), reshape=False)
-    rotated = rotate(rotated, angles[2], axes=(0, 1), reshape=False)
-    return rotated
+    Randomly zooms into a 3D volume and adjusts its dimensions to match the target shape.
 
-
-
-def random_zoom_and_crop(volume, target_shape, zoom_range=(0.8, 1.2)):
-
-    """
-
-    Randomly zooms into a 3D volume and crops or pads it to a target shape.
-
-    Parameters:
-
-    -----------
-
-    volume : np.ndarray
-        3D volume (x, y, z).
+    Parameters
+    ----------
+    volume : tf.Tensor
+        A 3D volume tensor (x, y, z).
     target_shape : tuple of ints
         Desired dimensions (x, y, z).
     zoom_range : tuple of floats, optional
-        Range of zoom factors (default is (0.8, 1.2)).
+        Range of zoom factors (default is (0.98, 1.02)).
 
-    Returns:
-
-    --------
-
-    np.ndarray
-        Transformed volume with the target dimensions.
+    Returns
+    -------
+    tf.Tensor
+        Transformed volume tensor with the target dimensions.
 
     """
-    zoom_factor = np.random.uniform(*zoom_range)
-    zoomed = zoom(volume, (zoom_factor, zoom_factor, zoom_factor), order=1)
+    def zoom_crop_fn(volume):
+        """
+        Helper function for zooming and cropping.
 
-    # Crop o pad
-    output = np.zeros(target_shape, dtype=zoomed.dtype)
-    min_shape = np.minimum(zoomed.shape, target_shape)
+        """
+        zoom_factor = np.random.uniform(*zoom_range)
+        zoomed = zoom(volume, (zoom_factor, zoom_factor, zoom_factor), order=1)
 
-    crop_start = [(s - ts) // 2 for s, ts in zip(zoomed.shape, min_shape)]
-    crop_end = [start + ts for start, ts in zip(crop_start, min_shape)]
-    pad_start = [(ts - ms) // 2 for ms, ts in zip(min_shape, target_shape)]
-    pad_end = [start + ms for start, ms in zip(pad_start, min_shape)]
+        # Determine the cropping and padding
+        output = np.zeros(target_shape, dtype=zoomed.dtype)
+        min_shape = np.minimum(zoomed.shape, target_shape)
 
-    output[pad_start[0]:pad_end[0], pad_start[1]:pad_end[1], pad_start[2]:pad_end[2]] = zoomed[
-        crop_start[0]:crop_end[0], crop_start[1]:crop_end[1], crop_start[2]:crop_end[2]
-    ]
-    return output
+        crop_start = [(s - ts) // 2 for s, ts in zip(zoomed.shape, min_shape)]
+        crop_end = [start + ts for start, ts in zip(crop_start, min_shape)]
+        pad_start = [(ts - ms) // 2 for ms, ts in zip(min_shape, target_shape)]
+        pad_end = [start + ms for start, ms in zip(pad_start, min_shape)]
 
-def augment_image_4d(volume_4d, target_shape):
+        output[pad_start[0]:pad_end[0], pad_start[1]:pad_end[1], pad_start[2]:pad_end[2]] = zoomed[
+            crop_start[0]:crop_end[0], crop_start[1]:crop_end[1], crop_start[2]:crop_end[2]
+        ]
+        return output
+
+    volume = tf.numpy_function(zoom_crop_fn, [volume], tf.float32)
+    return volume
+
+def add_noise_tf(volume, noise_factor=0.0001):
     """
-    Augmenta un'immagine 4D (x, y, z, 1).
+
+    Adds random Gaussian noise to a 3D volume.
+
+    Parameters
+    ----------
+    volume : tf.Tensor
+        Input 3D volume tensor.
+    noise_factor : float
+        Standard deviation of the Gaussian noise.
+
+    Returns
+    -------
+    tf.Tensor
+        Noisy 3D volume tensor.
+
+    """
+    noise = tf.random.normal(tf.shape(volume), mean=0.0, stddev=noise_factor , dtype=volume.dtype)
+    return tf.clip_by_value(volume + noise, 0.0, 1.0)
+
+
+def random_intensity_tf(volume, factor=0.001):
+    """
+
+    Modifica casualmente l'intensità di un volume 3D.
 
     Parameters:
     -----------
-    volume_4d : np.ndarray
-        Immagine 4D (x, y, z, 1).
-    target_shape : tuple of ints
-        Dimensioni desiderate (x, y, z).
+    volume : np.ndarray
+        Volume 3D da modificare.
+    factor : float
+        Range per il fattore di scala dell'intensità (default: 0.1).
 
     Returns:
     --------
     np.ndarray
-        Immagine augmentata 4D (x, y, z, 1).
+        Volume con intensità modificata.
+
     """
-    volume = volume_4d[..., 0]  # Rimuovi la dimensione del canale
-    volume = random_rotate(volume)
-    volume = random_zoom_and_crop(volume, target_shape)
-    return np.expand_dims(volume, axis=-1)  # Ripristina il canale
+    scale = tf.random.uniform([], 1 - factor, 1 + factor, dtype=volume.dtype)
+    return tf.clip_by_value(volume * scale, 0.0, 1.0)
+
+
+def augment_image_4d_tf(volume, target_shape):
+    """
+    Performs a series of augmentations on a 4D image tensor.
+
+    Parameters
+    ----------
+    volume : tf.Tensor
+        A 4D tensor (x, y, z, 1).
+    target_shape : tuple of ints
+        Target dimensions (x, y, z).
+
+    Returns
+    -------
+    tf.Tensor
+        Augmented 4D tensor (x, y, z, 1).
+
+    """
+    volume = tf.squeeze(volume, axis=-1)  # Remove channel dimension
+    volume = random_rotate_tf(volume)
+    volume = random_zoom_and_crop_tf(volume, target_shape)
+    volume = add_noise_tf(volume)
+    #volume = random_intensity_tf(volume)
+    return tf.expand_dims(volume, axis=-1)  # Restore channel dimension
 
 def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_per_image):
 
@@ -191,8 +239,10 @@ def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_pe
 
     for img, label in zip(images, labels):
         for _ in range(num_augmented_per_image):
-            augmented_img = augment_image_4d(img, target_shape)
-            augmented_images.append(augmented_img)
+            augmented_img = augment_image_4d_tf(tf.convert_to_tensor(img), target_shape)
+            # Converti il risultato in numpy array
+            augmented_img_np = augmented_img.numpy()
+            augmented_images.append(augmented_img_np)
             augmented_labels.append(label)
 
     return np.array(augmented_images, dtype=np.float32), np.array(augmented_labels)
@@ -250,7 +300,7 @@ def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
             image_data = image.get_fdata()
 
             # Extract the relevant Z range
-            image_data = image_data[:, :, z_min-10:z_max + 10]
+            image_data = image_data[:, :, z_min-1:z_max + 1]
 
             # Remove black voxels (voxels with intensity 0)
             non_black_voxels = image_data > 0.000001 #DA CAPIRE CHE NUMERO METTERE
@@ -282,7 +332,7 @@ def preprocessed_images_group(image_folder, atlas_path, metadata, roi_ids=(165, 
 
     # Extract group labels from metadata (assumed to be in the second column)
     group = meta_data.iloc[:, 1].map({'AD': 1, 'Normal': 0}).astype('float64').to_numpy()
-    
+
     return images, group
 
 

@@ -1,5 +1,7 @@
 import sys
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -7,39 +9,42 @@ import scipy
 
 import tensorflow
 from sklearn.metrics import roc_curve, auc
-from keras.layers import MaxPooling3D, Conv3D, Flatten, Dense, BatchNormalization, Activation, Dropout
+from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization, Activation, Dropout, GlobalAveragePooling3D)
 from keras.optimizers import SGD
+
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
-from tensorflow.keras.models import load_model
-
+from tensorflow.keras.models import load_model, Model, Sequential
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
-from keras.models import Model, Sequential
 from keras.losses import BinaryCrossentropy
-from keras.layers import Input
 
-import logging
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+from loguru import logger
+
+# Configure logger: you can customize the format, level, output file, etc.
+logger.remove()  # Remove default logger to customize
+logger.add(lambda msg: print(msg, end=''), colorize=True, format="<green>{time:HH:mm:ss}</green> | <level>{message}</level>")
+
+
+
+
+strategy = tensorflow.distribute.MirroredStrategy()
+logger.info(f"Number of GPUs detected: {strategy.num_replicas_in_sync}")
 
 
 class MyCNNModel(tensorflow.keras.Model):
-
     """
 
     A lightweight 3D CNN model for binary classification.
 
 
     Attributes:
-
     -----------
 
     model : tensorflow.keras.Sequential
         The internal sequential model that defines the architecture.
 
     Methods:
-
     --------
 
     compile_and_fit:
@@ -56,7 +61,6 @@ class MyCNNModel(tensorflow.keras.Model):
     """
 
     def __init__(self, input_shape):
-
         """
 
         Initializes the CNN model with a predefined architecture.
@@ -73,60 +77,55 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info("Initializing MyCNNModel with input shape: %s", input_shape)
         super(MyCNNModel, self).__init__()
 
-        #Define the model architecture
-        #self.model = Sequential([
-        #    Input(shape=input_shape),
-
-            # MaxPooling before first Conv3D
-         #   MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
-
-         #   Conv3D(16, (3, 3, 3), activation='relu', padding='same'),
-            #BatchNormalization(),
-
-
-
-          #  Conv3D(32, (3, 3, 3), activation='relu', padding='same'),
-            #BatchNormalization(),
-
-          #  Flatten(),
-
-           # Dropout(0.2),
-           # Dense(64, activation='relu'),
-           # Dense(1, activation='sigmoid')
-       # ])
-
-        self.model = Sequential([
+        # Define the model architecture using Keras Sequential API
+        self.model =  Sequential([
             Input(shape=input_shape),
-
-            # First Conv3D block with MaxPooling
-            Conv3D(16, (3, 3, 3), activation='relu', padding='same'),
-            BatchNormalization(),
             MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
 
-            # Second Conv3D block
-            Conv3D(32, (3, 3, 3), activation='relu', padding='same'),
+            Conv3D(16, (3, 3, 3), activation='relu', padding='same', kernel_regularizer=l2(1e-4)),
             BatchNormalization(),
-            MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
+            MaxPooling3D(),
 
-            # Third Conv3D block
-            Conv3D(64, (3, 3, 3), activation='relu', padding='same'),
+            Conv3D(32, (3, 3, 3), activation='relu', padding='same', kernel_regularizer=l2(1e-4)),
             BatchNormalization(),
-            MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
+            MaxPooling3D(),
 
-            # Flatten and Fully Connected layers
-            Flatten(),
-            Dropout(0.4),  # Increased dropout for better regularization
-            Dense(128, activation='relu'),
-            BatchNormalization(),
-            Dropout(0.4),
+            GlobalAveragePooling3D(),
+
+            Dense(64, activation='relu', kernel_regularizer=l2(1e-4)),
             Dense(1, activation='sigmoid')
         ])
 
         logger.info("Model architecture successfully initialized.")
 
+    def extract_data_and_labels(self, dataset):
+        """
+        Extracts and concatenates all features and labels from a TensorFlow dataset.
+
+        Parameters
+        ----------
+        dataset : tf.data.Dataset
+            Dataset yielding tuples of (features, labels).
+
+        Returns
+        -------
+        tf.Tensor
+            Concatenated features tensor.
+        tf.Tensor
+            Concatenated labels tensor.
+
+        """
+        x_list = []
+        y_list = []
+        for x_batch, y_batch in dataset:
+            x_list.append(x_batch)
+            y_list.append(y_batch)
+        x = tensorflow.concat(x_list, axis=0)
+        y = tensorflow.concat(y_list, axis=0)
+
+        return x, y
 
     def call(self, inputs, training=False):
-
         """
 
         Forward pass for the model.
@@ -149,21 +148,24 @@ class MyCNNModel(tensorflow.keras.Model):
         return self.model(inputs, training=training)
 
     def compile_and_fit(self, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
-
         """
 
         Compiles the model and trains it on the provided datasets.
 
-        Parameters:
-
+        Parameters
         ----------
-
-        x_train, y_train : numpy.ndarray
-            Training data and labels.
-        x_val, y_val : numpy.ndarray
-            Validation data and labels.
-        x_test, y_test : numpy.ndarray
-            Test data and labels.
+        x_train : np.ndarray
+            Training feature data.
+        y_train : np.ndarray
+            Training labels.
+        x_val : np.ndarray
+            Validation feature data.
+        y_val : np.ndarray
+            Validation labels.
+        x_test : np.ndarray
+            Test feature data.
+        y_test : np.ndarray
+            Test labels.
         n_epochs : int
             Number of training epochs.
         batchsize : int
@@ -171,66 +173,80 @@ class MyCNNModel(tensorflow.keras.Model):
 
         """
 
-        logger.info("Starting training with %d epochs and batch size %d", n_epochs, batchsize)
+        logger.info(f"Starting training with {n_epochs} epochs and batch size {batchsize}")
 
-        # Compile the model
         self.compile(
-            optimizer=SGD(learning_rate=0.001),
-            loss=BinaryCrossentropy(),
-            metrics=['accuracy']
+            optimizer=Adam(learning_rate=0.01),
+            loss=BinaryCrossentropy(from_logits=False),
+            metrics=[ 'accuracy']
         )
+
         logger.debug("Model compiled successfully.")
 
-        # Define callbacks
+        # Learning rate scheduler callback
         reduce_on_plateau = ReduceLROnPlateau(
-            monitor="val_loss",
-            factor=0.1,
-            patience=20,
-            verbose=0,
-            mode="auto",
-            min_delta=0.0001,
-            cooldown=0,
-            min_lr=0
+                monitor="val_loss",
+                factor=0.1,
+                patience=20,
+                verbose=0,
+                mode="auto",
+                min_delta=0.0001,
+                cooldown=0,
+                min_lr=0
         )
 
+        # Early stopping callback
         early_stopping = EarlyStopping(
-            monitor="val_loss",
-            min_delta=0,
-            patience=20,
-            verbose=0,
-            mode="auto",
-            restore_best_weights=False,
-            start_from_epoch=10
+                monitor="val_loss",
+                min_delta=0,
+                patience=20,
+                verbose=1,
+                mode="auto",
+                restore_best_weights=False,
+                start_from_epoch=10
         )
 
+        # Prepare TensorFlow datasets with batching and prefetching for performance
+        train_dataset = tensorflow.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(len(x_train)).batch(batchsize).repeat().prefetch(tensorflow.data.AUTOTUNE)
+        val_dataset = tensorflow.data.Dataset.from_tensor_slices((x_val, y_val)).batch(batchsize).prefetch(tensorflow.data.AUTOTUNE)
+        test_dataset = tensorflow.data.Dataset.from_tensor_slices((x_test, y_test)).batch(batchsize).prefetch(tensorflow.data.AUTOTUNE)
+
+        # Extract all validation and test data batches for ROC calculation
+        x_val, y_val = self.extract_data_and_labels(val_dataset)
+        x_test, y_test = self.extract_data_and_labels(test_dataset)
 
         # Train the model
         history = self.fit(
-            x_train, y_train,
-            batch_size=batchsize,
-            epochs=n_epochs,
-            steps_per_epoch=round(len(x_train) / batchsize),
-            verbose=1,
-            validation_data=(x_val, y_val),
-            validation_steps=round(len(x_val) / batchsize),
-            callbacks=[reduce_on_plateau, early_stopping]
+                train_dataset,
+                batch_size=batchsize,
+                epochs=n_epochs,
+                steps_per_epoch=round(len(x_train) // batchsize),
+                verbose=1,
+                validation_data=val_dataset,
+                validation_steps=round(len(x_val) // batchsize),
+                callbacks=[reduce_on_plateau]
         )
         logger.info("Model training completed.")
 
         # Plot accuracy and loss
         self.accuracy_loss_plot(history)
 
-        # Evaluate ROC
+
+        # Extract all validation and test data batches for ROC calculation
+        x_val, y_val = self.extract_data_and_labels(val_dataset)
+        x_test, y_test = self.extract_data_and_labels(test_dataset)
+
+
+        # Evaluate model performance on validation and test datasets using ROC curve
         self.validation_roc(x_val, y_val)
         self.test_roc(x_test, y_test)
 
         # Salva il modello completo subito dopo il training
-        self.save_model("model_full.h5")
+        #self.save_model("model_full.h5")
 
-        
+
 
     def accuracy_loss_plot(self, history):
-
         """
         Plots training and validation accuracy and loss curves.
 
@@ -246,49 +262,49 @@ class MyCNNModel(tensorflow.keras.Model):
         epochs_range = range(1, len(history.history['accuracy']) + 1)
         plt.figure(figsize=(15, 15))
 
-        # Accuracy
+        # Accuracy plot
         plt.subplot(1, 2, 1)
         plt.plot(epochs_range, history.history['accuracy'], label="Train Accuracy")
         plt.plot(epochs_range, history.history['val_accuracy'], label="Validation Accuracy")
         plt.legend(loc="lower right")
         plt.title("Training and Validation Accuracy")
 
-        # Loss
+        # Loss plot
         plt.subplot(1, 2, 2)
         plt.plot(epochs_range, history.history['loss'], label="Train Loss")
         plt.plot(epochs_range, history.history['val_loss'], label="Validation Loss")
         plt.legend(loc="upper right")
         plt.title("Training and Validation Loss")
 
-        # Prendi il percorso assoluto della cartella del file python in esecuzione
+        # Save plot to current script directory
         save_name="training_plot.png"
         base_path = os.path.dirname(os.path.abspath(__file__))
         save_path = os.path.join(base_path, save_name)
 
-        plt.savefig(save_path)  # salva il grafico nella stessa cartella dello script
-        logger.info(f"Plot saved to {save_path}")
+        plt.savefig(save_path)
+        plt.show()
+        logger.info("Accuracy and loss plots displayed.")
 
 
         plt.show()
         logger.info("Accuracy and loss plots displayed.")
 
     def validation_roc(self, x_val, y_val):
-
         """
-
         Evaluates the model using ROC on validation data.
 
-        Parameters:
-
+        Parameters
         ----------
-        x_val, y_val : numpy.ndarray
-            Validation data and labels.
+        x_val : np.ndarray
+            Validation feature data.
+        y_val : np.ndarray
+            Validation labels.
 
         """
 
         logger.info("Calculating ROC curve for validation data.")
-        confidence_int = 0.683  # Livello di confidenza
-        z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)  # Calcolo del punteggio z
+        confidence_int = 0.683  # Confidence interval for accuracy error bars
+        z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)
 
         # Evaluate accuracy on validation data
         _, val_acc = self.evaluate(x_val, y_val, verbose=0)
@@ -301,7 +317,7 @@ class MyCNNModel(tensorflow.keras.Model):
         roc_auc = auc(fpr, tpr)
         logger.info(f"Validation ROC AUC: {round(roc_auc, 2)}")
 
-        # Calculate AUC confidence interval
+        # Calculate standard error for AUC
         n1 = np.sum(y_val == 1)
         n2 = np.sum(y_val == 0)
         q1 = roc_auc / (2 - roc_auc)
@@ -394,7 +410,7 @@ class MyCNNModel(tensorflow.keras.Model):
         print(f"[DEBUG] test_roc: plot salvato in {save_path}")
 
         plt.show()
-        
+
     def save_model(self, path="model_full.h5"):
         """
         Saves the entire model, including architecture, weights, and optimizer state, to a file.
@@ -404,8 +420,6 @@ class MyCNNModel(tensorflow.keras.Model):
         path : str, optional
             The file path where the model will be saved. Default is "model_full.h5".
 
-        This allows you to later reload the model exactly as it was saved,
-        enabling easy deployment or further training.
         """
         self.model.save(path)
         logger.info(f"Model saved to {path}")
@@ -420,7 +434,6 @@ class MyCNNModel(tensorflow.keras.Model):
         path : str, optional
             The file path from which to load the model. Default is "model_full.h5".
 
-        This replaces the current model with the loaded one, ready for inference or training.
         """
         self.model = load_model(path)
         logger.info(f"Model loaded from {path}")
