@@ -197,7 +197,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     mean_fpr = np.linspace(0, 1, 100) 
     logger = MetricsLogger(mean_fpr)
 
-    for iteration in range(1):
+    for iteration in range(10):
         
         logging.info(f"Iteration {iteration + 1} - Splitting data into train and test sets.")
         
@@ -338,7 +338,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
     mean_fpr = np.linspace(0, 1, 100) 
     logger = MetricsLogger(mean_fpr)
 
-    for iteration in range(2):
+    for iteration in range(10):
         
         logging.info(f"Iteration {iteration + 1} - Splitting data into train and test sets.")
         
@@ -489,7 +489,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     logger = MetricsLogger(mean_fpr)
 
 
-    for iteration in range(2):  
+    for iteration in range(10):  
         logging.info(f"Iteration {iteration + 1} - Splitting data into train and test sets.")
 
         # Split data into training and test sets (10% test data)
@@ -699,7 +699,7 @@ def SVM_simple(df1, df2, ker: str, cv: int):
     mean_fpr = np.linspace(0, 1, 100)
     logger = MetricsLogger(mean_fpr) 
 
-    for iteration in range(2):
+    for iteration in range(10):
         logging.info(f"Iteration {iteration + 1}: splitting data into train/test sets.")
 
         # Split dataset
