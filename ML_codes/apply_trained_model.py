@@ -52,6 +52,7 @@ def feature_extractor_independent_dataset(nifti_image_path, atlas_file, atlas_tx
     - The MATLAB engine for Python must be installed and configured.
     - The MATLAB feature extraction function is expected to return matrices of features.
     - ROI labels are extracted from the provided atlas text file to name DataFrame columns.
+    
     """
 
     logger.info("Starting MATLAB engine.")
@@ -162,6 +163,7 @@ def classify_independent_dataset(data_frame, model_path):
     -------
     tuple[int, np.ndarray]
         Predicted class label and array of class probabilities.
+   
     """
     
     logger.info(f"Loading trained model from: {model_path}")

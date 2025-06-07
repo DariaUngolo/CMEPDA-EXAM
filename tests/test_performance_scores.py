@@ -7,8 +7,6 @@ from unittest.mock import patch
 import sys
 import atexit
 
-# Optional: Log to file with rotation and rich diagnostics
-logger.add("test_logs.log", level="DEBUG", rotation="500 KB", backtrace=True, diagnose=True)
 
 # Patching matplotlib to suppress display/save operations during test execution
 patches = [
