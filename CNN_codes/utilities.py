@@ -23,7 +23,6 @@ def pad_images(images):
     """
 
     Pads a list of 3D images to the same shape by adding zero-padding.
-
     Parameters:
     -----------
     images : list of np.ndarray
@@ -391,7 +390,7 @@ def split_data(images, group):
 
     """
 
-    Splits the dataset into training, validation, and test sets.
+    Splits the dataset into training(70%), validation(15%), and test sets(15%)
 
     Parameters:
 
@@ -412,14 +411,14 @@ def split_data(images, group):
         Test images and labels.
 
     """
-    # Split dataset into train+val and test (80% train+val, 20% test)
+    # Split dataset into train+val and test (85% train+val, 15% test)
     x_temp, x_test, y_temp, y_test = train_test_split(
-        images, group, test_size=0.2, random_state=10
+        images, group, test_size=0.15
     )
 
-    # Split train+val into train and validation (75% train, 25% val)
+    # Split train+val into train and validation (82% train, 18% val)
     x_train, x_val, y_train, y_val = train_test_split(
-        x_temp, y_temp, test_size=0.25, random_state=20
+        x_temp, y_temp, test_size=0.1765
     )
 
     return x_train, y_train, x_val, y_val, x_test, y_test

@@ -207,7 +207,7 @@ def main(args):
         return
 
 
-    num_augmented_per_image = 5
+    num_augmented_per_image = 3
 
 
     # Preprocessing images and labels
@@ -228,37 +228,36 @@ def main(args):
     logger.info(f"Normalized intensity of voxel")
     images_normalized = normalize_images_uniformly(images)
 
+    # Split dataset into train/val/test
+    logger.info("Splitting the dataset into train, validation, and test sets (70-15-15).")
+    x_train, y_train, x_val, y_val, x_test, y_test = split_data(images_normalized, labels )
+
+    logger.debug(f"x_train shape before data-augumentation: {x_train.shape}, y_train shape: {y_train.shape}")
+    logger.debug(f"x_val shape: {x_val.shape}, y_val shape: {y_val.shape}")
+    logger.debug(f"x_test shape: {x_test.shape}, y_test shape: {y_test.shape}")
+
     # Perform data augmentation
-    logger.info("Starting image augmentation.")
-    augmented_images, augmented_labels = augment_images_with_labels_4d(
-        images_normalized,
-        labels,
+    logger.info("Starting image augmentation on training data only.")
+    x_train_augmented, y_train_augmented = augment_images_with_labels_4d(
+        x_train,
+        y_train,
         target_shape,
         num_augmented_per_image
      )
 
-
-    # Split dataset into train/val/test
-    logger.info("Splitting the dataset into train, validation, and test sets.")
-    x_train, y_train, x_val, y_val, x_test, y_test = split_data(images_normalized, labels )
-
-
-
-    logger.debug(f"x_train shape: {x_train.shape}, y_train shape: {y_train.shape}")
-    logger.debug(f"x_val shape: {x_val.shape}, y_val shape: {y_val.shape}")
-    logger.debug(f"x_test shape: {x_test.shape}, y_test shape: {y_test.shape}")
+    logger.debug(f"After data-augumentation... x_train shape: {x_train_augmented.shape}, y_train shape: {y_train_augmented.shape}")
 
     # Model creation
     logger.info(f"Creating the model with input shape: {tuple(input_shape)}.")
     model = MyCNNModel(input_shape=input_shape)
 
-    logger.info(f"x_train shape: {x_train.shape}, y_train shape: {y_train.shape}")
-    logger.info(f"x_val shape: {x_val.shape}, y_val shape: {y_val.shape}")
+
+
 
     # Compile and train the model
     logger.info("Starting model training.")
     model.compile_and_fit(
-            x_train, y_train, x_val, y_val, x_test, y_test,
+            x_train_augmented, y_train_augmented, x_val, y_val, x_test, y_test,
             n_epochs=args.epochs,
             batchsize=args.batchsize
         )

@@ -16,7 +16,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import load_model, Model, Sequential
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
-from keras.losses import BinaryCrossentropy
+from keras.losses import BinaryCrossentropy, MeanSquaredError
 
 
 from loguru import logger
@@ -79,20 +79,21 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Define the model architecture using Keras Sequential API
         self.model =  Sequential([
-            Input(shape=input_shape),
-            MaxPooling3D(pool_size=(2, 2, 2), padding='valid'),
-
-            Conv3D(16, (3, 3, 3), activation='relu', padding='same', kernel_regularizer=l2(1e-4)),
+            Conv3D(32, (3, 3, 3), activation='relu', padding='same', kernel_regularizer=tensorflow.keras.regularizers.l2(1e-4)),
             BatchNormalization(),
-            MaxPooling3D(),
+            MaxPooling3D(pool_size=(2, 2, 2)),
+            Dropout(0.2),
 
-            Conv3D(32, (3, 3, 3), activation='relu', padding='same', kernel_regularizer=l2(1e-4)),
+
+            Conv3D(64, (3, 3, 3), activation='relu', padding='same', kernel_regularizer=tensorflow.keras.regularizers.l2(1e-4)),
             BatchNormalization(),
-            MaxPooling3D(),
+            MaxPooling3D(pool_size=(2, 2, 2)),
+            Dropout(0.3),
 
-            GlobalAveragePooling3D(),
 
-            Dense(64, activation='relu', kernel_regularizer=l2(1e-4)),
+            Flatten(),
+            Dense(128, activation='relu', kernel_regularizer=tensorflow.keras.regularizers.l2(1e-4)),
+            Dropout(0.4),
             Dense(1, activation='sigmoid')
         ])
 
@@ -176,9 +177,9 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info(f"Starting training with {n_epochs} epochs and batch size {batchsize}")
 
         self.compile(
-            optimizer=Adam(learning_rate=0.01),
-            loss=BinaryCrossentropy(from_logits=False),
-            metrics=[ 'accuracy']
+            optimizer=Adam(learning_rate=0.0001),
+            loss=BinaryCrossentropy(),
+            metrics=['accuracy']
         )
 
         logger.debug("Model compiled successfully.")
