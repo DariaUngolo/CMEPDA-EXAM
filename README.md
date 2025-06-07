@@ -133,7 +133,7 @@ The binary classification task is tackled using two complementary approaches:
 
 ### Evaluation Methodology
 
-For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are averaged across runs and folds, and include:
+For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are **averaged across runs and folds**, and include:
 
 - *Accuracy*
 - *Precision*
@@ -289,7 +289,6 @@ Uses a previously trained model to classify new independent NIfTI images, skippi
 
 ```bash
 python main.py \
-  --atlas_file "/path/to/original_atlas.nii.gz" \
   --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
   --atlas_txt "/path/to/atlas_labels.txt" \
   --matlab_path "/path/to/MATLAB_folder" \
@@ -411,7 +410,6 @@ Each performance metric is reported along with a 95% confidence interval to prov
 
 These intervals help assess the stability and generalizability of the model's performance, rather than relying solely on point estimates.
 
----
 
 ### 📦 4. Outputs
 
@@ -419,6 +417,16 @@ After the script completes execution, the following outputs are generated:
 
 - **📋 Tabulated Metrics Summary**  
   A table summarizing all key metrics for each iteration is printed in the terminal. This allows transparent comparison across runs.
+  The results are displayed as in the table below:
+
+| **Metric**    | **Score** | **± Error** |
+|---------------|-----------|-------------|
+| Accuracy      | 0.82      | ±0.07       |
+| Precision     | 0.67      | ±0.08       |
+| Recall        | 0.91      | ±0.05       |
+| F1-score      | 0.77      | ±0.07       |
+| Specificity   | 0.78      | ±0.07       |
+| AUC           | 0.84      | ±0.08       |
 
 - **📈 Visualization Outputs**
 

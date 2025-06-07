@@ -1,35 +1,49 @@
 import sys
 from pathlib import Path
 import os
-import argparse
-import logging
 
-from CNN_codes.CNN_class import MyCNNModel
-from CNN_codes.utilities import preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+import argparse
 import nibabel as nib
 
+from CNN_class import MyCNNModel
+from utilities import ( preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape )
+
+
+from tensorflow.python.client import device_lib
 
 import tensorflow as tf
+
+from loguru import logger
+# Configure loguru logger
+logger.remove()  # Remove default handler
+logger.add(sys.stdout, level="DEBUG", format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | {message}")
+
+
+# Configure GPU memory growth before TensorFlow usag
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logger.info(f"Memory growth enabled on {len(gpus)} GPU(s).")
+    except RuntimeError as e:
+        logger.error(f"Runtime error during GPU memory growth setup: {e}")
 
 # Enable verbose logging to see where ops run (GPU/CPU)
 tf.debugging.set_log_device_placement(True)
 
-# Check and log GPU availability
+# Log detected GPUs
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
     print(f"[INFO] {len(gpus)} GPU(s) detected:")
     for gpu in gpus:
         print(f"    -> {gpu}")
 else:
-    print("[WARNING] No GPU detected. Training will use CPU.")
+    logger.warning("No GPU detected. Training will use CPU.")
 
-
-# Setup logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(levelname)s] %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 
 def ask_yes_no_prompt(prompt_message, default="N"):
@@ -76,11 +90,10 @@ def ask_yes_no_prompt(prompt_message, default="N"):
             return user_input == "y"
 
         # Prompt again for invalid input
-        print("Invalid input. Please enter 'Y' or 'N'.")
+        logger.warning("Invalid input. Please enter 'Y' or 'N'.")
 
 
 def parse_arguments():
-
     """
     Parse command-line arguments for the CNN training script.
 
@@ -88,6 +101,7 @@ def parse_arguments():
     -------
     argparse.Namespace
         Parsed command-line arguments.
+
     """
     parser = argparse.ArgumentParser(
         description="Script for training a CNN model on NIfTI images",
@@ -112,11 +126,11 @@ def parse_arguments():
     # === Model parameters ===
 
     parser.add_argument(
-        '--epochs', type=int, default=300,
+        '--epochs', type=int, default=100,
         help="Number of training epochs (default: %(default)s)."
     )
     parser.add_argument(
-        '--batchsize', type=int, default=50,
+        '--batchsize', type=int, default=20,
         help="Batch size for training (default: %(default)s)."
     )
 
@@ -150,51 +164,53 @@ def main(args):
         Parsed command-line arguments.
 
     """
-    # Stampa i dispositivi rilevati
-    print("Dispositivi disponibili:")
-    print(device_lib.list_local_devices())
+    logger.info("Available devices:")
+    logger.info(device_lib.list_local_devices())
 
-    # Verifica se TensorFlow sta utilizzando una GPU
     if tf.config.list_physical_devices('GPU'):
-        print("TensorFlow sta utilizzando la GPU.")
+        logger.info("TensorFlow is using GPU.")
     else:
-        print("TensorFlow non sta utilizzando la GPU.")
+        logger.warning("TensorFlow is not using GPU, running on CPU.")
+
 
     roi_ids=(165,166)
 
-    # === Step 0: Classification only mode ===
+    # Classification only mode
     if args.use_trained_model:
         logger.info("Using pre-trained model for classification.")
 
         if not args.trained_model_path:
-            logger.error("Devi specificare --trained_model_path se usi --use_trained_model")
+            logger.error("You must specify --trained_model_path if using --use_trained_model")
             sys.exit(1)
         if not args.nifti_image_path:
-            logger.error("Devi specificare --nifti_image_path per classificare nuove immagini")
+            logger.error("You must specify --nifti_image_path to classify new images")
             sys.exit(1)
 
+        # Load model within strategy scope if needed (e.g. multi-GPU)
+        with strategy.scope():
+            trained_model = tf.keras.models.load_model(args.trained_model_path)
+
         trained_model = tf.keras.models.load_model(args.trained_model_path)
-        model_shape = (121,145,47,1)
+        model_shape = (121,145,29,1)
 
 
 
-        # Load NIfTI image
+        # Load and preprocess the image
         nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids))
-        # Adatta dimensioni all'input shape
         nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
         images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
 
-        # Perform prediction. Fai predizione
+
         prediction = trained_model.predict(images_normalized)
-        print(f"[RESULT] Predicted probability for class 1: {prediction[0][0]}")
+        logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
 
         return
 
 
-    num_augmented_per_image = 2
+    num_augmented_per_image = 3
 
 
-    # Image preprocessing
+    # Preprocessing images and labels
     logger.info("Starting image preprocessing.")
     images, labels = preprocessed_images_group(args.image_folder, args.atlas_path, args.metadata, tuple(roi_ids))
     logger.debug(f"Preprocessed image dimensions: {images.shape}")
@@ -208,46 +224,46 @@ def main(args):
     logger.info(f"Using target shape for augmentation derived from training data: {target_shape}")
     logger.info(f"Using input shape for the CNN model: {input_shape}")
 
-    # Data augmentation
-    logger.info("Starting image augmentation.")
-    augmented_images, augmented_labels = augment_images_with_labels_4d(
-        images,
-        labels,
-        target_shape,
-        num_augmented_per_image
-    )
-
+    # Normalize intensities before augmentation
     logger.info(f"Normalized intensity of voxel")
-    images_normalized = normalize_images_uniformly(augmented_images)
+    images_normalized = normalize_images_uniformly(images)
 
-    # Data splitting
-    logger.info("Splitting the dataset into train, validation, and test sets.")
-    x_train, y_train, x_val, y_val, x_test, y_test = split_data(images_normalized,augmented_labels )
-    logger.debug(f"x_train shape: {x_train.shape}, y_train shape: {y_train.shape}")
+    # Split dataset into train/val/test
+    logger.info("Splitting the dataset into train, validation, and test sets (70-15-15).")
+    x_train, y_train, x_val, y_val, x_test, y_test = split_data(images_normalized, labels )
+
+    logger.debug(f"x_train shape before data-augumentation: {x_train.shape}, y_train shape: {y_train.shape}")
     logger.debug(f"x_val shape: {x_val.shape}, y_val shape: {y_val.shape}")
     logger.debug(f"x_test shape: {x_test.shape}, y_test shape: {y_test.shape}")
 
+    # Perform data augmentation
+    logger.info("Starting image augmentation on training data only.")
+    x_train_augmented, y_train_augmented = augment_images_with_labels_4d(
+        x_train,
+        y_train,
+        target_shape,
+        num_augmented_per_image
+     )
+
+    logger.debug(f"After data-augumentation... x_train shape: {x_train_augmented.shape}, y_train shape: {y_train_augmented.shape}")
+
     # Model creation
     logger.info(f"Creating the model with input shape: {tuple(input_shape)}.")
-    # Optional: Force GPU usage explicitly (comment this out if TF handles it automatically)
-    with tf.device('/GPU:0'):
-    model = MyCNNModel(tuple(input_shape))
-    logger.info("Model assigned to /GPU:0")
+    model = MyCNNModel(input_shape=input_shape)
 
-    # Otherwise, just instantiate normally and log device info
-   #model = MyCNNModel(tuple(input_shape))
-   #logger.info("Model created successfully.")
 
-    # Training
+
+
+    # Compile and train the model
     logger.info("Starting model training.")
     model.compile_and_fit(
-        x_train, y_train, x_val, y_val, x_test, y_test,
-        n_epochs=args.epochs,
-        batchsize=args.batchsize
-    )
-    logger.info("Training completed successfully.")
+            x_train_augmented, y_train_augmented, x_val, y_val, x_test, y_test,
+            n_epochs=args.epochs,
+            batchsize=args.batchsize
+        )
+    logger.success("Training completed successfully.")
 
-    model.load_model("model_full.h5")
+    #model.load_model("model_full.h5")
 
     if model is not None:
         do_classify = ask_yes_no_prompt("Do you want to classify new images now? Y/N", default="N")
@@ -256,13 +272,13 @@ def main(args):
 
             # Load NIfTI image
             nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids))
-            # Adatta dimensioni all'input shape
+
             nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
             images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
 
-            # Perform prediction. Fai predizione
+            # Perform prediction.
             prediction = model.predict(images_normalized)
-            print(f"[RESULT] Predicted probability for class 1: {prediction[0][0]}")
+            logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
 
 
 
