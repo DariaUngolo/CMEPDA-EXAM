@@ -573,8 +573,9 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     # Get index of model with median AUC
     median_index = len(logger.model_auc_pairs) // 2
     pipeline_rfecv_medianAUC = logger.model_auc_pairs[median_index][0]
-    selected_ROIs_median = logger.selected_rois_list[median_index]
-    selected_ROIs_median = np.array(selected_ROIs_median) 
+    selector = pipeline_rfecv_medianAUC.named_steps['selector']
+    selected_ROIs_median = roi_names[selector.get_support()]
+    selected_ROIs_median = np.array(selected_ROIs_median)
     
 
     # Extract top 8 feature importances for selected ROIs
