@@ -239,7 +239,7 @@ def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_pe
     for img, label in zip(images, labels):
         for _ in range(num_augmented_per_image):
             augmented_img = augment_image_4d_tf(tf.convert_to_tensor(img), target_shape)
-            # Converti il risultato in numpy array
+            # convert to numpy array
             augmented_img_np = augmented_img.numpy()
             augmented_images.append(augmented_img_np)
             augmented_labels.append(label)

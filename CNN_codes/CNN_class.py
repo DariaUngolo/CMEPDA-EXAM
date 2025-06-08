@@ -261,33 +261,66 @@ class MyCNNModel(tensorflow.keras.Model):
 
         logger.info("Plotting training and validation accuracy and loss.")
         epochs_range = range(1, len(history.history['accuracy']) + 1)
-        plt.figure(figsize=(15, 15))
+
+        # Update matplotlib configuration for high-quality, compact plots
+        plt.rcParams.update({
+            'font.size': 6,
+            'font.family': 'serif',
+            'axes.labelsize': 5,
+            'axes.titlesize': 6,
+            'legend.fontsize': 4,
+            'xtick.labelsize': 4,
+            'ytick.labelsize': 4,
+            'axes.grid': True,
+            'grid.alpha': 0.2,
+            'grid.linestyle': '--',
+            'lines.linewidth': 0.8,
+            'figure.dpi': 600,
+            'savefig.dpi': 600
+        })
+
+        # Use colorblind-safe palette
+        sns.set_palette("colorblind")
+
+        logger.info("Generating training history plots...")
+
+        # Create the figure
+        plt.figure(figsize=(4, 2))  # compact high-quality layout
 
         # Accuracy plot
         plt.subplot(1, 2, 1)
         plt.plot(epochs_range, history.history['accuracy'], label="Train Accuracy")
         plt.plot(epochs_range, history.history['val_accuracy'], label="Validation Accuracy")
-        plt.legend(loc="lower right")
-        plt.title("Training and Validation Accuracy")
+        plt.xlabel("Epochs", labelpad=2, fontweight='semibold')
+        plt.ylabel("Accuracy", labelpad=2, fontweight='semibold')
+        plt.title("Training and Validation Accuracy", fontweight='bold', pad=4)
+        plt.legend(loc="lower right", frameon=False)
+        plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
+        plt.tick_params(axis='both', direction='in', length=2, width=0.3)
 
         # Loss plot
         plt.subplot(1, 2, 2)
         plt.plot(epochs_range, history.history['loss'], label="Train Loss")
         plt.plot(epochs_range, history.history['val_loss'], label="Validation Loss")
-        plt.legend(loc="upper right")
-        plt.title("Training and Validation Loss")
+        plt.xlabel("Epochs", labelpad=2, fontweight='semibold')
+        plt.ylabel("Loss", labelpad=2, fontweight='semibold')
+        plt.title("Training and Validation Loss", fontweight='bold', pad=4)
+        plt.legend(loc="upper right", frameon=False)
+        plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
+        plt.tick_params(axis='both', direction='in', length=2, width=0.3)
+
+        # Improve layout and aesthetics
+        sns.despine(trim=True)
+        plt.tight_layout()
 
         # Save plot to current script directory
-        save_name="training_plot.png"
+        save_name = "training_plot.png"
         base_path = os.path.dirname(os.path.abspath(__file__))
         save_path = os.path.join(base_path, save_name)
 
         plt.savefig(save_path)
         plt.show()
-        logger.info("Accuracy and loss plots displayed.")
 
-
-        plt.show()
         logger.info("Accuracy and loss plots displayed.")
 
     def validation_roc(self, x_val, y_val):
@@ -328,24 +361,49 @@ class MyCNNModel(tensorflow.keras.Model):
         )
         logger.info(f"Validation AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
 
+        # Update matplotlib configuration for high-quality, compact plots
+        matplotlib.rcParams.update({
+            'font.size': 6,
+            'font.family': 'serif',
+            'axes.labelsize': 5,
+            'axes.titlesize': 6,
+            'legend.fontsize': 4,
+            'xtick.labelsize': 4,
+            'ytick.labelsize': 4,
+            'axes.grid': True,
+            'grid.alpha': 0.2,
+            'grid.linestyle': '--',
+            'lines.linewidth': 0.8,
+            'figure.dpi': 600,
+            'savefig.dpi': 600
+        })
+
+        # Use colorblind-safe palette
+        sns.set_palette("colorblind")
+
         # Plot ROC curve
-        plt.figure()
-        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
-        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.figure(figsize=(2, 1.4))
+        plt.plot(fpr, tpr, color='tab:blue', lw=0.8, label=f'ROC curve (area = {roc_auc:.2f})')
+        plt.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.6)
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('Validation ROC')
-        plt.legend(loc="lower right")
+        plt.xlabel('False Positive Rate', labelpad=2, fontweight='semibold')
+        plt.ylabel('True Positive Rate', labelpad=2, fontweight='semibold')
+        plt.title('Validation ROC', fontweight='bold', pad=4)
+        plt.legend(loc="lower right", frameon=False)
+        plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
+        plt.tick_params(axis='both', direction='in', length=2, width=0.3)
+        sns.despine(trim=True)
+        plt.tight_layout()
 
-        # Salvataggio immagine nella stessa cartella dello script
+        # Save image to current script directory
         base_path = os.path.dirname(os.path.abspath(__file__))
         save_path = os.path.join(base_path, 'validation_roc.png')
         plt.savefig(save_path)
 
         plt.show()
         print("[DEBUG] validation_roc: plot mostrato")
+
 
     def test_roc(self, x_test, y_test):
 
@@ -392,25 +450,49 @@ class MyCNNModel(tensorflow.keras.Model):
         )
         logger.info(f"Test AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
 
+        # Update matplotlib configuration for high-quality, compact plots
+        matplotlib.rcParams.update({
+            'font.size': 6,
+            'font.family': 'serif',
+            'axes.labelsize': 5,
+            'axes.titlesize': 6,
+            'legend.fontsize': 4,
+            'xtick.labelsize': 4,
+            'ytick.labelsize': 4,
+            'axes.grid': True,
+            'grid.alpha': 0.2,
+            'grid.linestyle': '--',
+            'lines.linewidth': 0.8,
+            'figure.dpi': 600,
+            'savefig.dpi': 600
+        })
+
+        # Use colorblind-safe palette
+        sns.set_palette("colorblind")
+
         # Plot ROC curve
-        plt.figure()
-        lw = 2
-        plt.plot(fpr, tpr, color='darkorange', lw=lw, label=f'ROC curve (area = {roc_auc:.2f})')
-        plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+        plt.figure(figsize=(2, 1.4))
+        plt.plot(fpr, tpr, color='tab:blue', lw=0.8, label=f'ROC curve (area = {roc_auc:.2f})')
+        plt.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.6)
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('Test ROC')
-        plt.legend(loc="lower right")
+        plt.xlabel('False Positive Rate', labelpad=2, fontweight='semibold')
+        plt.ylabel('True Positive Rate', labelpad=2, fontweight='semibold')
+        plt.title('Test ROC', fontweight='bold', pad=4)
+        plt.legend(loc="lower right", frameon=False)
+        plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
+        plt.tick_params(axis='both', direction='in', length=2, width=0.3)
+        sns.despine(trim=True)
+        plt.tight_layout()
 
-        # salva immagine
+        #save image
         base_path = os.path.dirname(os.path.abspath(__file__))
         save_path = os.path.join(base_path, 'test_roc.png')
         plt.savefig(save_path)
         print(f"[DEBUG] test_roc: plot salvato in {save_path}")
 
         plt.show()
+
 
     def save_model(self, path="model_full.h5"):
         """
