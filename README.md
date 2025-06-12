@@ -274,7 +274,7 @@ The `main.py` script supports **two execution modes**: Training mode and Inferen
 Runs the full pipeline: extracts features via MATLAB, trains and evaluates the classifier, saves the trained model.
 
 ```bash
-python main.py \
+python ML_main.py \
   --folder_path "/path/to/nifti_folder" \
   --atlas_file "/path/to/original_atlas.nii.gz" \
   --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
@@ -291,7 +291,7 @@ python main.py \
 Uses a previously trained model to classify new independent NIfTI images, skipping training.
 
 ```bash
-python main.py \
+python ML_main.py \
   --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
   --atlas_txt "/path/to/atlas_labels.txt" \
   --matlab_path "/path/to/MATLAB_folder" \
