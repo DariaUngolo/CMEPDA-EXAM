@@ -42,6 +42,9 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 ├── trained_models/
 │   └── trained_model*.py  #one for each type of classifier
 │
+│
+├── plots and images/
+│
 └── README.md
 ```
 
@@ -71,11 +74,9 @@ These NIfTI images can be viewed using any neuroimaging viewer that supports 3D 
 
 These tools allow you to inspect the anatomical structure, overlay atlas labels, and verify alignment and ROI masking.
 
-##### 🖼️ Example [valutare se inserirle]
-
 Below is a sample slice from an `smwc1` image showing gray matter segmentation in MNI space, overlayed with atlas-based ROIs:
 
-![Example gray matter segmentation](path/to/your/example_image.png)
+![Example gray matter segmentation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/brain_example.png)
 
 #### 🧠 Available Atlases
 
@@ -90,11 +91,16 @@ Two atlases are currently supported and included in the `data/` folder:
    - **Purpose**: Suitable for coarse anatomical feature aggregation  
    - **Space**: Already coregistered to the MNI152 template space
 
+![Superposition of LONI probabilistic atlas on grey matter](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/brain_atlas_56_spectrum.png)
+
+
 2. **Brainnetome Atlas**
    - **Regions**: 246 fine-grained regions (210 cortical + 36 subcortical)  
    - **Origin**: Developed by the Chinese Academy of Sciences  
    - **Purpose**: Provides high-resolution parcellation ideal for detecting subtle changes in specific brain circuits  
    - **Space**: Aligned with the MNI152 coordinate system
+
+![Superposition of Brainnetome Atlas on grey matter](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/brain_atlas_246_spectrum.png)
 
 Both atlases are distributed in **NIfTI (.nii.gz)** format and are compatible with the T1-weighted input scans. Since the atlases are pre-aligned to the **MNI152 standard space**, they ensure anatomical consistency with most neuroimaging datasets without requiring additional registration steps.
 
@@ -271,7 +277,7 @@ The `main.py` script supports **two execution modes**: Training mode and Inferen
 Runs the full pipeline: extracts features via MATLAB, trains and evaluates the classifier, saves the trained model.
 
 ```bash
-python main.py \
+python ML_main.py \
   --folder_path "/path/to/nifti_folder" \
   --atlas_file "/path/to/original_atlas.nii.gz" \
   --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
@@ -288,7 +294,7 @@ python main.py \
 Uses a previously trained model to classify new independent NIfTI images, skipping training.
 
 ```bash
-python main.py \
+python ML_main.py \
   --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
   --atlas_txt "/path/to/atlas_labels.txt" \
   --matlab_path "/path/to/MATLAB_folder" \
@@ -396,10 +402,13 @@ The pipeline provides a comprehensive evaluation of the classification model usi
   Measures the proportion of correctly identified negative cases (e.g., healthy controls).
 
   TN / (TN + FP)
-  
+
+  ![metrics scheme](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/metrics_scheme.png)
 
 - **AUC (Area Under the ROC Curve)**
 The AUC measures the probability that the classifier will rank a randomly chosen positive instance higher than a randomly chosen negative one. It summarizes the model’s ability to distinguish between classes across all classification thresholds. An AUC of 0.5 indicates no discriminative power (equivalent to random guessing), while an AUC of 1.0 indicates perfect discrimination. A higher AUC thus reflects a more effective and statistically robust classifier, especially in imbalanced classification tasks.
+
+![ROC-AUC](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/AUC-ROC%20example.png)
 
 - **Confidence Intervals**
 Each performance metric is reported along with a 95% confidence interval to provide a measure of statistical reliability and variability:
@@ -433,12 +442,19 @@ After the script completes execution, the following outputs are generated:
   1. **ROC Curve**  
      Displays the trade-off between true positive rate and false positive rate for all classification thresholds. Useful for visual inspection of model discrimination power.
 
-  2. **Performance Bar Chart**  
-     A bar plot comparing mean values (with error bars for confidence intervals) of each metric such as Accuracy, Precsion, Recall, F1 Score, Sensitivity and AUC.
+![ROC curve and AUC example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/ROC_rf_RFE_100_15_mean%2Bstd_BN.png)
 
-  3. **Feature Importance Plot**  
+  3. **Performance Bar Chart**  
+     A bar plot comparing mean values (with error bars for confidence intervals) of each metric such as Accuracy, Precsion, Recall, F1 Score, Sensitivity and AUC.
+     
+![Bar chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/metrics_rf_RFE_100_15_mean%2Bstd_BN.png)
+
+
+  5. **Feature Importance Plot**  
      (Only available if using Random Forest with RFECV)  
      Visualizes the most relevant features selected by the Recursive Feature Elimination process, ranked by importance.
+     
+![Pie chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/piechart_rf_RFE_100_15_mean%2Bstd_BN.png)
 
 - **💾 Trained Model Persistence**
 The final classifier — including any dimensionality reduction steps (e.g., PCA or RFECV) — is serialized and saved in a .joblib file. Among all models trained during cross-validation, the one corresponding to the **median AUC** is selected and saved to ensure robust statistical performance. This file can later be reused for inference without repeating the entire training pipeline.
