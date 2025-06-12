@@ -104,13 +104,13 @@ def parse_arguments():
 
     # === Input paths ===
     parser.add_argument(
-        "--folder_path", required=True, type=str,
+        "--folder_path", type=str,
         help="""Path to the folder containing subject NIfTI images to be analyzed.
         Each file should represent one subject. Supported formats: .nii, .nii.gz"""
     )
 
     parser.add_argument(
-        "--atlas_file", required=True, type=str,
+        "--atlas_file", type=str,
         help="""Path to the original brain atlas NIfTI file. Each voxel contains
         a numeric label indicating the region-of-interest (ROI)."""
     )
@@ -128,7 +128,7 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--metadata_csv", required=True, type=str,
+        "--metadata_csv", type=str,
         help="""TSV file containing subject metadata and diagnostic labels.
         It must include: subject ID and diagnosis label (e.g., 'Normal', 'AD')."""
     )
@@ -142,7 +142,7 @@ def parse_arguments():
 
     # === Classifier configuration ===
     parser.add_argument(
-        "--classifier", required=True,
+        "--classifier",
         choices=["rf", "svm"],
         help="""Classifier to use:
         - 'rf': Random Forest .
