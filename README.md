@@ -42,6 +42,9 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 ├── trained_models/
 │   └── trained_model*.py  #one for each type of classifier
 │
+│
+├── plots and images/
+│
 └── README.md
 ```
 
@@ -399,7 +402,8 @@ The pipeline provides a comprehensive evaluation of the classification model usi
   Measures the proportion of correctly identified negative cases (e.g., healthy controls).
 
   TN / (TN + FP)
-  
+
+  ![metrics scheme](http://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/metrics_scheme.png)
 
 - **AUC (Area Under the ROC Curve)**
 The AUC measures the probability that the classifier will rank a randomly chosen positive instance higher than a randomly chosen negative one. It summarizes the model’s ability to distinguish between classes across all classification thresholds. An AUC of 0.5 indicates no discriminative power (equivalent to random guessing), while an AUC of 1.0 indicates perfect discrimination. A higher AUC thus reflects a more effective and statistically robust classifier, especially in imbalanced classification tasks.
