@@ -71,11 +71,9 @@ These NIfTI images can be viewed using any neuroimaging viewer that supports 3D 
 
 These tools allow you to inspect the anatomical structure, overlay atlas labels, and verify alignment and ROI masking.
 
-##### 🖼️ Example [valutare se inserirle]
-
 Below is a sample slice from an `smwc1` image showing gray matter segmentation in MNI space, overlayed with atlas-based ROIs:
 
-![Example gray matter segmentation](path/to/your/example_image.png)
+![Example gray matter segmentation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/brain_example.png)
 
 #### 🧠 Available Atlases
 
@@ -90,11 +88,16 @@ Two atlases are currently supported and included in the `data/` folder:
    - **Purpose**: Suitable for coarse anatomical feature aggregation  
    - **Space**: Already coregistered to the MNI152 template space
 
+![Superposition of LONI probabilistic atlas on grey matter](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/brain_atlas_56_spectrum.png)
+
+
 2. **Brainnetome Atlas**
    - **Regions**: 246 fine-grained regions (210 cortical + 36 subcortical)  
    - **Origin**: Developed by the Chinese Academy of Sciences  
    - **Purpose**: Provides high-resolution parcellation ideal for detecting subtle changes in specific brain circuits  
    - **Space**: Aligned with the MNI152 coordinate system
+
+![Superposition of Brainnetome Atlas on grey matter](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/brain_atlas_246_spectrum.png)
 
 Both atlases are distributed in **NIfTI (.nii.gz)** format and are compatible with the T1-weighted input scans. Since the atlases are pre-aligned to the **MNI152 standard space**, they ensure anatomical consistency with most neuroimaging datasets without requiring additional registration steps.
 
@@ -433,12 +436,19 @@ After the script completes execution, the following outputs are generated:
   1. **ROC Curve**  
      Displays the trade-off between true positive rate and false positive rate for all classification thresholds. Useful for visual inspection of model discrimination power.
 
-  2. **Performance Bar Chart**  
-     A bar plot comparing mean values (with error bars for confidence intervals) of each metric such as Accuracy, Precsion, Recall, F1 Score, Sensitivity and AUC.
+![ROC curve and AUC example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/ROC_rf_RFE_100_15_mean%2Bstd_BN.png)
 
-  3. **Feature Importance Plot**  
+  3. **Performance Bar Chart**  
+     A bar plot comparing mean values (with error bars for confidence intervals) of each metric such as Accuracy, Precsion, Recall, F1 Score, Sensitivity and AUC.
+     
+![Bar chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/metrics_rf_RFE_100_15_mean%2Bstd_BN.png)
+
+
+  5. **Feature Importance Plot**  
      (Only available if using Random Forest with RFECV)  
      Visualizes the most relevant features selected by the Recursive Feature Elimination process, ranked by importance.
+     
+![Pie chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/piechart_rf_RFE_100_15_mean%2Bstd_BN.png)
 
 - **💾 Trained Model Persistence**
 The final classifier — including any dimensionality reduction steps (e.g., PCA or RFECV) — is serialized and saved in a .joblib file. Among all models trained during cross-validation, the one corresponding to the **median AUC** is selected and saved to ensure robust statistical performance. This file can later be reused for inference without repeating the entire training pipeline.
