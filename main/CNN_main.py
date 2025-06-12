@@ -11,7 +11,7 @@ import nibabel as nib
 from CNN_class import MyCNNModel
 from utilities import ( preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape )
 
-
+import numpy
 from tensorflow.python.client import device_lib
 
 import tensorflow as tf
@@ -20,7 +20,7 @@ from loguru import logger
 # Configure loguru logger
 logger.remove()  # Remove default handler
 logger.add(sys.stdout, level="DEBUG", format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | {message}")
-
+from tabulate import tabulate
 
 # Configure GPU memory growth before TensorFlow usag
 gpus = tf.config.list_physical_devices('GPU')
@@ -43,6 +43,25 @@ if gpus:
         print(f"    -> {gpu}")
 else:
     logger.warning("No GPU detected. Training will use CPU.")
+
+def prompt_for_valid_folder_path():
+    """
+    Prompt the user to input a valid folder path containing NIfTI images for classification.
+    Keeps asking until a valid folder path is given or the user chooses to quit.
+
+    Returns
+    -------
+    str or None
+        Valid path to the folder or None if the user wants to quit.
+    """
+    while True:
+        folder_path = input("Please enter the path to the folder containing NIfTI images to classify (or type 'quit' to exit): ").strip()
+        if folder_path.lower() == "quit":
+            return None
+        if os.path.isdir(folder_path):
+            return folder_path
+        else:
+            print(f"Error: The folder '{folder_path}' does not exist or is not accessible. Please try again.")
 
 
 
@@ -110,7 +129,7 @@ def parse_arguments():
 
     # === Input paths ===
     parser.add_argument(
-        '--image_folder', type=str, required=True,
+        '--image_folder', type=str,
         help="Path to the folder containing NIfTI images."
     )
     parser.add_argument(
@@ -118,7 +137,7 @@ def parse_arguments():
         help="Path to the NIfTI atlas file."
     )
     parser.add_argument(
-        '--metadata', type=str, required=True,
+        '--metadata', type=str,
         help="Path to CSV metadata file containing labels."
     )
 
@@ -187,27 +206,33 @@ def main(args):
             sys.exit(1)
 
         # Load model within strategy scope if needed (e.g. multi-GPU)
-        with strategy.scope():
-            trained_model = tf.keras.models.load_model(args.trained_model_path)
 
         trained_model = tf.keras.models.load_model(args.trained_model_path)
-        model_shape = (121,145,29,1)
+        #model_shape = (121,145,47,1)
+        model_shape = trained_model .input_shape
+        target_shape = trained_model.input_shape[1:4]
+        logger.info(f"Target shape: {target_shape}")
 
 
 
         # Load and preprocess the image
         nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids))
-        nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
+        nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  target_shape )
         images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
 
 
         prediction = trained_model.predict(images_normalized)
         logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
+        logger.info(f"Predicted probability for class 0: {1 - prediction[0][0]}")
+
+        threshold = 0.5
+        predicted_class = 1 if prediction[0][0] >= threshold else 0
+        logger.info(f"Predicted class: {predicted_class}")
+
 
         return
 
 
-    num_augmented_per_image = 3
 
 
     # Preprocessing images and labels
@@ -241,11 +266,9 @@ def main(args):
     x_train_augmented, y_train_augmented = augment_images_with_labels_4d(
         x_train,
         y_train,
-        target_shape,
-        num_augmented_per_image
-     )
+        target_shape
+    )
 
-    logger.debug(f"After data-augumentation... x_train shape: {x_train_augmented.shape}, y_train shape: {y_train_augmented.shape}")
 
     # Model creation
     logger.info(f"Creating the model with input shape: {tuple(input_shape)}.")
@@ -263,22 +286,54 @@ def main(args):
         )
     logger.success("Training completed successfully.")
 
-    #model.load_model("model_full.h5")
+    model.save_model("trained_model.keras")
 
     if model is not None:
         do_classify = ask_yes_no_prompt("Do you want to classify new images now? Y/N", default="N")
         if do_classify:
-            model_shape = model.input_shape
+            results=[]
+            while True:
+                nifti_image_path = prompt_for_valid_folder_path()
+                if nifti_image_path is None:
+                    logger.info("Classification aborted by user.")
+                    break
 
-            # Load NIfTI image
-            nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids))
 
-            nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
-            images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
 
-            # Perform prediction.
-            prediction = model.predict(images_normalized)
-            logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
+                model_shape = input_shape
+
+                # Load NIfTI image
+                nifti_img_preprocessed = preprocessed_images(nifti_image_path, args.atlas_path, tuple(roi_ids))
+
+                nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
+                images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
+
+                # Perform prediction.
+                prediction = model.predict(images_normalized)
+                logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
+
+                threshold = 0.5
+                classification = 1 if prediction[0][0] >= threshold else 0
+
+
+                if classification == 1:
+                    selected_probability = prediction[0][0]
+                else:
+                    selected_probability = 1- prediction[0][0]
+
+                results.append({
+                "Image": os.path.basename(nifti_image_path),
+                "Prediction": classification,
+                "Probability": f"{selected_probability:.2f}"
+                })
+
+                # Display results in a table
+                print("\nClassification Results:")
+                print(tabulate(results, headers="keys", tablefmt="fancy_grid"))
+
+                continue_classify = ask_yes_no_prompt("Classify another image? Y/N", default="N")
+                if not continue_classify:
+                    break
 
 
 

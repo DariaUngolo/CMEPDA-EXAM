@@ -14,10 +14,41 @@ from scipy.ndimage import rotate, zoom
 from skimage import exposure
 import tensorflow as tf
 
+
+import re
+
 # Configure loguru logger
 logger.remove()  # Remove default handler
 logger.add(sys.stdout, level="DEBUG", format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | {message}")
 
+
+def sorting_key(filename):
+    """
+    Generate a sorting key from the filename based on group and number.
+
+    The function extracts a group label ('CTRL' or 'AD') and a following number
+    from the filename using a regex pattern. It returns a tuple `(group, number)`
+    that can be used to sort filenames first by group, then numerically by the number.
+    If the filename does not match the expected pattern, it returns a tuple
+    that will place the filename at the end when sorting.
+
+    Parameters
+    ----------
+    filename : str
+        The filename string to parse.
+
+    Returns
+    -------
+    tuple
+        A tuple `(group, number)` where:
+        - `group` is a string, either 'CTRL' or 'AD' if matched, otherwise an empty string.
+        - `number` is an integer extracted from the filename, or `float('inf')` if no match.
+    """
+    match = re.search(r"(CTRL|AD)-(\d+)", filename)
+    if match:
+        group, number = match.groups()
+        return (group, int(number))
+    return ("", float('inf'))
 
 def pad_images(images):
     """
@@ -61,6 +92,7 @@ def pad_images(images):
 def random_rotate_tf(volume):
     """
     Applies random 3D rotation to a volume using TensorFlow.
+    Each direction is randomly rotated by a value between -2 and +2 degrees.
 
     Parameters
     ----------
@@ -80,7 +112,7 @@ def random_rotate_tf(volume):
 
         """
         # Random angles for each axis
-        angles = np.random.uniform(-0.1, 0.1 , size=3)
+        angles = np.random.uniform(-0.017, 0.017 , size=3)
 
         rotated = rotate(volume, angles[0], axes=(1, 2), reshape=False)
         rotated = rotate(rotated, angles[1], axes=(0, 2), reshape=False)
@@ -92,7 +124,7 @@ def random_rotate_tf(volume):
 
 
 
-def random_zoom_and_crop_tf(volume, target_shape, zoom_range=(0.98, 1.01)):
+def random_zoom_and_crop_tf(volume, target_shape, zoom_range=(0.99, 1.01)):
     """
 
     Randomly zooms into a 3D volume and adjusts its dimensions to match the target shape.
@@ -104,7 +136,7 @@ def random_zoom_and_crop_tf(volume, target_shape, zoom_range=(0.98, 1.01)):
     target_shape : tuple of ints
         Desired dimensions (x, y, z).
     zoom_range : tuple of floats, optional
-        Range of zoom factors (default is (0.98, 1.02)).
+        Range of zoom factors (default is (0.99, 1.01)).
 
     Returns
     -------
@@ -161,91 +193,90 @@ def add_noise_tf(volume, noise_factor=0.0001):
 
 def random_intensity_tf(volume, factor=0.001):
     """
-
-    Modifica casualmente l'intensità di un volume 3D.
+    Randomly modifies the intensity of a 3D volume.
 
     Parameters:
     -----------
     volume : np.ndarray
-        Volume 3D da modificare.
+        3D volume to be modified.
     factor : float
-        Range per il fattore di scala dell'intensità (default: 0.1).
+        Range for the intensity scaling factor (default: 0.1).
 
     Returns:
     --------
     np.ndarray
-        Volume con intensità modificata.
-
+        Volume with modified intensity.
     """
+
     scale = tf.random.uniform([], 1 - factor, 1 + factor, dtype=volume.dtype)
     return tf.clip_by_value(volume * scale, 0.0, 1.0)
 
-
-def augment_image_4d_tf(volume, target_shape):
+def apply_all_transforms(volume, target_shape):
     """
-    Performs a series of augmentations on a 4D image tensor.
-
-    Parameters
-    ----------
-    volume : tf.Tensor
-        A 4D tensor (x, y, z, 1).
-    target_shape : tuple of ints
-        Target dimensions (x, y, z).
-
-    Returns
-    -------
-    tf.Tensor
-        Augmented 4D tensor (x, y, z, 1).
-
-    """
-    volume = tf.squeeze(volume, axis=-1)  # Remove channel dimension
-    volume = random_rotate_tf(volume)
-    volume = random_zoom_and_crop_tf(volume, target_shape)
-    volume = add_noise_tf(volume)
-    #volume = random_intensity_tf(volume)
-    return tf.expand_dims(volume, axis=-1)  # Restore channel dimension
-
-def augment_images_with_labels_4d(images, labels, target_shape, num_augmented_per_image):
-
-    """
-
-    Generates augmented images while preserving the associated original labels.
+    Applies all transformations one by one to the volume.
 
     Parameters:
-
     -----------
-    images : np.ndarray
-        Batch of original images (shape: [num_images, x, y, z, 1]).
-    labels : np.ndarray
-        Array of labels corresponding to the original images.
+    volume : tf.Tensor
+        3D volume tensor.
     target_shape : tuple of ints
-        Desired dimensions (x, y, z).
-    num_augmented_per_image : int
-        Number of augmented images to generate for each original image.
+        Desired output shape.
 
     Returns:
+    --------
+    List of tf.Tensor
+        List of transformed volumes (one per transformation).
+    """
+    transforms = [
+        #lambda vol: random_rotate_tf(vol),
+        lambda vol: random_zoom_and_crop_tf(vol, target_shape),
+        #lambda vol: add_noise_tf(vol),
+        lambda vol: random_intensity_tf(vol)
+    ]
 
+    transformed_volumes = []
+    for transform in transforms:
+        transformed_volumes.append(transform(volume))
+    return transformed_volumes
+
+def augment_images_with_labels_4d(images, labels, target_shape):
+    """
+    Generates augmented images by including original images and all transformations applied to each original image.
+
+    Parameters:
+    -----------
+    images : np.ndarray
+        Original images (shape: [num_images, x, y, z, 1]).
+    labels : np.ndarray
+        Corresponding labels.
+    target_shape : tuple of ints
+        Desired output shape (x, y, z).
+
+    Returns:
     --------
     augmented_images : np.ndarray
-        Batch of augmented images (num_augmented_images, x, y, z, 1).
+        Augmented images (num_images * (1 + num_transforms), x, y, z, 1).
     augmented_labels : np.ndarray
-        Array of labels corresponding to the augmented images.
-
+        Corresponding labels.
     """
-
     augmented_images = []
     augmented_labels = []
 
     for img, label in zip(images, labels):
-        for _ in range(num_augmented_per_image):
-            augmented_img = augment_image_4d_tf(tf.convert_to_tensor(img), target_shape)
-            # convert to numpy array
-            augmented_img_np = augmented_img.numpy()
-            augmented_images.append(augmented_img_np)
+        # Aggiungo l'immagine originale così com'è
+        augmented_images.append(img)
+        augmented_labels.append(label)
+
+        # Rimuovo la dimensione canale per le trasformazioni
+        img_tensor = tf.convert_to_tensor(img[..., 0])
+        transformed_imgs = apply_all_transforms(img_tensor, target_shape)
+
+        for transformed_img in transformed_imgs:
+            transformed_img = tf.expand_dims(transformed_img, axis=-1)
+            augmented_images.append(transformed_img.numpy())
             augmented_labels.append(label)
 
     return np.array(augmented_images, dtype=np.float32), np.array(augmented_labels)
-
 
 
 def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
@@ -289,8 +320,15 @@ def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
 
     preprocessed_images = []
 
+
+    # Elenco file nella cartella
+    file_list = [f for f in os.listdir(image_folder) if f.endswith(".nii") or f.endswith(".nii.gz")]
+
+    # Ordina i file usando la funzione `sorting_key`
+    sorted_file_list = sorted(file_list, key=sorting_key)
+
     # Iterate over NIFTI files in the folder
-    for filename in os.listdir(image_folder):
+    for filename in sorted_file_list:
         if filename.endswith(".nii") or filename.endswith(".nii.gz"):
             image_path = os.path.join(image_folder, filename)
 
@@ -299,10 +337,10 @@ def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
             image_data = image.get_fdata()
 
             # Extract the relevant Z range
-            image_data = image_data[:, :, z_min-1:z_max + 1]
+            image_data = image_data[:, :, z_min-10:z_max + 10]
 
             # Remove black voxels (voxels with intensity 0)
-            non_black_voxels = image_data > 0.000001 #DA CAPIRE CHE NUMERO METTERE
+            non_black_voxels = image_data > 0.000001
             cropped_data = image_data[np.ix_(
                 np.any(non_black_voxels, axis=(1, 2)),
                 np.any(non_black_voxels, axis=(0, 2)),
@@ -332,7 +370,11 @@ def preprocessed_images_group(image_folder, atlas_path, metadata, roi_ids=(165, 
     # Extract group labels from metadata (assumed to be in the second column)
     group = meta_data.iloc[:, 1].map({'AD': 1, 'Normal': 0}).astype('float64').to_numpy()
 
+    file_list = [f for f in os.listdir(image_folder) if f.endswith(".nii") or f.endswith(".nii.gz")]
+
     return images, group
+
+
 
 
 def normalize_images_uniformly(images, global_min=None, global_max=None, min_val=0.0, max_val=1.0):
@@ -413,12 +455,12 @@ def split_data(images, group):
     """
     # Split dataset into train+val and test (85% train+val, 15% test)
     x_temp, x_test, y_temp, y_test = train_test_split(
-        images, group, test_size=0.15
+        images, group, test_size=0.15,random_state=10
     )
 
     # Split train+val into train and validation (82% train, 18% val)
     x_train, x_val, y_train, y_val = train_test_split(
-        x_temp, y_temp, test_size=0.1765
+        x_temp, y_temp, test_size=0.1765, random_state=10
     )
 
     return x_train, y_train, x_val, y_val, x_test, y_test

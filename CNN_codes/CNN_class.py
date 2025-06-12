@@ -9,14 +9,16 @@ import scipy
 
 import tensorflow
 from sklearn.metrics import roc_curve, auc
-from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization, Activation, Dropout, GlobalAveragePooling3D)
+from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization, Activation, Dropout,PReLU, GlobalAveragePooling3D)
 from keras.optimizers import SGD
 
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import load_model, Model, Sequential
-from keras.callbacks import ReduceLROnPlateau, EarlyStopping
+from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
+
 from keras.losses import BinaryCrossentropy, MeanSquaredError
+import seaborn as sns
 
 
 from loguru import logger
@@ -78,23 +80,43 @@ class MyCNNModel(tensorflow.keras.Model):
         super(MyCNNModel, self).__init__()
 
         # Define the model architecture using Keras Sequential API
-        self.model =  Sequential([
-            Conv3D(32, (3, 3, 3), activation='relu', padding='same', kernel_regularizer=tensorflow.keras.regularizers.l2(1e-4)),
+        self.model = Sequential([
+
+            # First block
+            MaxPooling3D(pool_size=(2, 2, 2),),
+            Conv3D(16, kernel_size=3, activation=None, padding='same',kernel_regularizer=l2(0.001)),
+            PReLU(),
             BatchNormalization(),
-            MaxPooling3D(pool_size=(2, 2, 2)),
+
             Dropout(0.2),
 
+            # Second block
+            MaxPooling3D(pool_size=(2, 2, 2)),
+            Conv3D(32, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
+            PReLU(),
+            BatchNormalization(),
+            Dropout(0.2),
 
-            Conv3D(64, (3, 3, 3), activation='relu', padding='same', kernel_regularizer=tensorflow.keras.regularizers.l2(1e-4)),
+            # Third block
+            Conv3D(64, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
+            PReLU(),
             BatchNormalization(),
             MaxPooling3D(pool_size=(2, 2, 2)),
             Dropout(0.3),
 
+            # Fourth block (extra layer)
+            Conv3D(64, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
+            PReLU(),
+            BatchNormalization(),
+            Dropout(0.3),
 
-            Flatten(),
-            Dense(128, activation='relu', kernel_regularizer=tensorflow.keras.regularizers.l2(1e-4)),
-            Dropout(0.4),
-            Dense(1, activation='sigmoid')
+            # Global Average Pooling
+            GlobalAveragePooling3D(),
+
+            # Fully connected layers
+            Dense(64, activation='relu', kernel_regularizer=l2(0.001)),
+            Dropout(0.5),
+            Dense(1, activation='sigmoid')  # Binary classification
         ])
 
         logger.info("Model architecture successfully initialized.")
@@ -179,7 +201,7 @@ class MyCNNModel(tensorflow.keras.Model):
         self.compile(
             optimizer=Adam(learning_rate=0.0001),
             loss=BinaryCrossentropy(),
-            metrics=['accuracy']
+            metrics=['accuracy', tensorflow.keras.metrics.AUC()]
         )
 
         logger.debug("Model compiled successfully.")
@@ -203,7 +225,7 @@ class MyCNNModel(tensorflow.keras.Model):
                 patience=20,
                 verbose=1,
                 mode="auto",
-                restore_best_weights=False,
+                restore_best_weights=True,
                 start_from_epoch=10
         )
 
@@ -216,16 +238,20 @@ class MyCNNModel(tensorflow.keras.Model):
         x_val, y_val = self.extract_data_and_labels(val_dataset)
         x_test, y_test = self.extract_data_and_labels(test_dataset)
 
+
+        # Save best model
+        model_checkpoint=ModelCheckpoint("best_modelCNN.keras", save_best_only=True)
+
         # Train the model
         history = self.fit(
                 train_dataset,
                 batch_size=batchsize,
                 epochs=n_epochs,
                 steps_per_epoch=round(len(x_train) // batchsize),
-                verbose=1,
+                verbose=2,
                 validation_data=val_dataset,
                 validation_steps=round(len(x_val) // batchsize),
-                callbacks=[reduce_on_plateau]
+                callbacks=[reduce_on_plateau, model_checkpoint]
         )
         logger.info("Model training completed.")
 
@@ -242,8 +268,6 @@ class MyCNNModel(tensorflow.keras.Model):
         self.validation_roc(x_val, y_val)
         self.test_roc(x_test, y_test)
 
-        # Salva il modello completo subito dopo il training
-        #self.save_model("model_full.h5")
 
 
 
@@ -341,7 +365,8 @@ class MyCNNModel(tensorflow.keras.Model):
         z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)
 
         # Evaluate accuracy on validation data
-        _, val_acc = self.evaluate(x_val, y_val, verbose=0)
+        val_results = self.evaluate(x_val, y_val, verbose=0)
+        _, val_acc, val_auc = val_results
         accuracy_err = z_score * np.sqrt((val_acc * (1 - val_acc)) / y_val.shape[0])
         logger.info(f"Validation Accuracy: {round(val_acc, 2)} ± {round(accuracy_err, 2)}")
 
@@ -362,7 +387,7 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info(f"Validation AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
 
         # Update matplotlib configuration for high-quality, compact plots
-        matplotlib.rcParams.update({
+        plt.rcParams.update({
             'font.size': 6,
             'font.family': 'serif',
             'axes.labelsize': 5,
@@ -430,7 +455,9 @@ class MyCNNModel(tensorflow.keras.Model):
         z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)
 
         # Evaluate accuracy on test data
-        test_loss, test_acc = self.evaluate(x_test, y_test, verbose=0)
+
+        test_results = self.evaluate(x_test, y_test, verbose=0)
+        _, test_acc, test_auc = test_results
         accuracy_err = z_score * np.sqrt((test_acc * (1 - test_acc)) / y_test.shape[0])
         logger.info(f"Test Accuracy: {round(test_acc, 2)} ± {round(accuracy_err, 2)}")
 
@@ -451,7 +478,7 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info(f"Test AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
 
         # Update matplotlib configuration for high-quality, compact plots
-        matplotlib.rcParams.update({
+        plt.rcParams.update({
             'font.size': 6,
             'font.family': 'serif',
             'axes.labelsize': 5,
