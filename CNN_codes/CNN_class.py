@@ -49,16 +49,16 @@ class MyCNNModel(tensorflow.keras.Model):
     Methods:
     --------
 
-    compile_and_fit:
-        Compiles and trains the model on the provided datasets.
-    accuracy_loss_plot:
-        Plots training and validation accuracy and loss curves.
-    validation_roc:
-        Evaluates model performance using ROC on validation data.
-    test_roc:
-        Evaluates model performance using ROC on test data.
-    load:
-        Loads saved model weights and optionally continues training.
+        - compile_and_fit:
+             Compiles and trains the model on the provided datasets.
+        - accuracy_loss_plot:
+             Plots training and validation accuracy and loss curves.
+        - validation_roc:
+             Evaluates model performance using ROC on validation data.
+        - test_roc:
+             Evaluates model performance using ROC on test data.
+        - load:
+             Loads saved model weights and optionally continues training.
 
     """
 
@@ -68,8 +68,7 @@ class MyCNNModel(tensorflow.keras.Model):
         Initializes the CNN model with a predefined architecture.
 
         Parameters:
-
-        ----------
+        ------------
 
         input_shape : tuple, optional
             The shape of the input data
@@ -126,12 +125,12 @@ class MyCNNModel(tensorflow.keras.Model):
         Extracts and concatenates all features and labels from a TensorFlow dataset.
 
         Parameters
-        ----------
+        ------------
         dataset : tf.data.Dataset
             Dataset yielding tuples of (features, labels).
 
         Returns
-        -------
+        ---------
         tf.Tensor
             Concatenated features tensor.
         tf.Tensor
@@ -154,16 +153,14 @@ class MyCNNModel(tensorflow.keras.Model):
         Forward pass for the model.
 
         Parameters:
-
-        ----------
+        ------------
         inputs : tensor
             Input tensor for the forward pass.
         training : bool, optional
             Whether the model is in training mode, by default False.
 
         Returns:
-
-        -------
+        ---------
         tensor
             Output of the model.
 
@@ -276,8 +273,7 @@ class MyCNNModel(tensorflow.keras.Model):
         Plots training and validation accuracy and loss curves.
 
         Parameters:
-
-        ----------
+        ------------
         history : keras.callbacks.History
             Training history object returned by `fit`.
 
@@ -349,10 +345,11 @@ class MyCNNModel(tensorflow.keras.Model):
 
     def validation_roc(self, x_val, y_val):
         """
+
         Evaluates the model using ROC on validation data.
 
-        Parameters
-        ----------
+        Parameters:
+        --------------
         x_val : np.ndarray
             Validation feature data.
         y_val : np.ndarray
@@ -431,19 +428,15 @@ class MyCNNModel(tensorflow.keras.Model):
 
 
     def test_roc(self, x_test, y_test):
-
         """
 
         Evaluates the model's performance on test data using ROC analysis.
-
         This method computes the ROC curve and its corresponding area under the curve (AUC)
         for the given test dataset. It also calculates the confidence intervals
         for accuracy and AUC based on the given confidence level.
 
         Parameters:
-
-        ----------
-
+        ------------
         x_test : numpy.ndarray
             Test feature data.
         y_test : numpy.ndarray
@@ -537,6 +530,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
     def load_model(self, path="model_full.h5"):
         """
+
         Loads a complete model (architecture + weights + optimizer state) from a file.
 
         Parameters:
