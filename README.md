@@ -336,7 +336,7 @@ python ML_main.py \
 
 ---
 
-## 🧠 Pipeline Guide
+## 🧠 ML Pipeline Guide
 
 This project is structured around a modular **4-step pipeline**, combining feature extraction from brain MRI images (via MATLAB) and classification (via Python) for Alzheimer's Disease detection.
 
