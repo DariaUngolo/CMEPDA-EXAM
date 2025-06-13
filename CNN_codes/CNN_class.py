@@ -68,7 +68,6 @@ class MyCNNModel(tensorflow.keras.Model):
         Initializes the CNN model with a predefined architecture.
 
         Parameters:
-
         ----------
 
         input_shape : tuple, optional
@@ -154,7 +153,6 @@ class MyCNNModel(tensorflow.keras.Model):
         Forward pass for the model.
 
         Parameters:
-
         ----------
         inputs : tensor
             Input tensor for the forward pass.
@@ -162,7 +160,6 @@ class MyCNNModel(tensorflow.keras.Model):
             Whether the model is in training mode, by default False.
 
         Returns:
-
         -------
         tensor
             Output of the model.
@@ -276,7 +273,6 @@ class MyCNNModel(tensorflow.keras.Model):
         Plots training and validation accuracy and loss curves.
 
         Parameters:
-
         ----------
         history : keras.callbacks.History
             Training history object returned by `fit`.
@@ -431,7 +427,6 @@ class MyCNNModel(tensorflow.keras.Model):
 
 
     def test_roc(self, x_test, y_test):
-
         """
 
         Evaluates the model's performance on test data using ROC analysis.
@@ -441,9 +436,7 @@ class MyCNNModel(tensorflow.keras.Model):
         for accuracy and AUC based on the given confidence level.
 
         Parameters:
-
         ----------
-
         x_test : numpy.ndarray
             Test feature data.
         y_test : numpy.ndarray
@@ -523,6 +516,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
     def save_model(self, path="model_full.h5"):
         """
+
         Saves the entire model, including architecture, weights, and optimizer state, to a file.
 
         Parameters:
@@ -537,6 +531,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
     def load_model(self, path="model_full.h5"):
         """
+
         Loads a complete model (architecture + weights + optimizer state) from a file.
 
         Parameters:
