@@ -134,7 +134,7 @@ The binary classification task is tackled using two complementary approaches:
      - Random Forest with **Recursive Feature Elimination (RFE)** for automated feature selection
    - **Support Vector Machine (SVM)** with customizable kernels (e.g., linear, RBF)
 
-2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes. [ESPANDERE]
+2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes.
 
 ### Evaluation Methodology
 
@@ -158,7 +158,52 @@ In the case of the **RFE-based Random Forest**, an additional **pie chart** is g
 
 The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
 
-[CONTINUARE CON LA CNN]
+## 3D Convolutional Neural Network (CNN)
+
+To complement classical ML approaches, the project implements a lightweight **3D Convolutional Neural Network (CNN)** designed to operate directly on cropped MRI volumes. This deep learning pipeline enables automatic feature learning, avoiding the need for manual ROI-based statistics.
+
+Given the **limited dataset size**, particular attention is devoted to minimizing **overfitting** through both architectural choices and preprocessing strategies:
+
+#### Preprocessing Pipeline
+
+1. **Cropping**:  
+   Leveraging the most informative ROIs identified in the classical pipeline, a **3D bounding box** is computed to isolate and crop a brain sub-volume centered on regions typically affected by Alzheimer's Disease (e.g., the hippocampus and surrounding medial temporal structures). This reduces input dimensionality and emphasizes diagnostic regions.
+
+2. **Data Augmentation**:  
+   To artificially increase the dataset and improve generalization, a series of random transformations are applied during training:
+   - 3D rotations (±10°)
+   - Horizontal/vertical flipping
+   - Gaussian noise injection
+   - Random zooming and shifting
+
+These augmentations are applied on-the-fly and vary across epochs, helping the network generalize beyond the training data distribution.
+
+#### CNN Architecture
+
+The model consists of **four convolutional blocks**, each comprising:
+- 3D Convolutional layer
+- Batch Normalization
+- ReLU activation
+- 3D Max Pooling
+
+To reduce the number of trainable parameters and combat overfitting, the network avoids excessive depth or filter size inflation. Instead, it employs a **progressive downsampling strategy**, followed by a compact classification head:
+
+- **Global Average Pooling (GAP)** layer to compress spatial dimensions
+- Two **fully connected (Dense)** layers:
+  - First Dense layer with dropout regularization
+  - Final output layer with sigmoid activation for binary classification (AD vs. Control)
+
+#### Training Setup
+
+- **Loss Function**: Binary Cross-Entropy
+- **Optimizer**: Adam with learning rate scheduler
+- **Early Stopping**: Monitors validation loss to prevent overfitting
+- **Metrics**: Accuracy, AUC, and F1 Score
+
+Training is performed over multiple repetitions using **cross-validation splits**, and average performance is reported with standard deviation.
+
+This CNN pipeline enables **end-to-end learning** from raw image data, making it a powerful complement to the classical ROI-based strategies. It benefits from the precise localization provided by earlier steps while retaining the flexibility of deep representation learning.
+
 
 ### Execution Modes: Training vs. Inference
 
