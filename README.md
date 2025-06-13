@@ -42,7 +42,6 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 ├── trained_models/
 │   └── trained_model*.py  #one for each type of classifier
 │
-│
 ├── plots and images/
 │
 └── README.md
