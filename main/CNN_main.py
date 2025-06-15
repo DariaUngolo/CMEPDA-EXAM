@@ -218,10 +218,10 @@ def main(args):
         # Load and preprocess the image
         nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids))
         nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  target_shape )
-        images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
+        #images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
 
 
-        prediction = trained_model.predict(images_normalized)
+        prediction = trained_model.predict(nifti_img_preprocessed)
         logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
         logger.info(f"Predicted probability for class 0: {1 - prediction[0][0]}")
 
@@ -251,11 +251,11 @@ def main(args):
 
     # Normalize intensities before augmentation
     logger.info(f"Normalized intensity of voxel")
-    images_normalized = normalize_images_uniformly(images)
+    #images_normalized = normalize_images_uniformly(images)
 
     # Split dataset into train/val/test
     logger.info("Splitting the dataset into train, validation, and test sets (70-15-15).")
-    x_train, y_train, x_val, y_val, x_test, y_test = split_data(images_normalized, labels )
+    x_train, y_train, x_val, y_val, x_test, y_test = split_data(images, labels )
 
     logger.debug(f"x_train shape before data-augumentation: {x_train.shape}, y_train shape: {y_train.shape}")
     logger.debug(f"x_val shape: {x_val.shape}, y_val shape: {y_val.shape}")
@@ -306,10 +306,10 @@ def main(args):
                 nifti_img_preprocessed = preprocessed_images(nifti_image_path, args.atlas_path, tuple(roi_ids))
 
                 nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
-                images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
+                #images_normalized = normalize_images_uniformly(nifti_img_preprocessed)
 
                 # Perform prediction.
-                prediction = model.predict(images_normalized)
+                prediction = model.predict(nifti_img_preprocessed)
                 logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
 
                 threshold = 0.5

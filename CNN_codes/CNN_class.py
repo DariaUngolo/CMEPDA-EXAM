@@ -376,8 +376,11 @@ class MyCNNModel(tensorflow.keras.Model):
         val_results = self.evaluate(x_val, y_val, verbose=0)
         _, val_acc, val_auc, val_recall = val_results
         accuracy_err = z_score * np.sqrt((val_acc * (1 - val_acc)) / y_val.shape[0])
+        recall_err = z_score * np.sqrt((val_acc * (1 - val_recall)) / y_val.shape[0])
         logger.info(f"Validation Accuracy: {round(val_acc, 2)} ± {round(accuracy_err, 2)}")
-        logger.info(f"Validation Recall: {round(val_recall, 2)} ± {round(accuracy_err, 2)}")
+        logger.info(f"Validation Recall: {round(val_recall, 2)} ± {round(recall_err, 2)}")
+
+
 
         # Generate predictions and compute ROC curve
         preds = self.predict(x_val, verbose=1)
@@ -468,8 +471,10 @@ class MyCNNModel(tensorflow.keras.Model):
         test_results = self.evaluate(x_test, y_test, verbose=0)
         _, test_acc, test_auc, test_recall = test_results
         accuracy_err = z_score * np.sqrt((test_acc * (1 - test_acc)) / y_test.shape[0])
+        accuracy_err = z_score * np.sqrt((test_acc * (1 - test_reall)) / y_test.shape[0])
         logger.info(f"Test Accuracy: {round(test_acc, 2)} ± {round(accuracy_err, 2)}")
-        logger.info(f"Test Recall: {round(test_recall, 2)} ± {round(accuracy_err, 2)}")
+        logger.info(f"Test Recall: {round(test_recall, 2)} ± {round(recall_err, 2)}")
+
 
         # Generate predictions and compute ROC curve
         preds_test = self.predict(x_test, verbose=1)
@@ -531,7 +536,7 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.show()
 
 
-    def save_model(self, path="model_full.h5"):
+    def save_model(self, path):
         """
         Saves the entire model, including architecture, weights, and optimizer state, to a file.
 
@@ -545,7 +550,7 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info(f"Model saved to {path}")
 
 
-    def load_model(self, path="model_full.h5"):
+    def load_model(self, path):
         """
         Loads a complete model (architecture + weights + optimizer state) from a file.
 
