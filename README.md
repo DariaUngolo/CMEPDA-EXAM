@@ -40,7 +40,8 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 │   └── CNN_main.py
 │
 ├── trained_models/
-│   └── trained_model*.py  #one for each type of classifier
+│   ├── CNN_trained_model.h5
+│   └── trained_model*.joblib  #one for each type of classifier
 │
 ├── plots and images/
 │
