@@ -9,6 +9,7 @@ import scipy
 
 import tensorflow
 from sklearn.metrics import roc_curve, auc
+from sklearn.utils import class_weight
 from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization, Activation, Dropout,PReLU, GlobalAveragePooling3D)
 from keras.optimizers import SGD
 
@@ -16,6 +17,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import load_model, Model, Sequential
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
+from tensorflow.keras.initializers import HeNormal
 
 from keras.losses import BinaryCrossentropy, MeanSquaredError
 import seaborn as sns
@@ -49,16 +51,16 @@ class MyCNNModel(tensorflow.keras.Model):
     Methods:
     --------
 
-        - compile_and_fit:
-             Compiles and trains the model on the provided datasets.
-        - accuracy_loss_plot:
-             Plots training and validation accuracy and loss curves.
-        - validation_roc:
-             Evaluates model performance using ROC on validation data.
-        - test_roc:
-             Evaluates model performance using ROC on test data.
-        - load:
-             Loads saved model weights and optionally continues training.
+    compile_and_fit:
+        Compiles and trains the model on the provided datasets.
+    accuracy_loss_plot:
+        Plots training and validation accuracy and loss curves.
+    validation_roc:
+        Evaluates model performance using ROC on validation data.
+    test_roc:
+        Evaluates model performance using ROC on test data.
+    load:
+        Loads saved model weights and optionally continues training.
 
     """
 
@@ -68,7 +70,8 @@ class MyCNNModel(tensorflow.keras.Model):
         Initializes the CNN model with a predefined architecture.
 
         Parameters:
-        ------------
+
+        ----------
 
         input_shape : tuple, optional
             The shape of the input data
@@ -82,39 +85,39 @@ class MyCNNModel(tensorflow.keras.Model):
         self.model = Sequential([
 
             # First block
-            MaxPooling3D(pool_size=(2, 2, 2),),
-            Conv3D(16, kernel_size=3, activation=None, padding='same',kernel_regularizer=l2(0.001)),
+            MaxPooling3D(pool_size=(2, 2, 2)),
+            Conv3D(8, kernel_size=3,kernel_initializer=HeNormal(), activation=None, padding='same',kernel_regularizer=l2(0.001)),
             PReLU(),
             BatchNormalization(),
 
-            Dropout(0.2),
+            Dropout(0.1),
 
             # Second block
             MaxPooling3D(pool_size=(2, 2, 2)),
-            Conv3D(32, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
+            Conv3D(16, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
             PReLU(),
             BatchNormalization(),
             Dropout(0.2),
 
             # Third block
-            Conv3D(64, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
+            Conv3D(32, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
             PReLU(),
             BatchNormalization(),
             MaxPooling3D(pool_size=(2, 2, 2)),
-            Dropout(0.3),
+            Dropout(0.2),
 
             # Fourth block (extra layer)
-            Conv3D(64, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
+            Conv3D(32, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
             PReLU(),
             BatchNormalization(),
-            Dropout(0.3),
+            Dropout(0.2),
 
             # Global Average Pooling
             GlobalAveragePooling3D(),
 
             # Fully connected layers
-            Dense(64, activation='relu', kernel_regularizer=l2(0.001)),
-            Dropout(0.5),
+            Dense(32, activation='relu', kernel_regularizer=l2(0.0001)),
+            Dropout(0.3),
             Dense(1, activation='sigmoid')  # Binary classification
         ])
 
@@ -125,12 +128,12 @@ class MyCNNModel(tensorflow.keras.Model):
         Extracts and concatenates all features and labels from a TensorFlow dataset.
 
         Parameters
-        ------------
+        ----------
         dataset : tf.data.Dataset
             Dataset yielding tuples of (features, labels).
 
         Returns
-        ---------
+        -------
         tf.Tensor
             Concatenated features tensor.
         tf.Tensor
@@ -153,14 +156,16 @@ class MyCNNModel(tensorflow.keras.Model):
         Forward pass for the model.
 
         Parameters:
-        ------------
+
+        ----------
         inputs : tensor
             Input tensor for the forward pass.
         training : bool, optional
             Whether the model is in training mode, by default False.
 
         Returns:
-        ---------
+
+        -------
         tensor
             Output of the model.
 
@@ -198,7 +203,7 @@ class MyCNNModel(tensorflow.keras.Model):
         self.compile(
             optimizer=Adam(learning_rate=0.0001),
             loss=BinaryCrossentropy(),
-            metrics=['accuracy', tensorflow.keras.metrics.AUC()]
+            metrics=['accuracy', tensorflow.keras.metrics.AUC(), tensorflow.keras.metrics.Recall()]
         )
 
         logger.debug("Model compiled successfully.")
@@ -219,7 +224,7 @@ class MyCNNModel(tensorflow.keras.Model):
         early_stopping = EarlyStopping(
                 monitor="val_loss",
                 min_delta=0,
-                patience=20,
+                patience=25,
                 verbose=1,
                 mode="auto",
                 restore_best_weights=True,
@@ -235,6 +240,11 @@ class MyCNNModel(tensorflow.keras.Model):
         x_val, y_val = self.extract_data_and_labels(val_dataset)
         x_test, y_test = self.extract_data_and_labels(test_dataset)
 
+        weights = class_weight.compute_class_weight(class_weight='balanced',
+                                                    classes=np.unique(y_train),
+                                                    y=y_train)
+
+        class_weights = {0: weights[0], 1: weights[1]}
 
         # Save best model
         model_checkpoint=ModelCheckpoint("best_modelCNN.keras", save_best_only=True)
@@ -242,18 +252,19 @@ class MyCNNModel(tensorflow.keras.Model):
         # Train the model
         history = self.fit(
                 train_dataset,
-                batch_size=batchsize,
+                #batch_size=batchsize,
                 epochs=n_epochs,
                 steps_per_epoch=round(len(x_train) // batchsize),
                 verbose=2,
                 validation_data=val_dataset,
                 validation_steps=round(len(x_val) // batchsize),
-                callbacks=[reduce_on_plateau, model_checkpoint]
+                callbacks=[reduce_on_plateau,early_stopping, model_checkpoint],
+                class_weight=class_weights
         )
         logger.info("Model training completed.")
 
         # Plot accuracy and loss
-        self.accuracy_loss_plot(history)
+        self.AUC_loss_plot(history)
 
 
         # Extract all validation and test data batches for ROC calculation
@@ -268,19 +279,20 @@ class MyCNNModel(tensorflow.keras.Model):
 
 
 
-    def accuracy_loss_plot(self, history):
+    def AUC_loss_plot(self, history):
         """
-        Plots training and validation accuracy and loss curves.
+        Plots training and validation AUC and loss curves.
 
         Parameters:
-        ------------
+
+        ----------
         history : keras.callbacks.History
             Training history object returned by `fit`.
 
         """
 
-        logger.info("Plotting training and validation accuracy and loss.")
-        epochs_range = range(1, len(history.history['accuracy']) + 1)
+        logger.info("Plotting training and validation AUC and loss.")
+        epochs_range = range(1, len(history.history['auc']) + 1)
 
         # Update matplotlib configuration for high-quality, compact plots
         plt.rcParams.update({
@@ -309,12 +321,12 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Accuracy plot
         plt.subplot(1, 2, 1)
-        plt.plot(epochs_range, history.history['accuracy'], label="Train Accuracy")
-        plt.plot(epochs_range, history.history['val_accuracy'], label="Validation Accuracy")
+        plt.plot(epochs_range, history.history['auc'], label="Train AUC")
+        plt.plot(epochs_range, history.history['val_auc'], label="Validation AUC")
         plt.xlabel("Epochs", labelpad=2, fontweight='semibold')
-        plt.ylabel("Accuracy", labelpad=2, fontweight='semibold')
-        plt.title("Training and Validation Accuracy", fontweight='bold', pad=4)
-        plt.legend(loc="lower right", frameon=False)
+        plt.ylabel("AUC", labelpad=2, fontweight='semibold')
+        plt.title("Training and Validation AUC", fontweight='bold', pad=4)
+        plt.legend(loc="best", frameon=False )
         plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
         plt.tick_params(axis='both', direction='in', length=2, width=0.3)
 
@@ -325,7 +337,7 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.xlabel("Epochs", labelpad=2, fontweight='semibold')
         plt.ylabel("Loss", labelpad=2, fontweight='semibold')
         plt.title("Training and Validation Loss", fontweight='bold', pad=4)
-        plt.legend(loc="upper right", frameon=False)
+        plt.legend(loc="best", frameon=False)
         plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
         plt.tick_params(axis='both', direction='in', length=2, width=0.3)
 
@@ -334,22 +346,21 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.tight_layout()
 
         # Save plot to current script directory
-        save_name = "training_plot.png"
+        save_name = "AUC_loss_train+val.png"
         base_path = os.path.dirname(os.path.abspath(__file__))
         save_path = os.path.join(base_path, save_name)
 
         plt.savefig(save_path)
         plt.show()
 
-        logger.info("Accuracy and loss plots displayed.")
+        logger.info("AUC and loss plots displayed.")
 
     def validation_roc(self, x_val, y_val):
         """
-
         Evaluates the model using ROC on validation data.
 
-        Parameters:
-        --------------
+        Parameters
+        ----------
         x_val : np.ndarray
             Validation feature data.
         y_val : np.ndarray
@@ -363,9 +374,10 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Evaluate accuracy on validation data
         val_results = self.evaluate(x_val, y_val, verbose=0)
-        _, val_acc, val_auc = val_results
+        _, val_acc, val_auc, val_recall = val_results
         accuracy_err = z_score * np.sqrt((val_acc * (1 - val_acc)) / y_val.shape[0])
         logger.info(f"Validation Accuracy: {round(val_acc, 2)} ± {round(accuracy_err, 2)}")
+        logger.info(f"Validation Recall: {round(val_recall, 2)} ± {round(accuracy_err, 2)}")
 
         # Generate predictions and compute ROC curve
         preds = self.predict(x_val, verbose=1)
@@ -405,7 +417,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Plot ROC curve
         plt.figure(figsize=(2, 1.4))
-        plt.plot(fpr, tpr, color='tab:blue', lw=0.8, label=f'ROC curve (area = {roc_auc:.2f})')
+        plt.plot(fpr, tpr, color='tab:blue', lw=0.8, label=f'ROC curve (area = {roc_auc:.2f}  ± {auc_err:.2f})')
         plt.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.6)
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
@@ -420,7 +432,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Save image to current script directory
         base_path = os.path.dirname(os.path.abspath(__file__))
-        save_path = os.path.join(base_path, 'validation_roc.png')
+        save_path = os.path.join(base_path, 'CNN_validation_roc.png')
         plt.savefig(save_path)
 
         plt.show()
@@ -428,15 +440,19 @@ class MyCNNModel(tensorflow.keras.Model):
 
 
     def test_roc(self, x_test, y_test):
+
         """
 
         Evaluates the model's performance on test data using ROC analysis.
+
         This method computes the ROC curve and its corresponding area under the curve (AUC)
         for the given test dataset. It also calculates the confidence intervals
         for accuracy and AUC based on the given confidence level.
 
         Parameters:
-        ------------
+
+        ----------
+
         x_test : numpy.ndarray
             Test feature data.
         y_test : numpy.ndarray
@@ -450,9 +466,10 @@ class MyCNNModel(tensorflow.keras.Model):
         # Evaluate accuracy on test data
 
         test_results = self.evaluate(x_test, y_test, verbose=0)
-        _, test_acc, test_auc = test_results
+        _, test_acc, test_auc, test_recall = test_results
         accuracy_err = z_score * np.sqrt((test_acc * (1 - test_acc)) / y_test.shape[0])
         logger.info(f"Test Accuracy: {round(test_acc, 2)} ± {round(accuracy_err, 2)}")
+        logger.info(f"Test Recall: {round(test_recall, 2)} ± {round(accuracy_err, 2)}")
 
         # Generate predictions and compute ROC curve
         preds_test = self.predict(x_test, verbose=1)
@@ -492,7 +509,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Plot ROC curve
         plt.figure(figsize=(2, 1.4))
-        plt.plot(fpr, tpr, color='tab:blue', lw=0.8, label=f'ROC curve (area = {roc_auc:.2f})')
+        plt.plot(fpr, tpr, color='tab:blue', lw=0.8, label=f'ROC curve (area = {roc_auc:.2f} ± {auc_err:.2f})')
         plt.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.6)
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
@@ -507,7 +524,7 @@ class MyCNNModel(tensorflow.keras.Model):
 
         #save image
         base_path = os.path.dirname(os.path.abspath(__file__))
-        save_path = os.path.join(base_path, 'test_roc.png')
+        save_path = os.path.join(base_path, 'CNN_test_roc.png')
         plt.savefig(save_path)
         print(f"[DEBUG] test_roc: plot salvato in {save_path}")
 
@@ -530,7 +547,6 @@ class MyCNNModel(tensorflow.keras.Model):
 
     def load_model(self, path="model_full.h5"):
         """
-
         Loads a complete model (architecture + weights + optimizer state) from a file.
 
         Parameters:
