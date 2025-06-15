@@ -42,7 +42,6 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 ├── trained_models/
 │   └── trained_model*.py  #one for each type of classifier
 │
-│
 ├── plots and images/
 │
 └── README.md
@@ -135,7 +134,7 @@ The binary classification task is tackled using two complementary approaches:
      - Random Forest with **Recursive Feature Elimination (RFE)** for automated feature selection
    - **Support Vector Machine (SVM)** with customizable kernels (e.g., linear, RBF)
 
-2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes. [ESPANDERE]
+2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes.
 
 ### Evaluation Methodology
 
@@ -159,7 +158,6 @@ In the case of the **RFE-based Random Forest**, an additional **pie chart** is g
 
 The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
 
-[CONTINUARE CON LA CNN]
 
 ### Execution Modes: Training vs. Inference
 
@@ -338,7 +336,7 @@ python ML_main.py \
 
 ---
 
-## 🧠 Pipeline Guide
+## 🧠 ML Pipeline Guide
 
 This project is structured around a modular **4-step pipeline**, combining feature extraction from brain MRI images (via MATLAB) and classification (via Python) for Alzheimer's Disease detection.
 
