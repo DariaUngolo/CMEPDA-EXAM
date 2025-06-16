@@ -652,7 +652,24 @@ This pipeline supports both training and inference in a modular and extensible m
 
 --
 - **📈 Visualization Outputs**
-??
+
+1. **Training and Validation Performance**  
+   This figure shows both **Loss** and **AUC** curves during training and validation.  
+   The top subplot compares the training and validation AUC across epochs, while the bottom subplot compares the corresponding Loss. This visualization helps identify potential overfitting or underfitting during model training.
+
+![AUC and Loss during training and validation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_auc_loss_train%2Bval.png)
+
+2. **Validation ROC Curve**  
+   Displays the Receiver Operating Characteristic (ROC) curve on the validation set.  
+   This curve helps evaluate how well the model distinguishes between classes before final testing.
+
+![Validation ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_validation_ROC.png)
+
+3. **Test ROC Curve**  
+   Shows the ROC curve obtained on the test set.  
+   It's a final indicator of model generalization, reflecting performance on unseen data.
+
+![Test ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_test_ROC.png)
 
 --
 ## 📄 Documentation
