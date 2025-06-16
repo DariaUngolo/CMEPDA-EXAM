@@ -663,13 +663,13 @@ This pipeline supports both training and inference in a modular and extensible m
    Displays the Receiver Operating Characteristic (ROC) curve on the validation set.  
    This curve helps evaluate how well the model distinguishes between classes before final testing.
 
-![Validation ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_validation_ROC.png)
+![Validation ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_validation_roc.png)
 
 3. **Test ROC Curve**  
    Shows the ROC curve obtained on the test set.  
    It's a final indicator of model generalization, reflecting performance on unseen data.
 
-![Test ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_test_ROC.png)
+![Test ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_test_roc.png)
 
 --
 ## 📄 Documentation
