@@ -601,15 +601,41 @@ Splits the dataset into three subsets:
 
 Trains a Convolutional Neural Network (CNN) model:
 
-- **Model Architecture**: Created using the `MyCNNModel` class.
-- **Input Shape**: Derived automatically from the preprocessed data.
+### 5. 🤖 CNN Training
+
+Trains a Convolutional Neural Network (CNN) model:
+
+- **Model Architecture**: Created using the `MyCNNModel` class.  
+    This is a 3D CNN designed for volumetric data. It consists of four convolutional blocks followed by a classification head.
+
+    **Architecture:**
+    - **Block 1**  
+      `MaxPooling3D → Conv3D(8) → PReLU → BatchNorm → Dropout(0.1)`
+
+    - **Block 2**  
+      `MaxPooling3D → Conv3D(16) → PReLU → BatchNorm → Dropout(0.2)`
+
+    - **Block 3**  
+      `Conv3D(32) → PReLU → BatchNorm → MaxPooling3D → Dropout(0.2)`
+
+    - **Block 4**  
+      `Conv3D(32) → PReLU → BatchNorm → Dropout(0.2)`
+
+    - **Classification Head**  
+      `GlobalAvgPool3D → Dense(32, ReLU) → Dropout(0.3) → Dense(1, Sigmoid)`
+
+      The model uses L2 regularization, PReLU activations, and pooling to reduce dimensionality and prevent overfitting.
+
+    - **Input Shape**: Derived automatically from the preprocessed data.
+
 - **Training Configuration**: Parameters such as epochs and batch size are customizable via command-line arguments.
 
-**Output**: A trained model saved as a `.h5` file.
+- **Output**: A trained model saved as a `.h5` file.
 
-**Implemented by**:
-- `MyCNNModel(input_shape=...)`
-- `model.compile_and_fit(...)`
+
+- **Implemented by**:
+  - `MyCNNModel(input_shape=...)`
+  - `model.compile_and_fit(...)`
 
 ---
 

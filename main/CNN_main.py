@@ -160,7 +160,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--trained_model_path", type=str,
-        help="Path to saved model (joblib). Required if --use_trained_model is set."
+        help="Path to saved model (.h5). Required if --use_trained_model is set."
     )
     parser.add_argument(
         "--nifti_image_path", type=str,
