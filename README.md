@@ -673,7 +673,7 @@ This pipeline supports both training and inference in a modular and extensible m
 
 --
 ## 📄 Documentation
-INSERIRE LINK DOCUMENTAZIONE
+[Link Documentazione](https://cmepda-exam-fisica.readthedocs.io/en/latest/index.html)
 
 --- 
 
