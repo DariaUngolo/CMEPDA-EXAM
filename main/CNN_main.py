@@ -286,7 +286,7 @@ def main(args):
         )
     logger.success("Training completed successfully.")
 
-    model.save_model("trained_model.keras")
+    model.save_model("trained_model.h5")
 
     if model is not None:
         do_classify = ask_yes_no_prompt("Do you want to classify new images now? Y/N", default="N")
