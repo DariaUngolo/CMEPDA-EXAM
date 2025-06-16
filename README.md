@@ -266,11 +266,13 @@ The **MATLAB Engine API for Python** enables calling MATLAB functions directly f
 ## 🚀 How to Run
 
 > 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
+---
 
-The `main.py` script supports **two execution modes**: Training mode and Inference mode.
+**The `main.py` script supports two execution modes**: Training mode and Inference mode.
 
+---
 
-### 1. Training Mode
+### 1. ML Training Mode
 
 Runs the full pipeline: extracts features via MATLAB, trains and evaluates the classifier, saves the trained model.
 
@@ -288,7 +290,7 @@ python ML_main.py \
   --kernel {linear, rbf}
 ```
 
-### 2. Inference Mode
+### 2. ML Inference Mode
 Uses a previously trained model to classify new independent NIfTI images, skipping training.
 
 ```bash
@@ -301,7 +303,7 @@ python ML_main.py \
   --nifti_image_path "/path/to/independent_nifti_images"
 ```
 
-#### Notes
+#### ML Notes
 
 - If the `--use_trained_model` flag is **not** provided, the script runs in **Training Mode**.
 - After training, the pipeline is saved as a `.joblib` file.
@@ -316,7 +318,7 @@ python ML_main.py \
   - If neither PCA nor RFE is selected, standard Random Forest is used.
 - For RFE, the top 8 ROIs are visualized in a pie chart to highlight their relative importance in classification performance.
 
-#### 🧾 Command-Line Parameters Overview
+#### 🧾 ML Command-Line Parameters Overview
 
 | Parameter              | Description                                     | Required in          |
 |------------------------|-------------------------------------------------|----------------------|
@@ -335,6 +337,57 @@ python ML_main.py \
 | `--nifti_image_path`   | Directory with new subjects to classify         | Inference only       |
 
 ---
+
+**The `main.py` script supports two execution modes**: Training mode and Inference mode.
+
+---
+## 1. CNN Training Mode
+
+This mode trains a CNN model using the provided dataset and saves the resulting trained model for future inference.
+
+```bash
+python CNN_main.py \
+  --image_folder "/path/to/nifti_folder" \
+  --atlas_path "/lpba40.spm5.avg152T1.gm.label.nii.gz" \
+  --metadata "/path/to/metadata.csv" \
+  --epochs <number_of_epochs> \
+  --batchsize <batch_size>
+```
+
+## 2. CNN inference Mode
+
+Uses a pre-trained CNN model to classify new independent NIfTI images.
+
+```bash
+python CNN_main.py \
+  --atlas_path "/lpba40.spm5.avg152T1.gm.label.nii.gz" \
+  --nifti_image_path "/path/to/nifti_image" \
+  --use_trained_model \
+  --trained_model_path "/path/to/trained_model.h5"
+```
+
+#### CNN Notes
+
+- Ensure that the atlas file aligns with the resolution of the NIfTI images used for both training and inference.
+- In Training Mode, the `--metadata` file must include all necessary labels for proper model training.
+- The script supports dynamic batch sizes and epochs; experiment with these parameters to optimize training performance.
+- Pre-trained models must match the input data format and preprocessing pipeline to avoid compatibility issues during inference.
+- Inference Mode allows classification of a single image at a time; batch processing requires script modification.
+- If using a custom atlas, ensure it is preprocessed and compatible with the input data structure.
+
+#### 🧾 CNN Command-Line Parameters Overview
+
+| Parameter              | Description                                    | Required in    |
+| ---------------------- | ---------------------------------------------- | -------------- |
+| `--image_folder`       | Directory containing NIfTI images              | Training only  |
+| `--atlas_path`         | Path to the NIfTI atlas file                   | Both Modes     |
+| `--metadata`           | Path to a CSV file with metadata and labels    | Training only  |
+| `--epochs`             | Number of training epochs                      | Training only  |
+| `--batchsize`          | Batch size for model training                  | Training only  |
+| `--use_trained_model`  | Enables Inference Mode using a saved model     | Inference only |
+| `--trained_model_path` | Path to a `.h5` file for the trained model | Inference only |
+| `--nifti_image_path`   | Path to a NIfTI image for classification       | Inference only |
+
 
 ## 🧠 ML Pipeline Guide
 
