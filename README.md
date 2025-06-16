@@ -534,9 +534,127 @@ The output allows for both binary classification and an assessment of prediction
 
 
 ---
+## 🧠 CNN Pipeline Guide
 
+This project is structured around a modular **6-step pipeline** that includes preprocessing, augmentation, model training, and interactive classification of brain MRI data.
 
+---
 
+### 1. 🔍 GPU Configuration
+
+Before any processing begins, the script detects available GPUs and configures memory growth to optimize usage. If no GPU is detected, it defaults to CPU execution.
+
+- **Purpose**: Ensures compatibility with various hardware configurations and leverages GPU acceleration when available.
+- **Implemented by**:
+  - `tf.config.list_physical_devices('GPU')`
+  - GPU memory growth setup.
+
+---
+
+### 2. 🧪 Preprocessing
+
+The preprocessing step processes NIfTI images and prepares them for CNN input. Key operations include:
+
+- **Z-range Extraction**: Identifies the slice range containing Regions of Interest (ROIs) from the provided atlas file.
+- **Black Voxel Removal**: Removes empty regions to reduce unnecessary computation.
+- **Padding**: Pads images to ensure uniform dimensions.
+- **Normalization**: Adjusts intensity values for consistent input across images.
+
+**Output**: A 4D numpy array of preprocessed images and corresponding labels.
+
+**Implemented by**:
+- `preprocessed_images_group(...)`  
+- `normalize_images_uniformly(...)`
+
+---
+
+### 3. 🎨 Data Augmentation
+
+Augments the dataset to improve model generalization and prevent overfitting. Techniques include:
+
+- **Random Rotation**: Applies random 3D rotations to training volumes.
+- **Random Zoom and Crop**: Zooms into a volume and crops or pads it to match the target shape.
+
+**Output**: Augmented training data with enhanced diversity.
+
+**Implemented by**:
+- `augment_images_with_labels_4d(...)`
+
+---
+
+### 4. 📂 Data Splitting
+
+Splits the dataset into three subsets:
+
+- **Training Set**: Used to train the CNN.
+- **Validation Set**: Monitors performance during training.
+- **Test Set**: Independently evaluates the model after training.
+
+**Output**: Training, validation, and test datasets.
+
+**Implemented by**:
+- `split_data(...)`
+
+---
+
+### 5. 🤖 CNN Training
+
+Trains a Convolutional Neural Network (CNN) model:
+
+- **Model Architecture**: Created using the `MyCNNModel` class.
+- **Input Shape**: Derived automatically from the preprocessed data.
+- **Training Configuration**: Parameters such as epochs and batch size are customizable via command-line arguments.
+
+**Output**: A trained model saved as a `.h5` file.
+
+**Implemented by**:
+- `MyCNNModel(input_shape=...)`
+- `model.compile_and_fit(...)`
+
+---
+
+### 6. 🧪 Interactive Classification
+
+After training, the user can optionally classify new NIfTI images using the trained model. Key steps:
+
+1. **Model Loading**: Loads the pre-trained model for inference.
+2. **Preprocessing**: Ensures the new image matches the input shape expected by the model.
+3. **Prediction**: Outputs the class probabilities and the predicted label.
+4. **Interactive Loop**: Allows users to classify additional images in a session.
+
+**Output**: A tabulated summary of predictions with probabilities for each classified image.
+
+**Implemented by**:
+- `preprocessed_images(...)`  
+- `adjust_image_shape(...)`  
+- `model.predict(...)`  
+
+---
+
+### 🛠 Outputs
+
+After executing the pipeline, the following are produced:
+
+1. **Trained Model**: Saved as `trained_model.h5` for future use.
+2. **Classification Results**: A tabulated summary of predictions during interactive classification.
+3. **Performance Logs**: Detailed logs, including GPU usage and intermediate steps, to assist debugging and performance analysis.
+
+**Example Classification Results**:
+
+| Image          | Prediction | Probability |
+|-----------------|------------|-------------|
+| `patient_01.nii.gz` | 1          | ??       |
+| `patient_02.nii.gz` | 0          | ??       |
+
+---
+
+This pipeline supports both training and inference in a modular and extensible manner, ensuring ease of use and adaptability to different datasets and configurations.
+
+--
+- **📈 Visualization Outputs**
+??
+
+--
 ## 📄 Documentation
 INSERIRE LINK DOCUMENTAZIONE
 
