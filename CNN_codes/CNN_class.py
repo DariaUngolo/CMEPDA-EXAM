@@ -10,13 +10,13 @@ import scipy
 import tensorflow
 from sklearn.metrics import roc_curve, auc
 from sklearn.utils import class_weight
-from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization, Activation, Dropout,PReLU, GlobalAveragePooling3D)
+from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization,LeakyReLU, Activation, Dropout,PReLU, GlobalAveragePooling3D)
 from keras.optimizers import SGD
 
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import load_model, Model, Sequential
-from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
+from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.initializers import HeNormal
 
 from keras.losses import BinaryCrossentropy, MeanSquaredError
@@ -87,9 +87,9 @@ class MyCNNModel(tensorflow.keras.Model):
             # First block
             MaxPooling3D(pool_size=(2, 2, 2)),
             Conv3D(8, kernel_size=3,kernel_initializer=HeNormal(), activation=None, padding='same',kernel_regularizer=l2(0.001)),
+            BatchNormalization(),
             PReLU(),
             BatchNormalization(),
-
             Dropout(0.1),
 
             # Second block
@@ -172,6 +172,8 @@ class MyCNNModel(tensorflow.keras.Model):
         """
         return self.model(inputs, training=training)
 
+
+
     def compile_and_fit(self, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
         """
 
@@ -201,7 +203,7 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info(f"Starting training with {n_epochs} epochs and batch size {batchsize}")
 
         self.compile(
-            optimizer=Adam(learning_rate=0.0001),
+            optimizer=Adam(learning_rate=0.00005),
             loss=BinaryCrossentropy(),
             metrics=['accuracy', tensorflow.keras.metrics.AUC(), tensorflow.keras.metrics.Recall()]
         )
@@ -230,6 +232,8 @@ class MyCNNModel(tensorflow.keras.Model):
                 restore_best_weights=True,
                 start_from_epoch=10
         )
+
+
 
         # Prepare TensorFlow datasets with batching and prefetching for performance
         train_dataset = tensorflow.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(len(x_train)).batch(batchsize).repeat().prefetch(tensorflow.data.AUTOTUNE)

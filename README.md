@@ -110,9 +110,9 @@ If the atlas resolution does not match the input image (e.g., different voxel si
 
 The resampled atlas is saved in the output directory and reused in subsequent runs to avoid redundant computation.
 
-### Feature Extraction
+### Feature Extraction (ML)
 
-Feature extraction is performed using **MATLAB**, which processes the MRI scans and atlas-based segmentations to compute region-level statistics for each ROI. Specifically, the extraction pipeline calculates:
+Feature extraction is performed using **MATLAB**, an essential step in the machine learning approach, which processes the MRI scans and atlas-based segmentations to compute region-level statistics for each ROI. Specifically, the extraction pipeline calculates:
 
 - **Mean intensity**
 - **Standard deviation**
@@ -123,6 +123,38 @@ These features serve as the input to the classification pipeline implemented in 
 The atlas is overlaid on the input MRI as a **binary mask**, and statistics are computed **only within voxels labeled as part of each ROI**. To reduce the impact of background noise or interpolation artifacts, a small intensity **threshold of 10⁻⁶** is applied: any voxel with an intensity value below this threshold is ignored during feature computation.
 
 This masking and thresholding step ensures that the extracted features are robust, biologically meaningful, and not corrupted by out-of-brain or near-zero intensity values.
+
+The voxels above the chosen threshold do not cause the loss of brain regions, as can be seen in the image below, where voxels exceeding the threshold are highlighted in white.
+
+
+![voxel above threshold](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/smwc1AD_1_colored.png)
+
+### Image Preparation for CNN
+
+In the deep learning approach, it is **not necessary to use ROIs as binary masks** for preprocessing. Instead, each MRI scan is **cropped along the z-axis around the most relevant region of interest**, specifically the hippocampus. This region has been identified as the most important for classification in our case, which aligns with known medical findings regarding neurodegenerative diseases.
+
+Since convolutional neural networks (CNNs) require input images to have consistent dimensions, each cropped volume is **padded** to match the size of the largest cropped sample in the dataset.
+
+The processed images are saved as **3D NumPy arrays** with a single intensity channel, making them directly compatible with CNN architectures.
+
+Voxel intensities are **not normalized between 0 and 1 by default**, but a built-in normalization function is available for users who wish to apply it.
+
+---
+
+### Data Augmentation Strategy for CNN
+
+Given the limited size of our dataset, we implement a **data augmentation strategy** to improve the model's generalization and reduce overfitting.
+
+The following augmentations are applied randomly to the training set:
+- **Random intensity variation**
+- **Random crop-and-zoom**
+
+As a result, the training dataset is **tripled**, consisting of:
+1. Original cropped and padded images
+2. Images with random crop-and-zoom transformations
+3. Images with random intensity modifications
+
+This process enriches the diversity of the training data and strengthens the performance of the CNN on unseen samples.
 
 ### Classification Approaches
 
@@ -137,7 +169,7 @@ The binary classification task is tackled using two complementary approaches:
 
 2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes.
 
-### Evaluation Methodology
+### Evaluation Methodology 
 
 For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are **averaged across runs and folds**, and include:
 
@@ -155,7 +187,24 @@ Results are visualized through:
 
 In the case of the **RFE-based Random Forest**, an additional **pie chart** is generated to display the **top 8 most relevant ROIs** contributing to the classification decision, along with their relative feature importances.
 
-### Advanced ROI-based Analysis
+
+For the **deep learning (CNN) approach**, the model is trained for **150 epochs** with a **batch size of 32** and an initial **learning rate of 0.001**. Two callbacks are used during training:
+
+- **EarlyStopping** to halt training when performance stops improving  
+- **ReduceLROnPlateau** to lower the learning rate when validation performance plateaus
+
+Evaluation of the CNN is based on:
+
+- Accuracy  
+- Recall  
+- AUC
+
+Throughout training, the model logs per-epoch values of these metrics on the **training**, **validation**, and **test** sets. After training, the following outputs are generated automatically:
+
+- Accuracy and loss curves for training and validation  
+- ROC curves for validation and test datasets
+
+### Advanced ROI-based Analysis (ML)
 
 The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
 
@@ -164,7 +213,7 @@ The ROIs identified as most informative by RFE are used in the second phase of t
 
 The user can choose to run the pipeline in either **training mode** or **inference mode**, depending on the task:
 
-**Training Mode**
+**Training Mode – Machine Learning Approach**
 
 - Executes the full pipeline described above:
   - Feature extraction (via MATLAB)
@@ -173,9 +222,22 @@ The user can choose to run the pipeline in either **training mode** or **inferen
 - At the end of training, the entire trained pipeline (including preprocessing and classifier) is saved as a `.joblib` file.
 - After training completes, the user is prompted whether they want to classify **single MRI images** extracted from independent datasets, using the newly trained model.
 
+**Training Mode – Deep Learning Approach**
+
+- Executes the full deep learning pipeline:
+  - Image preparation, including cropping around the hippocampus and padding to ensure uniform input dimensions
+  - Data augmentation applied to the training set with random intensity variation and crop-zoom transformations
+  - Conversion of preprocessed images into NumPy arrays formatted for 3D CNN input
+
+- Trains a 3D Convolutional Neural Network (CNN) using the prepared dataset.
+
+- Once training is complete, the entire trained model is saved (`.h5`)and ready for inference.
+
+- The user is then prompted to classify new, independent MRI images using the trained CNN model.
+
 **Inference Mode**
 
-- Requires the user to provide the path to a **pre-trained model file** (`.joblib`) saved in a previous run.
+- Requires the user to provide the path to a **pre-trained model file** (`.joblib`/`.h5`) saved in a previous run.
 - The pipeline loads the saved model and uses it directly to classify **new individual MRI images** without retraining.
 - This mode is optimized for applying the classifier on unseen data efficiently.
 
@@ -188,6 +250,7 @@ All core scripts in this project are accompanied by dedicated unit tests located
 - Preprocessing and transformation routines
 - Model training and evaluation functions
 - Inference logic and performance metrics computation
+
 
 #### ✅ Running Unit Tests
 
