@@ -203,7 +203,7 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info(f"Starting training with {n_epochs} epochs and batch size {batchsize}")
 
         self.compile(
-            optimizer=Adam(learning_rate=0.00005),
+            optimizer=Adam(learning_rate=0.0001),
             loss=BinaryCrossentropy(),
             metrics=['accuracy', tensorflow.keras.metrics.AUC(), tensorflow.keras.metrics.Recall()]
         )
