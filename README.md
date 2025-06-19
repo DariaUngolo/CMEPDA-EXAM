@@ -462,11 +462,6 @@ The preprocessing step processes NIfTI images and prepares them for CNN input. K
 
 **Output**: A 4D numpy array of preprocessed images and corresponding labels.
 
-**Implemented by**:
-- `preprocessed_images_group(...)`  
-- `normalize_images_uniformly(...)`
-
-
 ### 3. 🎨 Data Augmentation
 
 Augments the dataset to improve model generalization and prevent overfitting. Techniques include:
@@ -475,9 +470,6 @@ Augments the dataset to improve model generalization and prevent overfitting. Te
 - **Random Zoom and Crop**: Zooms into a volume and crops or pads it to match the target shape.
 
 **Output**: Augmented training data with enhanced diversity.
-
-**Implemented by**:
-- `augment_images_with_labels_4d(...)`
 
 
 ### 4. 📂 Data Splitting
@@ -489,9 +481,6 @@ Splits the dataset into three subsets:
 - **Test Set**: Independently evaluates the model after training.
 
 **Output**: Training, validation, and test datasets.
-
-**Implemented by**:
-- `split_data(...)`
 
 
 ### 5. 🤖 CNN Training
@@ -526,10 +515,6 @@ Trains a Convolutional Neural Network (CNN) model:
 - **Output**: A trained model saved as a `.h5` file.
 
 
-- **Implemented by**:
-  - `MyCNNModel(input_shape=...)`
-  - `model.compile_and_fit(...)`
-
 ### 6. 🧪 Interactive Classification
 
 After training, the user can optionally classify new NIfTI images using the trained model. Key steps:
@@ -540,11 +525,6 @@ After training, the user can optionally classify new NIfTI images using the trai
 4. **Interactive Loop**: Allows users to classify additional images in a session.
 
 **Output**: A tabulated summary of predictions with probabilities for each classified image.
-
-**Implemented by**:
-- `preprocessed_images(...)`  
-- `adjust_image_shape(...)`  
-- `model.predict(...)`  
 
 
 
