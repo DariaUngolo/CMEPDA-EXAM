@@ -471,7 +471,7 @@ class MyCNNModel(tensorflow.keras.Model):
         test_results = self.evaluate(x_test, y_test, verbose=0)
         _, test_acc, test_auc, test_recall = test_results
         accuracy_err = z_score * np.sqrt((test_acc * (1 - test_acc)) / y_test.shape[0])
-        accuracy_err = z_score * np.sqrt((test_acc * (1 - test_reall)) / y_test.shape[0])
+        accuracy_err = z_score * np.sqrt((test_acc * (1 - test_recall)) / y_test.shape[0])
         logger.info(f"Test Accuracy: {round(test_acc, 2)} ± {round(accuracy_err, 2)}")
         logger.info(f"Test Recall: {round(test_recall, 2)} ± {round(recall_err, 2)}")
 
