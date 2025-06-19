@@ -9,7 +9,7 @@
 import os
 import sys
 
-project= 'CMEPDA Project'
+project= 'Alzheimer-Classifier Project'
 
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 
@@ -54,7 +54,8 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'pydata_sphinx_theme'
+#html_theme = 'pydata_sphinx_theme'
+html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     "navigation_depth": 3,       # Profondità massima della navigazione laterale
     "show_nav_level": 1,         # Mostra il primo livello nella navigazione
