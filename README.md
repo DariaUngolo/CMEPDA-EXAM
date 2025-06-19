@@ -332,7 +332,7 @@ The **MATLAB Engine API for Python** enables calling MATLAB functions directly f
 > 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
 ---
 
-**The `main.py` script supports two execution modes**: Training mode and Inference mode.
+**The `ML_main.py` script supports two execution modes**: Training mode and Inference mode.
 
 ---
 
@@ -402,7 +402,7 @@ python ML_main.py \
 
 ---
 
-**The `main.py` script supports two execution modes**: Training mode and Inference mode.
+**The `CNN_main.py` script supports two execution modes**: Training mode and Inference mode.
 
 ---
 ## 1. CNN Training Mode
@@ -742,19 +742,40 @@ This pipeline supports both training and inference in a modular and extensible m
 --
 - **📈 Visualization Outputs**
 
-1. **Training and Validation Performance**  
+1. **📋 Tabulated Metrics Summary**  
+  A table summarizing all key metrics for training dtata, validation data and test data:
+
+| **Train_Metric**    | **Score** | **± Error** |
+|---------------|-----------|-------------|
+| Train_Accuracy      | ??      | ± ??         |
+| Train_Recall        |  ??        | ± ??        |
+| Train_AUC           |  ??        | ± ??        |
+
+| **Val_Metric**    | **Score** | **± Error** |
+|---------------|-----------|-------------|
+| Val_Accuracy      | ??      | ± ??         |
+| Val_Recall        |  ??        | ± ??        |
+| Val_AUC           |  ??        | ± ??        |
+
+| **Test_Metric**    | **Score** | **± Error** |
+|---------------|-----------|-------------|
+| Test_Accuracy      | ??      | ± ??         |
+| Test_Recall        |  ??        | ± ??        |
+| Test_AUC           |  ??        | ± ??        |
+
+2. **Training and Validation Performance (Plot)**  
    This figure shows both **Loss** and **AUC** curves during training and validation.  
    The top subplot compares the training and validation AUC across epochs, while the bottom subplot compares the corresponding Loss. This visualization helps identify potential overfitting or underfitting during model training.
 
 ![AUC and Loss during training and validation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_auc_loss_train%2Bval.png)
 
-2. **Validation ROC Curve**  
+3. **Validation ROC Curve**  
    Displays the Receiver Operating Characteristic (ROC) curve on the validation set.  
    This curve helps evaluate how well the model distinguishes between classes before final testing.
 
 ![Validation ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_validation_roc.png)
 
-3. **Test ROC Curve**  
+4. **Test ROC Curve**  
    Shows the ROC curve obtained on the test set.  
    It's a final indicator of model generalization, reflecting performance on unseen data.
 
