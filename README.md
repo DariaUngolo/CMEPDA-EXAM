@@ -653,7 +653,6 @@ Splits the dataset into three subsets:
 **Implemented by**:
 - `split_data(...)`
 
----
 
 ### 5. 🤖 CNN Training
 
@@ -769,8 +768,44 @@ After executing the pipeline, the following are produced:
 ---
 ## ⚖️ Conclusions: Comparing Machine Learning and Deep Learning Approaches
 
-SCRIVI QUALCOSA
---
+This project implements and compares two distinct strategies for classifying Alzheimer's Disease from structural brain MRI: classical **Machine Learning (ML)** based on handcrafted features and **Deep Learning (DL)** based on raw 3D images. Each approach offers specific advantages depending on the dataset size, the interpretability needs, and the computational resources available.
+
+### ✅ Machine Learning
+
+- **Pros**:
+  - Highly interpretable: feature importance and selected ROIs offer direct neuroscientific insight.
+  - Efficient with small to medium datasets.
+  - Easily adaptable to different brain atlases and custom ROI-level features.
+- **Cons**:
+  - Relies on accurate feature extraction and brain parcellation.
+  - Performance plateaus with increasing data complexity.
+
+### 🧠 Deep Learning (CNN 3D)
+
+- **Pros**:
+  - Learns hierarchical representations directly from raw volumetric data.
+  - High accuracy when trained on sufficiently large and well-preprocessed datasets.
+  - Requires minimal manual feature engineering.
+- **Cons**:
+  - Less interpretable: learned filters are hard to map to anatomical meaning.
+  - Demands larger training sets and higher computational power (especially GPUs).
+  - Sensitive to overfitting on small datasets.
+
+### 📊 Summary
+
+| Method             | Input Type         | Preprocessing | Interpretability | Performance | Data Needs  |
+|--------------------|--------------------|---------------|------------------|-------------|-------------|
+| Random Forest / SVM | ROI features (CSV) | Atlas-based   | High             | Good        | Low–Medium  |
+| 3D CNN             | SMWC1 MRI volumes  | NIfTI-based   | Low              | High (if trained well) | High |
+
+Ultimately, the choice between ML and DL depends on the **goal of the analysis**:
+
+- Use **ML** when explainability and anatomical interpretability are critical (e.g., biomarker identification).
+- Use **DL** when performance is paramount and sufficient data and GPU resources are available.
+
+> 🧪 For optimal results, a hybrid approach combining both techniques — e.g., feature-based ML models enhanced by CNN-learned features — may offer the best trade-off between accuracy and interpretability.
+
+---
 ## 📄 Documentation
 [Link Documentazione](https://cmepda-exam-fisica.readthedocs.io/en/latest/index.html)
 
