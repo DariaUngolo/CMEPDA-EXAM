@@ -1,5 +1,5 @@
-CompProject
-===========
+Complete List of Classification Scripts with Documentation
+==================================================================
 
 .. toctree::
    :maxdepth: 4
