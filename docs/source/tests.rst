@@ -35,3 +35,28 @@ test\_performance\_scores
    :members:
    :undoc-members:
    :show-inheritance:
+
+test\_apply\_trained\_model 
+------------------------------------------
+
+.. automodule:: tests.test_apply_trained_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+test\_CNN\_utilities 
+------------------------------------------
+
+.. automodule:: tests.test_CNN_utilities
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+test\_CNN\_class 
+------------------------------------------
+
+.. automodule:: tests.test_CNN_class
+   :members:
+   :undoc-members:
+   :show-inheritance:
