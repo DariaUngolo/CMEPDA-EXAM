@@ -120,16 +120,6 @@ Feature extraction is performed using **MATLAB**, an essential step in the machi
 
 These features serve as the input to the classification pipeline implemented in **Python**.
 
-The atlas is overlaid on the input MRI as a **binary mask**, and statistics are computed **only within voxels labeled as part of each ROI**. To reduce the impact of background noise or interpolation artifacts, a small intensity **threshold of 10⁻⁶** is applied: any voxel with an intensity value below this threshold is ignored during feature computation.
-
-This masking and thresholding step ensures that the extracted features are robust, biologically meaningful, and not corrupted by out-of-brain or near-zero intensity values.
-
-The voxels above the chosen threshold do not cause the loss of brain regions, as can be seen in the image below, where voxels exceeding the threshold are highlighted in white.
-
-
-![voxel above threshold](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/smwc1AD_1_colored.png)
-
-
 ### Classification Approaches
 
 The binary classification task is tackled using two complementary approaches:
@@ -282,6 +272,15 @@ For each subject and for each ROI defined in the atlas, the script computes the 
 - **Region Volume**: number of voxels (i.e., size) comprising the ROI.
 
 - ⚠️ Mean and Standard Deviation are set as "default figures of merit" but one can switch to every other possible combination according to their preferences
+
+The atlas is overlaid on the input MRI as a **binary mask**, and statistics are computed **only within voxels labeled as part of each ROI**. To reduce the impact of background noise or interpolation artifacts, a small intensity **threshold of 10⁻⁶** is applied: any voxel with an intensity value below this threshold is ignored during feature computation.
+
+This masking and thresholding step ensures that the extracted features are robust, biologically meaningful, and not corrupted by out-of-brain or near-zero intensity values.
+
+The voxels above the chosen threshold do not cause the loss of brain regions, as can be seen in the image below, where voxels exceeding the threshold are highlighted in white.
+
+
+![voxel above threshold](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/smwc1AD_1_colored.png)
 
 ### 2. 🤖 Classification (via Python)
 
