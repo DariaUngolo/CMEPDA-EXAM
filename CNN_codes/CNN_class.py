@@ -10,13 +10,13 @@ import scipy
 import tensorflow
 from sklearn.metrics import roc_curve, auc
 from sklearn.utils import class_weight
-from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization, Activation, Dropout,PReLU, GlobalAveragePooling3D)
+from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization,LeakyReLU, Activation, Dropout,PReLU, GlobalAveragePooling3D)
 from keras.optimizers import SGD
 
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import load_model, Model, Sequential
-from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
+from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.initializers import HeNormal
 
 from keras.losses import BinaryCrossentropy, MeanSquaredError
@@ -87,9 +87,9 @@ class MyCNNModel(tensorflow.keras.Model):
             # First block
             MaxPooling3D(pool_size=(2, 2, 2)),
             Conv3D(8, kernel_size=3,kernel_initializer=HeNormal(), activation=None, padding='same',kernel_regularizer=l2(0.001)),
+            BatchNormalization(),
             PReLU(),
             BatchNormalization(),
-
             Dropout(0.1),
 
             # Second block
@@ -172,6 +172,8 @@ class MyCNNModel(tensorflow.keras.Model):
         """
         return self.model(inputs, training=training)
 
+
+
     def compile_and_fit(self, x_train, y_train, x_val, y_val, x_test, y_test, n_epochs, batchsize):
         """
 
@@ -230,6 +232,8 @@ class MyCNNModel(tensorflow.keras.Model):
                 restore_best_weights=True,
                 start_from_epoch=10
         )
+
+
 
         # Prepare TensorFlow datasets with batching and prefetching for performance
         train_dataset = tensorflow.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(len(x_train)).batch(batchsize).repeat().prefetch(tensorflow.data.AUTOTUNE)
@@ -376,7 +380,7 @@ class MyCNNModel(tensorflow.keras.Model):
         val_results = self.evaluate(x_val, y_val, verbose=0)
         _, val_acc, val_auc, val_recall = val_results
         accuracy_err = z_score * np.sqrt((val_acc * (1 - val_acc)) / y_val.shape[0])
-        recall_err = z_score * np.sqrt((val_acc * (1 - val_recall)) / y_val.shape[0])
+        recall_err = z_score * np.sqrt((val_recall * (1 - val_recall)) / y_val.shape[0])
         logger.info(f"Validation Accuracy: {round(val_acc, 2)} ± {round(accuracy_err, 2)}")
         logger.info(f"Validation Recall: {round(val_recall, 2)} ± {round(recall_err, 2)}")
 
@@ -471,7 +475,7 @@ class MyCNNModel(tensorflow.keras.Model):
         test_results = self.evaluate(x_test, y_test, verbose=0)
         _, test_acc, test_auc, test_recall = test_results
         accuracy_err = z_score * np.sqrt((test_acc * (1 - test_acc)) / y_test.shape[0])
-        accuracy_err = z_score * np.sqrt((test_acc * (1 - test_recall)) / y_test.shape[0])
+        recall_err = z_score * np.sqrt((test_recall * (1 - test_recall)) / y_test.shape[0])
         logger.info(f"Test Accuracy: {round(test_acc, 2)} ± {round(accuracy_err, 2)}")
         logger.info(f"Test Recall: {round(test_recall, 2)} ± {round(recall_err, 2)}")
 

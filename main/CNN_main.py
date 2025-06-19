@@ -160,7 +160,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--trained_model_path", type=str,
-        help="Path to saved model (joblib). Required if --use_trained_model is set."
+        help="Path to saved model (.h5). Required if --use_trained_model is set."
     )
     parser.add_argument(
         "--nifti_image_path", type=str,
@@ -286,7 +286,7 @@ def main(args):
         )
     logger.success("Training completed successfully.")
 
-    model.save_model("trained_model.keras")
+    model.save_model("trained_model.h5")
 
     if model is not None:
         do_classify = ask_yes_no_prompt("Do you want to classify new images now? Y/N", default="N")

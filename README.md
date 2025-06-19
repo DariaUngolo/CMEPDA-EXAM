@@ -110,9 +110,9 @@ If the atlas resolution does not match the input image (e.g., different voxel si
 
 The resampled atlas is saved in the output directory and reused in subsequent runs to avoid redundant computation.
 
-### Feature Extraction
+### Feature Extraction (ML)
 
-Feature extraction is performed using **MATLAB**, which processes the MRI scans and atlas-based segmentations to compute region-level statistics for each ROI. Specifically, the extraction pipeline calculates:
+Feature extraction is performed using **MATLAB**, an essential step in the machine learning approach, which processes the MRI scans and atlas-based segmentations to compute region-level statistics for each ROI. Specifically, the extraction pipeline calculates:
 
 - **Mean intensity**
 - **Standard deviation**
@@ -123,6 +123,37 @@ These features serve as the input to the classification pipeline implemented in 
 The atlas is overlaid on the input MRI as a **binary mask**, and statistics are computed **only within voxels labeled as part of each ROI**. To reduce the impact of background noise or interpolation artifacts, a small intensity **threshold of 10⁻⁶** is applied: any voxel with an intensity value below this threshold is ignored during feature computation.
 
 This masking and thresholding step ensures that the extracted features are robust, biologically meaningful, and not corrupted by out-of-brain or near-zero intensity values.
+
+The voxels above the chosen threshold do not cause the loss of brain regions, as can be seen in the image below, where voxels exceeding the threshold are highlighted in white.
+
+
+![voxel above threshold](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/smwc1AD_1_colored.png)
+
+### Image Preparation for CNN
+
+In the deep learning approach, it is **not necessary to use ROIs as binary masks** for preprocessing. Instead, each MRI scan is **cropped along the z-axis around the most relevant region of interest**, specifically the hippocampus. This region has been identified as the most important for classification in our case, which aligns with known medical findings regarding neurodegenerative diseases.
+
+Since convolutional neural networks (CNNs) require input images to have consistent dimensions, each cropped volume is **padded** to match the size of the largest cropped sample in the dataset.
+
+The processed images are saved as **3D NumPy arrays** with a single intensity channel, making them directly compatible with CNN architectures.
+
+Voxel intensities are **not normalized between 0 and 1 by default**, but a built-in normalization function is available for users who wish to apply it.
+
+
+### Data Augmentation Strategy for CNN
+
+Given the limited size of our dataset, we implement a **data augmentation strategy** to improve the model's generalization and reduce overfitting.
+
+The following augmentations are applied randomly to the training set:
+- **Random intensity variation**
+- **Random crop-and-zoom**
+
+As a result, the training dataset is **tripled**, consisting of:
+1. Original cropped and padded images
+2. Images with random crop-and-zoom transformations
+3. Images with random intensity modifications
+
+This process enriches the diversity of the training data and strengthens the performance of the CNN on unseen samples.
 
 ### Classification Approaches
 
@@ -137,7 +168,11 @@ The binary classification task is tackled using two complementary approaches:
 
 2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes.
 
-### Evaluation Methodology
+### Advanced ROI-based Analysis (ML)
+
+The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
+
+### Evaluation Methodology 
 
 For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are **averaged across runs and folds**, and include:
 
@@ -155,16 +190,29 @@ Results are visualized through:
 
 In the case of the **RFE-based Random Forest**, an additional **pie chart** is generated to display the **top 8 most relevant ROIs** contributing to the classification decision, along with their relative feature importances.
 
-### Advanced ROI-based Analysis
 
-The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
+For the **deep learning (CNN) approach**, the model is trained for **150 epochs** with a **batch size of 32** and an initial **learning rate of 0.001**. Two callbacks are used during training:
+
+- **EarlyStopping** to halt training when performance stops improving  
+- **ReduceLROnPlateau** to lower the learning rate when validation performance plateaus
+
+Evaluation of the CNN is based on:
+
+- Accuracy  
+- Recall  
+- AUC
+
+Throughout training, the model logs per-epoch values of these metrics on the **training**, **validation**, and **test** sets. After training, the following outputs are generated automatically:
+
+- Accuracy and loss curves for training and validation  
+- ROC curves for validation and test datasets
 
 
 ### Execution Modes: Training vs. Inference
 
 The user can choose to run the pipeline in either **training mode** or **inference mode**, depending on the task:
 
-**Training Mode**
+**Training Mode – Machine Learning Approach**
 
 - Executes the full pipeline described above:
   - Feature extraction (via MATLAB)
@@ -173,9 +221,22 @@ The user can choose to run the pipeline in either **training mode** or **inferen
 - At the end of training, the entire trained pipeline (including preprocessing and classifier) is saved as a `.joblib` file.
 - After training completes, the user is prompted whether they want to classify **single MRI images** extracted from independent datasets, using the newly trained model.
 
+**Training Mode – Deep Learning Approach**
+
+- Executes the full deep learning pipeline:
+  - Image preparation, including cropping around the hippocampus and padding to ensure uniform input dimensions
+  - Data augmentation applied to the training set with random intensity variation and crop-zoom transformations
+  - Conversion of preprocessed images into NumPy arrays formatted for 3D CNN input
+
+- Trains a 3D Convolutional Neural Network (CNN) using the prepared dataset.
+
+- Once training is complete, the entire trained model is saved (`.h5`)and ready for inference.
+
+- The user is then prompted to classify new, independent MRI images using the trained CNN model.
+
 **Inference Mode**
 
-- Requires the user to provide the path to a **pre-trained model file** (`.joblib`) saved in a previous run.
+- Requires the user to provide the path to a **pre-trained model file** (`.joblib`/`.h5`) saved in a previous run.
 - The pipeline loads the saved model and uses it directly to classify **new individual MRI images** without retraining.
 - This mode is optimized for applying the classifier on unseen data efficiently.
 
@@ -188,6 +249,7 @@ All core scripts in this project are accompanied by dedicated unit tests located
 - Preprocessing and transformation routines
 - Model training and evaluation functions
 - Inference logic and performance metrics computation
+
 
 #### ✅ Running Unit Tests
 
@@ -267,11 +329,13 @@ The **MATLAB Engine API for Python** enables calling MATLAB functions directly f
 ## 🚀 How to Run
 
 > 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
+---
 
-The `main.py` script supports **two execution modes**: Training mode and Inference mode.
+**The `ML_main.py` script supports two execution modes**: Training mode and Inference mode.
 
+---
 
-### 1. Training Mode
+### 1. ML Training Mode
 
 Runs the full pipeline: extracts features via MATLAB, trains and evaluates the classifier, saves the trained model.
 
@@ -284,12 +348,12 @@ python ML_main.py \
   --metadata_csv "/path/to/metadata.csv" \
   --matlab_path "/path/to/MATLAB_folder" \
   --classifier {rf, svm} \
-  --n_iter N_ITER \
-  --cv CV \
+  --n_iter <number_of_combinations> \
+  --cv <number_of_folds> \
   --kernel {linear, rbf}
 ```
 
-### 2. Inference Mode
+### 2. ML Inference Mode
 Uses a previously trained model to classify new independent NIfTI images, skipping training.
 
 ```bash
@@ -302,7 +366,7 @@ python ML_main.py \
   --nifti_image_path "/path/to/independent_nifti_images"
 ```
 
-#### Notes
+#### ML Notes
 
 - If the `--use_trained_model` flag is **not** provided, the script runs in **Training Mode**.
 - After training, the pipeline is saved as a `.joblib` file.
@@ -317,7 +381,7 @@ python ML_main.py \
   - If neither PCA nor RFE is selected, standard Random Forest is used.
 - For RFE, the top 8 ROIs are visualized in a pie chart to highlight their relative importance in classification performance.
 
-#### 🧾 Command-Line Parameters Overview
+#### 🧾 ML Command-Line Parameters Overview
 
 | Parameter              | Description                                     | Required in          |
 |------------------------|-------------------------------------------------|----------------------|
@@ -336,6 +400,57 @@ python ML_main.py \
 | `--nifti_image_path`   | Directory with new subjects to classify         | Inference only       |
 
 ---
+
+**The `CNN_main.py` script supports two execution modes**: Training mode and Inference mode.
+
+---
+## 1. CNN Training Mode
+
+This mode trains a CNN model using the provided dataset and saves the resulting trained model for future inference.
+
+```bash
+python CNN_main.py \
+  --image_folder "/path/to/nifti_folder" \
+  --atlas_path  "/path/to/original_atlas.nii.gz" \
+  --metadata "/path/to/metadata.csv" \
+  --epochs <number_of_epochs> \
+  --batchsize <batch_size>
+```
+
+## 2. CNN inference Mode
+
+Uses a pre-trained CNN model to classify new independent NIfTI images.
+
+```bash
+python CNN_main.py \
+  --atlas_path  "/path/to/original_atlas.nii.gz" \
+  --nifti_image_path "/path/to/nifti_image" \
+  --use_trained_model \
+  --trained_model_path "/path/to/trained_model.h5"
+```
+
+#### CNN Notes
+
+- Ensure that the atlas file aligns with the resolution of the NIfTI images used for both training and inference.
+- In Training Mode, the `--metadata` file must include all necessary labels for proper model training.
+- The script supports dynamic batch sizes and epochs; experiment with these parameters to optimize training performance.
+- Pre-trained models must match the input data format and preprocessing pipeline to avoid compatibility issues during inference.
+- Inference Mode allows classification of a single image at a time; batch processing requires script modification.
+- If using a custom atlas, ensure it is preprocessed and compatible with the input data structure.
+
+#### 🧾 CNN Command-Line Parameters Overview
+
+| Parameter              | Description                                    | Required in    |
+| ---------------------- | ---------------------------------------------- | -------------- |
+| `--image_folder`       | Directory containing NIfTI images              | Training only  |
+| `--atlas_path`         | Path to the NIfTI atlas file                   | Both Modes     |
+| `--metadata`           | Path to a CSV file with metadata and labels    | Training only  |
+| `--epochs`             | Number of training epochs                      | Training only  |
+| `--batchsize`          | Batch size for model training                  | Training only  |
+| `--use_trained_model`  | Enables Inference Mode using a saved model     | Inference only |
+| `--trained_model_path` | Path to a `.h5` file for the trained model     | Inference only |
+| `--nifti_image_path`   | Path to a NIfTI image for classification       | Inference only |
+
 
 ## 🧠 ML Pipeline Guide
 
@@ -443,13 +558,13 @@ After the script completes execution, the following outputs are generated:
 
 ![ROC curve and AUC example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/ROC_rf_RFE_100_15_mean%2Bstd_BN.png)
 
-  3. **Performance Bar Chart**  
+  2. **Performance Bar Chart**  
      A bar plot comparing mean values (with error bars for confidence intervals) of each metric such as Accuracy, Precsion, Recall, F1 Score, Sensitivity and AUC.
      
 ![Bar chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/metrics_rf_RFE_100_15_mean%2Bstd_BN.png)
 
 
-  5. **Feature Importance Plot**  
+  3. **Feature Importance Plot**  
      (Only available if using Random Forest with RFECV)  
      Visualizes the most relevant features selected by the Recursive Feature Elimination process, ranked by importance.
      
@@ -481,11 +596,218 @@ The output allows for both binary classification and an assessment of prediction
 
 
 ---
+## 🧠 CNN Pipeline Guide
+
+This project is structured around a modular **6-step pipeline** that includes preprocessing, augmentation, model training, and interactive classification of brain MRI data.
+
+
+### 1. 🔍 GPU Configuration
+
+Before any processing begins, the script detects available GPUs and configures memory growth to optimize usage. If no GPU is detected, it defaults to CPU execution.
+
+- **Purpose**: Ensures compatibility with various hardware configurations and leverages GPU acceleration when available.
+- **Implemented by**:
+  - `tf.config.list_physical_devices('GPU')`
+  - GPU memory growth setup.
+
+
+### 2. 🧪 Preprocessing
+
+The preprocessing step processes NIfTI images and prepares them for CNN input. Key operations include:
+
+- **Z-range Extraction**: Identifies the slice range containing Regions of Interest (ROIs) from the provided atlas file.
+- **Black Voxel Removal**: Removes empty regions to reduce unnecessary computation.
+- **Padding**: Pads images to ensure uniform dimensions.
+- **Normalization**: Adjusts intensity values for consistent input across images.
+
+**Output**: A 4D numpy array of preprocessed images and corresponding labels.
+
+**Implemented by**:
+- `preprocessed_images_group(...)`  
+- `normalize_images_uniformly(...)`
+
+
+### 3. 🎨 Data Augmentation
+
+Augments the dataset to improve model generalization and prevent overfitting. Techniques include:
+
+- **Random Rotation**: Applies random 3D rotations to training volumes.
+- **Random Zoom and Crop**: Zooms into a volume and crops or pads it to match the target shape.
+
+**Output**: Augmented training data with enhanced diversity.
+
+**Implemented by**:
+- `augment_images_with_labels_4d(...)`
+
+
+### 4. 📂 Data Splitting
+
+Splits the dataset into three subsets:
+
+- **Training Set**: Used to train the CNN.
+- **Validation Set**: Monitors performance during training.
+- **Test Set**: Independently evaluates the model after training.
+
+**Output**: Training, validation, and test datasets.
+
+**Implemented by**:
+- `split_data(...)`
+
+
+### 5. 🤖 CNN Training
+
+Trains a Convolutional Neural Network (CNN) model:
+
+- **Model Architecture**: Created using the `MyCNNModel` class.  
+    This is a 3D CNN designed for volumetric data. It consists of four convolutional blocks followed by a classification head.
+
+    **Architecture:**
+    - **Block 1**  
+      `MaxPooling3D → Conv3D(8) → PReLU → BatchNorm → Dropout(0.1)`
+
+    - **Block 2**  
+      `MaxPooling3D → Conv3D(16) → PReLU → BatchNorm → Dropout(0.2)`
+
+    - **Block 3**  
+      `Conv3D(32) → PReLU → BatchNorm → MaxPooling3D → Dropout(0.2)`
+
+    - **Block 4**  
+      `Conv3D(32) → PReLU → BatchNorm → Dropout(0.2)`
+
+    - **Classification Head**  
+      `GlobalAvgPool3D → Dense(32, ReLU) → Dropout(0.3) → Dense(1, Sigmoid)`
+
+      The model uses L2 regularization, PReLU activations, and pooling to reduce dimensionality and prevent overfitting.
+
+    - **Input Shape**: Derived automatically from the preprocessed data.
+
+- **Training Configuration**: Parameters such as epochs and batch size are customizable via command-line arguments.
+
+- **Output**: A trained model saved as a `.h5` file.
+
+
+- **Implemented by**:
+  - `MyCNNModel(input_shape=...)`
+  - `model.compile_and_fit(...)`
+
+### 6. 🧪 Interactive Classification
+
+After training, the user can optionally classify new NIfTI images using the trained model. Key steps:
+
+1. **Model Loading**: Loads the pre-trained model for inference.
+2. **Preprocessing**: Ensures the new image matches the input shape expected by the model.
+3. **Prediction**: Outputs the class probabilities and the predicted label.
+4. **Interactive Loop**: Allows users to classify additional images in a session.
+
+**Output**: A tabulated summary of predictions with probabilities for each classified image.
+
+**Implemented by**:
+- `preprocessed_images(...)`  
+- `adjust_image_shape(...)`  
+- `model.predict(...)`  
 
 
 
+### 🛠 Outputs
+
+After executing the pipeline, the following are produced:
+
+1. **Trained Model**: Saved as `trained_model.h5` for future use.
+2. **Classification Results**: A tabulated summary of predictions during interactive classification.
+3. **Performance Logs**: Detailed logs, including GPU usage and intermediate steps, to assist debugging and performance analysis.
+
+**Example Classification Results**:
+
+| Image          | Prediction | Probability |
+|-----------------|------------|-------------|
+| `patient_01.nii.gz` | 1          | 0.75       |
+| `patient_02.nii.gz` | 0          | 0.88      |
+
+
+- **📈 Visualization Outputs**
+
+1. **📋 Tabulated Metrics Summary**  
+  A table summarizing all key metrics for training dtata, validation data and test data:
+
+| **Train_Metric**    | **Score** | **± Error** |
+|---------------|-----------|-------------|
+| Train_Accuracy      | ??      | ± ??         |
+| Train_Recall        |  ??        | ± ??        |
+| Train_AUC           |  ??        | ± ??        |
+
+| **Val_Metric**    | **Score** | **± Error** |
+|---------------|-----------|-------------|
+| Val_Accuracy      | ??      | ± ??         |
+| Val_Recall        |  ??        | ± ??        |
+| Val_AUC           |  ??        | ± ??        |
+
+| **Test_Metric**    | **Score** | **± Error** |
+|---------------|-----------|-------------|
+| Test_Accuracy      | ??      | ± ??         |
+| Test_Recall        |  ??        | ± ??        |
+| Test_AUC           |  ??        | ± ??        |
+
+2. **Training and Validation Performance (Plot)**  
+   This figure shows both **Loss** and **AUC** curves during training and validation.  
+   The top subplot compares the training and validation AUC across epochs, while the bottom subplot compares the corresponding Loss. This visualization helps identify potential overfitting or underfitting during model training.
+
+![AUC and Loss during training and validation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_auc_loss_train%2Bval.png)
+
+3. **Validation ROC Curve**  
+   Displays the Receiver Operating Characteristic (ROC) curve on the validation set.  
+   This curve helps evaluate how well the model distinguishes between classes before final testing.
+
+![Validation ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_validation_roc.png)
+
+4. **Test ROC Curve**  
+   Shows the ROC curve obtained on the test set.  
+   It's a final indicator of model generalization, reflecting performance on unseen data.
+
+![Test ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_test_roc.png)
+
+---
+## ⚖️ Conclusions: Comparing Machine Learning and Deep Learning Approaches
+
+This project implements and compares two distinct strategies for classifying Alzheimer's Disease from structural brain MRI: classical **Machine Learning (ML)** based on handcrafted features and **Deep Learning (DL)** based on raw 3D images. Each approach offers specific advantages depending on the dataset size, the interpretability needs, and the computational resources available.
+
+### ✅ Machine Learning
+
+- **Pros**:
+  - Highly interpretable: feature importance and selected ROIs offer direct neuroscientific insight.
+  - Efficient with small to medium datasets.
+  - Easily adaptable to different brain atlases and custom ROI-level features.
+- **Cons**:
+  - Relies on accurate feature extraction and brain parcellation.
+  - Performance plateaus with increasing data complexity.
+
+### 🧠 Deep Learning (CNN 3D)
+
+- **Pros**:
+  - Learns hierarchical representations directly from raw volumetric data.
+  - High accuracy when trained on sufficiently large and well-preprocessed datasets.
+  - Requires minimal manual feature engineering.
+- **Cons**:
+  - Less interpretable: learned filters are hard to map to anatomical meaning.
+  - Demands larger training sets and higher computational power (especially GPUs).
+  - Sensitive to overfitting on small datasets.
+
+### 📊 Summary
+
+| Method             | Input Type         | Preprocessing | Interpretability | Performance | Data Needs  |
+|--------------------|--------------------|---------------|------------------|-------------|-------------|
+| Random Forest / SVM | ROI features (CSV) | Atlas-based   | High             | Good        | Low–Medium  |
+| 3D CNN             | SMWC1 MRI volumes  | NIfTI-based   | Low              | High (if trained well) | High |
+
+Ultimately, the choice between ML and DL depends on the **goal of the analysis**:
+
+- Use **ML** when explainability and anatomical interpretability are critical (e.g., biomarker identification).
+- Use **DL** when performance is paramount and sufficient data and GPU resources are available.
+
+> 🧪 For optimal results, a hybrid approach combining both techniques — e.g., feature-based ML models enhanced by CNN-learned features — may offer the best trade-off between accuracy and interpretability.
+
+---
 ## 📄 Documentation
-INSERIRE LINK DOCUMENTAZIONE
+[Link Documentazione](https://cmepda-exam-fisica.readthedocs.io/en/latest/index.html)
 
 --- 
 
