@@ -8,7 +8,7 @@ Welcome to the official documentation for Alzheimer-Classifier, a comprehensive 
 
 Contents:
 ---------------
-This documentation provides a comprehensive guide to the Alzheimer-Classifie project, including setup instructions, detailed descriptions of datasets and key components, usage guidelines for both machine learning and CNN models, and contribution guidelines to help you get involved.
+This documentation provides a comprehensive guide to the Alzheimer-Classifier project, including setup instructions, detailed descriptions of datasets and key components, usage guidelines for both machine learning and CNN models, and contribution guidelines to help you get involved.
 
 .. toctree::
    :maxdepth: 3

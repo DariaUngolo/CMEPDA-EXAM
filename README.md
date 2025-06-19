@@ -1,4 +1,4 @@
-# 🧠 CMEPDA-EXAM: Scalable MRI-Based Classification of Alzheimer’s Disease with Classical and Deep Learning
+# 🧠 Scalable MRI-Based Classification of Alzheimer’s Disease with Classical and Deep Learning
 
 **Brain MRI Classification Pipeline for Alzheimer’s Disease Detection**
 
@@ -36,12 +36,12 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 │   └── ...deep learning modules...
 │
 ├── main/
-│   ├── ML_main.py  # Entry point for the ML pipeline
+│   ├── ML_main.py  
 │   └── CNN_main.py
 │
 ├── trained_models/
 │   ├── CNN_trained_model.h5
-│   └── trained_model*.joblib  #one for each type of classifier
+│   └── trained_model*.joblib  #one for each type of classifiers
 │
 ├── plots and images/
 │
@@ -329,11 +329,10 @@ The **MATLAB Engine API for Python** enables calling MATLAB functions directly f
 ## 🚀 How to Run
 
 > 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
----
+
 
 **The `ML_main.py` script supports two execution modes**: Training mode and Inference mode.
 
----
 
 ### 1. ML Training Mode
 
@@ -403,7 +402,7 @@ python ML_main.py \
 
 **The `CNN_main.py` script supports two execution modes**: Training mode and Inference mode.
 
----
+
 ## 1. CNN Training Mode
 
 This mode trains a CNN model using the provided dataset and saves the resulting trained model for future inference.

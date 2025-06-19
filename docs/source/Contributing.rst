@@ -1,12 +1,12 @@
 Contributing
 ============
 
-Thank you for your interest in contributing to the **CMEPDA-EXAM** project! This section outlines the guidelines, code of conduct, and instructions for contributing effectively to the project.
+Thank you for your interest in contributing to the **Alzheimer-Classifier** project! This section outlines the guidelines, code of conduct, and instructions for contributing effectively to the project.
 
 Guidelines
 ----------
 
-We welcome contributions from the community to improve **CMEPDA-EXAM**. Contributions can include bug fixes, feature enhancements, documentation improvements, or anything else that adds value to the project. Please adhere to the following guidelines:
+We welcome contributions from the community to improve **Alzheimer-Classifier**. Contributions can include bug fixes, feature enhancements, documentation improvements, or anything else that adds value to the project. Please adhere to the following guidelines:
 
 - **Code of Conduct**: Be respectful and constructive when interacting with other contributors.
 - **Issue Reporting**: Use the GitHub Issues tab to report bugs or suggest new features. Provide detailed descriptions to help the maintainers understand the problem or suggestion.
@@ -15,7 +15,7 @@ We welcome contributions from the community to improve **CMEPDA-EXAM**. Contribu
 How to Contribute
 ------------------
 
-Follow these steps to contribute to **CMEPDA-EXAM**:
+Follow these steps to contribute to **Alzheimer-Classifier**:
 
 1. **Fork the Repository**  
    Fork the repository on GitHub to create your copy.
