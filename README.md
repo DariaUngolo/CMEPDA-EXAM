@@ -329,11 +329,10 @@ The **MATLAB Engine API for Python** enables calling MATLAB functions directly f
 ## 🚀 How to Run
 
 > 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
----
+
 
 **The `ML_main.py` script supports two execution modes**: Training mode and Inference mode.
 
----
 
 ### 1. ML Training Mode
 
@@ -403,7 +402,7 @@ python ML_main.py \
 
 **The `CNN_main.py` script supports two execution modes**: Training mode and Inference mode.
 
----
+
 ## 1. CNN Training Mode
 
 This mode trains a CNN model using the provided dataset and saves the resulting trained model for future inference.
