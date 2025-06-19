@@ -781,6 +781,10 @@ This pipeline supports both training and inference in a modular and extensible m
 
 ![Test ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_test_roc.png)
 
+---
+## ⚖️ Conclusions: Comparing Machine Learning and Deep Learning Approaches
+
+SCRIVI QUALCOSA
 --
 ## 📄 Documentation
 [Link Documentazione](https://cmepda-exam-fisica.readthedocs.io/en/latest/index.html)
