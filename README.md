@@ -174,7 +174,7 @@ The ROIs identified as most informative by RFE are used in the second phase of t
 
 ### Evaluation Methodology 
 
-For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **20-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are **averaged across runs and folds**, and include:
+For each classical ML classifier configuration, the model is trained and evaluated over **10 independent runs**, using a robust **15-fold cross-validation** strategy to ensure statistical reliability and generalizability. Performance metrics are **averaged across runs and folds**, and include:
 
 - *Accuracy*
 - *Precision*
