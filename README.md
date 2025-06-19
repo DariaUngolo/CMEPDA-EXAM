@@ -646,8 +646,9 @@ python ML_main.py \
   --trained_model_path "/path/to/trained_model.joblib" \
   --nifti_image_path "/path/to/independent_nifti_images"
 ```
-
-The following models have been trained using the **mean_std_volume** feature set derived from the **Brainnetome Atlas**. These models are ready for inference and can be reused as long as the same feature extraction method and atlas are applied.
+> ⚠️ **Warning:** The following models have been trained using the **mean_std** feature set derived from the  **LPBA40**.  
+> To ensure compatibility and accurate predictions, you **must use the LPBA40** during feature extraction.  
+> Using a different atlas may lead to incorrect results.
 
 | Model Name                        | Description                     |
 |----------------------------------|---------------------------------|
@@ -657,9 +658,7 @@ The following models have been trained using the **mean_std_volume** feature set
 | `trained_model_svm_linear.joblib`| SVM with Linear Kernel          |
 | `trained_model_svm_rbf.joblib`   | SVM with RBF Kernel             |
 
-> ⚠️ **Warning:** These models were trained using features extracted specifically with the **Brainnetome Atlas**.  
-> To ensure compatibility and accurate predictions, you **must use the Brainnetome Atlas** during feature extraction.  
-> Using a different atlas may lead to incorrect results.
+
 
 #### ML Notes
 
