@@ -1,4 +1,4 @@
-# 🧠 CMEPDA-EXAM: Scalable MRI-Based Classification of Alzheimer’s Disease with Classical and Deep Learning
+# 🧠 Scalable MRI-Based Classification of Alzheimer’s Disease with Classical and Deep Learning
 
 **Brain MRI Classification Pipeline for Alzheimer’s Disease Detection**
 
