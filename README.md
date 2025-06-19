@@ -129,31 +129,6 @@ The voxels above the chosen threshold do not cause the loss of brain regions, as
 
 ![voxel above threshold](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/smwc1AD_1_colored.png)
 
-### Image Preparation for CNN
-
-In the deep learning approach, it is **not necessary to use ROIs as binary masks** for preprocessing. Instead, each MRI scan is **cropped along the z-axis around the most relevant region of interest**, specifically the hippocampus. This region has been identified as the most important for classification in our case, which aligns with known medical findings regarding neurodegenerative diseases.
-
-Since convolutional neural networks (CNNs) require input images to have consistent dimensions, each cropped volume is **padded** to match the size of the largest cropped sample in the dataset.
-
-The processed images are saved as **3D NumPy arrays** with a single intensity channel, making them directly compatible with CNN architectures.
-
-Voxel intensities are **not normalized between 0 and 1 by default**, but a built-in normalization function is available for users who wish to apply it.
-
-
-### Data Augmentation Strategy for CNN
-
-Given the limited size of our dataset, we implement a **data augmentation strategy** to improve the model's generalization and reduce overfitting.
-
-The following augmentations are applied randomly to the training set:
-- **Random intensity variation**
-- **Random crop-and-zoom**
-
-As a result, the training dataset is **tripled**, consisting of:
-1. Original cropped and padded images
-2. Images with random crop-and-zoom transformations
-3. Images with random intensity modifications
-
-This process enriches the diversity of the training data and strengthens the performance of the CNN on unseen samples.
 
 ### Classification Approaches
 
@@ -440,7 +415,6 @@ The output allows for both binary classification and an assessment of prediction
 
 This project is structured around a modular **6-step pipeline** that includes preprocessing, augmentation, model training, and interactive classification of brain MRI data.
 
-
 ### 1. 🔍 GPU Configuration
 
 Before any processing begins, the script detects available GPUs and configures memory growth to optimize usage. If no GPU is detected, it defaults to CPU execution.
@@ -453,21 +427,30 @@ Before any processing begins, the script detects available GPUs and configures m
 
 ### 2. 🧪 Preprocessing
 
-The preprocessing step processes NIfTI images and prepares them for CNN input. Key operations include:
+In the deep learning approach, it is **not necessary to use ROIs as binary masks** for preprocessing. Instead, each MRI scan is **cropped along the z-axis around the most relevant region of interest**, specifically the hippocampus. This region has been identified as the most important for classification in our case, which aligns with known medical findings regarding neurodegenerative diseases.
 
-- **Z-range Extraction**: Identifies the slice range containing Regions of Interest (ROIs) from the provided atlas file.
-- **Black Voxel Removal**: Removes empty regions to reduce unnecessary computation.
-- **Padding**: Pads images to ensure uniform dimensions.
-- **Normalization**: Adjusts intensity values for consistent input across images.
+Since convolutional neural networks (CNNs) require input images to have consistent dimensions, each cropped volume is **padded** to match the size of the largest cropped sample in the dataset.
+
+The processed images are saved as **3D NumPy arrays** with a single intensity channel, making them directly compatible with CNN architectures.
+
+Voxel intensities are **not normalized between 0 and 1 by default**, but a built-in normalization function is available for users who wish to apply it.
 
 **Output**: A 4D numpy array of preprocessed images and corresponding labels.
 
 ### 3. 🎨 Data Augmentation
 
-Augments the dataset to improve model generalization and prevent overfitting. Techniques include:
+Given the limited size of our dataset, we implement a **data augmentation strategy** to improve the model's generalization and reduce overfitting.
 
-- **Random Rotation**: Applies random 3D rotations to training volumes.
-- **Random Zoom and Crop**: Zooms into a volume and crops or pads it to match the target shape.
+The following augmentations are applied randomly to the training set:
+- **Random intensity variation**
+- **Random crop-and-zoom**
+
+As a result, the training dataset is **tripled**, consisting of:
+1. Original cropped and padded images
+2. Images with random crop-and-zoom transformations
+3. Images with random intensity modifications
+
+This process enriches the diversity of the training data and strengthens the performance of the CNN on unseen samples.
 
 **Output**: Augmented training data with enhanced diversity.
 
