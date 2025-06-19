@@ -36,12 +36,12 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 │   └── ...deep learning modules...
 │
 ├── main/
-│   ├── ML_main.py  # Entry point for the ML pipeline
+│   ├── ML_main.py  
 │   └── CNN_main.py
 │
 ├── trained_models/
 │   ├── CNN_trained_model.h5
-│   └── trained_model*.joblib  #one for each type of classifier
+│   └── trained_model*.joblib  #one for each type of classifiers
 │
 ├── plots and images/
 │
