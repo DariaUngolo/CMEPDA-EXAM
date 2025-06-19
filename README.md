@@ -207,40 +207,6 @@ Throughout training, the model logs per-epoch values of these metrics on the **t
 - Accuracy and loss curves for training and validation  
 - ROC curves for validation and test datasets
 
-
-### Execution Modes: Training vs. Inference
-
-The user can choose to run the pipeline in either **training mode** or **inference mode**, depending on the task:
-
-**Training Mode – Machine Learning Approach**
-
-- Executes the full pipeline described above:
-  - Feature extraction (via MATLAB)
-  - Model training using the selected classifier and parameters
-  - Performance evaluation with cross-validation and plotting of results
-- At the end of training, the entire trained pipeline (including preprocessing and classifier) is saved as a `.joblib` file.
-- After training completes, the user is prompted whether they want to classify **single MRI images** extracted from independent datasets, using the newly trained model.
-
-**Training Mode – Deep Learning Approach**
-
-- Executes the full deep learning pipeline:
-  - Image preparation, including cropping around the hippocampus and padding to ensure uniform input dimensions
-  - Data augmentation applied to the training set with random intensity variation and crop-zoom transformations
-  - Conversion of preprocessed images into NumPy arrays formatted for 3D CNN input
-
-- Trains a 3D Convolutional Neural Network (CNN) using the prepared dataset.
-
-- Once training is complete, the entire trained model is saved (`.h5`)and ready for inference.
-
-- The user is then prompted to classify new, independent MRI images using the trained CNN model.
-
-**Inference Mode**
-
-- Requires the user to provide the path to a **pre-trained model file** (`.joblib`/`.h5`) saved in a previous run.
-- The pipeline loads the saved model and uses it directly to classify **new individual MRI images** without retraining.
-- This mode is optimized for applying the classifier on unseen data efficiently.
-
-
 ### 🧪 Unit Testing
 
 All core scripts in this project are accompanied by dedicated unit tests located in the `tests/` directory. These tests are designed to ensure the correctness, robustness, and stability of the pipeline's components, including:
@@ -325,141 +291,6 @@ pip install -r requirements.txt
 The **MATLAB Engine API for Python** enables calling MATLAB functions directly from Python scripts. This integration allows the pipeline to automate feature extraction without manual intervention, combining the strengths of MATLAB’s neuroimaging tools with Python’s machine learning frameworks.
 
 ---
-
-## 🚀 How to Run
-
-> 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
-
-
-**The `ML_main.py` script supports two execution modes**: Training mode and Inference mode.
-
-
-### 1. ML Training Mode
-
-Runs the full pipeline: extracts features via MATLAB, trains and evaluates the classifier, saves the trained model.
-
-```bash
-python ML_main.py \
-  --folder_path "/path/to/nifti_folder" \
-  --atlas_file "/path/to/original_atlas.nii.gz" \
-  --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
-  --atlas_txt "/path/to/atlas_labels.txt" \
-  --metadata_csv "/path/to/metadata.csv" \
-  --matlab_path "/path/to/MATLAB_folder" \
-  --classifier {rf, svm} \
-  --n_iter <number_of_combinations> \
-  --cv <number_of_folds> \
-  --kernel {linear, rbf}
-```
-
-### 2. ML Inference Mode
-Uses a previously trained model to classify new independent NIfTI images, skipping training.
-
-```bash
-python ML_main.py \
-  --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
-  --atlas_txt "/path/to/atlas_labels.txt" \
-  --matlab_path "/path/to/MATLAB_folder" \
-  --use_trained_model \
-  --trained_model_path "/path/to/trained_model.joblib" \
-  --nifti_image_path "/path/to/independent_nifti_images"
-```
-
-#### ML Notes
-
-- If the `--use_trained_model` flag is **not** provided, the script runs in **Training Mode**.
-- After training, the pipeline is saved as a `.joblib` file.
-- In Inference Mode, feature extraction is still performed on the new images using MATLAB, but classification uses the pre-trained model without re-training.
-- The pipeline supports three variants of Random Forest:
-  - Standard RF
-  - RF with PCA
-  - RF with RFE (Recursive Feature Elimination)
-- ⚠️ **If Random Forest (`--classifier rf`) is selected**, the user is prompted **after feature extraction** but **before training** to choose the desired variant:
-  - A terminal input (`yes/no`) will ask whether to apply **PCA**.
-  - If PCA is not chosen, a second prompt will ask whether to apply **RFE**.
-  - If neither PCA nor RFE is selected, standard Random Forest is used.
-- For RFE, the top 8 ROIs are visualized in a pie chart to highlight their relative importance in classification performance.
-
-#### 🧾 ML Command-Line Parameters Overview
-
-| Parameter              | Description                                     | Required in          |
-|------------------------|-------------------------------------------------|----------------------|
-| `--folder_path`        | Directory containing subject NIfTI images       | Training only        |
-| `--atlas_file`         | Original brain atlas in `.nii` or `.nii.gz`     | Training & Inference |
-| `--atlas_file_resized` | Resampled atlas aligned with image dimensions   | Training & Inference |
-| `--atlas_txt`          | Text file with ROI labels (one per line)        | Training & Inference |
-| `--metadata_csv`       | CSV file with subject IDs and diagnosis labels  | Training only        |
-| `--matlab_path`        | Folder containing MATLAB scripts                | Training & Inference |
-| `--classifier`         | Classifier type: `rf` (Random Forest) or `svm`  | Training only        |
-| `--n_iter`             | Number of combinations for parameters search    | Training only        |
-| `--cv`                 | Number of K-folds for cross-validation          | Training only        |
-| `--kernel`             | SVM kernel type: `linear` or `rbf`              | Training only        |
-| `--use_trained_model`  | Enables Inference Mode using a saved model      | Inference only       |
-| `--trained_model_path` | Path to a `.joblib` model previously trained    | Inference only       |
-| `--nifti_image_path`   | Directory with new subjects to classify         | Inference only       |
-
----
-
-**The `CNN_main.py` script supports two execution modes**: Training mode and Inference mode.
-
-
-## 1. CNN Training Mode
-
-This mode trains a CNN model using the provided dataset and saves the resulting trained model for future inference.
-
-To handle the computational demands of 3D convolutional neural networks for Alzheimer’s classification,  
-we leveraged **GPU** acceleration. GPUs excel at parallel processing,  
-which significantly speeds up both data augmentation and model training.  
-
-By using **TensorFlow**’s GPU capabilities, we optimized the processing of large volumetric medical images,  
-substantially reducing training times.  
-
-**It is recommended to run this code on a machine equipped with a GPU  
-to fully benefit from these optimizations and accelerate the training process.**
-
-```bash
-python CNN_main.py \
-  --image_folder "/path/to/nifti_folder" \
-  --atlas_path  "/path/to/original_atlas.nii.gz" \
-  --metadata "/path/to/metadata.csv" \
-  --epochs <number_of_epochs> \
-  --batchsize <batch_size>
-```
-
-## 2. CNN inference Mode
-
-Uses a pre-trained CNN model to classify new independent NIfTI images.
-
-```bash
-python CNN_main.py \
-  --atlas_path  "/path/to/original_atlas.nii.gz" \
-  --nifti_image_path "/path/to/nifti_image" \
-  --use_trained_model \
-  --trained_model_path "/path/to/trained_model.h5"
-```
-
-#### CNN Notes
-
-- Ensure that the atlas file aligns with the resolution of the NIfTI images used for both training and inference.
-- In Training Mode, the `--metadata` file must include all necessary labels for proper model training.
-- The script supports dynamic batch sizes and epochs; experiment with these parameters to optimize training performance.
-- Pre-trained models must match the input data format and preprocessing pipeline to avoid compatibility issues during inference.
-- Inference Mode allows classification of a single image at a time; batch processing requires script modification.
-- If using a custom atlas, ensure it is preprocessed and compatible with the input data structure.
-
-#### 🧾 CNN Command-Line Parameters Overview
-
-| Parameter              | Description                                    | Required in    |
-| ---------------------- | ---------------------------------------------- | -------------- |
-| `--image_folder`       | Directory containing NIfTI images              | Training only  |
-| `--atlas_path`         | Path to the NIfTI atlas file                   | Both Modes     |
-| `--metadata`           | Path to a CSV file with metadata and labels    | Training only  |
-| `--epochs`             | Number of training epochs                      | Training only  |
-| `--batchsize`          | Batch size for model training                  | Training only  |
-| `--use_trained_model`  | Enables Inference Mode using a saved model     | Inference only |
-| `--trained_model_path` | Path to a `.h5` file for the trained model     | Inference only |
-| `--nifti_image_path`   | Path to a NIfTI image for classification       | Inference only |
-
 
 ## 🧠 ML Pipeline Guide
 
@@ -774,6 +605,156 @@ After executing the pipeline, the following are produced:
 
 ![Test ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_test_roc.png)
 
+---
+
+
+## 🚀 How to Run
+
+> 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
+
+
+**The `ML_main.py` script supports two execution modes**: Training mode and Inference mode.
+
+
+### 1. ML Training Mode
+
+Runs the full pipeline: extracts features via MATLAB, trains and evaluates the classifier, saves the trained model.
+
+```bash
+python ML_main.py \
+  --folder_path "/path/to/nifti_folder" \
+  --atlas_file "/path/to/original_atlas.nii.gz" \
+  --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
+  --atlas_txt "/path/to/atlas_labels.txt" \
+  --metadata_csv "/path/to/metadata.csv" \
+  --matlab_path "/path/to/MATLAB_folder" \
+  --classifier {rf, svm} \
+  --n_iter <number_of_combinations> \
+  --cv <number_of_folds> \
+  --kernel {linear, rbf}
+```
+
+### 2. ML Inference Mode
+Uses a previously trained model to classify new independent NIfTI images, skipping training.
+
+```bash
+python ML_main.py \
+  --atlas_file_resized "/path/to/resampled_atlas.nii.gz" \
+  --atlas_txt "/path/to/atlas_labels.txt" \
+  --matlab_path "/path/to/MATLAB_folder" \
+  --use_trained_model \
+  --trained_model_path "/path/to/trained_model.joblib" \
+  --nifti_image_path "/path/to/independent_nifti_images"
+```
+
+The following models have been trained using the **mean_std_volume** feature set derived from the **Brainnetome Atlas**. These models are ready for inference and can be reused as long as the same feature extraction method and atlas are applied.
+
+| Model Name                        | Description                     |
+|----------------------------------|---------------------------------|
+| `trained_model_rf.joblib`        | Random Forest                   |
+| `trained_model_rf_pca.joblib`    | Random Forest + PCA             |
+| `trained_model_rf_rfecv.joblib`  | Random Forest + RFECV           |
+| `trained_model_svm_linear.joblib`| SVM with Linear Kernel          |
+| `trained_model_svm_rbf.joblib`   | SVM with RBF Kernel             |
+
+> ⚠️ **Warning:** These models were trained using features extracted specifically with the **Brainnetome Atlas**.  
+> To ensure compatibility and accurate predictions, you **must use the Brainnetome Atlas** during feature extraction.  
+> Using a different atlas may lead to incorrect results.
+
+#### ML Notes
+
+- If the `--use_trained_model` flag is **not** provided, the script runs in **Training Mode**.
+- After training, the pipeline is saved as a `.joblib` file.
+- In Inference Mode, feature extraction is still performed on the new images using MATLAB, but classification uses the pre-trained model without re-training.
+- The pipeline supports three variants of Random Forest:
+  - Standard RF
+  - RF with PCA
+  - RF with RFE (Recursive Feature Elimination)
+- ⚠️ **If Random Forest (`--classifier rf`) is selected**, the user is prompted **after feature extraction** but **before training** to choose the desired variant:
+  - A terminal input (`yes/no`) will ask whether to apply **PCA**.
+  - If PCA is not chosen, a second prompt will ask whether to apply **RFE**.
+  - If neither PCA nor RFE is selected, standard Random Forest is used.
+- For RFE, the top 8 ROIs are visualized in a pie chart to highlight their relative importance in classification performance.
+
+#### 🧾 ML Command-Line Parameters Overview
+
+| Parameter              | Description                                     | Required in          |
+|------------------------|-------------------------------------------------|----------------------|
+| `--folder_path`        | Directory containing subject NIfTI images       | Training only        |
+| `--atlas_file`         | Original brain atlas in `.nii` or `.nii.gz`     | Training & Inference |
+| `--atlas_file_resized` | Resampled atlas aligned with image dimensions   | Training & Inference |
+| `--atlas_txt`          | Text file with ROI labels (one per line)        | Training & Inference |
+| `--metadata_csv`       | CSV file with subject IDs and diagnosis labels  | Training only        |
+| `--matlab_path`        | Folder containing MATLAB scripts                | Training & Inference |
+| `--classifier`         | Classifier type: `rf` (Random Forest) or `svm`  | Training only        |
+| `--n_iter`             | Number of combinations for parameters search    | Training only        |
+| `--cv`                 | Number of K-folds for cross-validation          | Training only        |
+| `--kernel`             | SVM kernel type: `linear` or `rbf`              | Training only        |
+| `--use_trained_model`  | Enables Inference Mode using a saved model      | Inference only       |
+| `--trained_model_path` | Path to a `.joblib` model previously trained    | Inference only       |
+| `--nifti_image_path`   | Directory with new subjects to classify         | Inference only       |
+
+---
+
+**The `CNN_main.py` script supports two execution modes**: Training mode and Inference mode.
+
+
+## 1. CNN Training Mode
+
+This mode trains a CNN model using the provided dataset and saves the resulting trained model for future inference.
+
+To handle the computational demands of 3D convolutional neural networks for Alzheimer’s classification,  
+we leveraged **GPU** acceleration. GPUs excel at parallel processing,  
+which significantly speeds up both data augmentation and model training.  
+
+By using **TensorFlow**’s GPU capabilities, we optimized the processing of large volumetric medical images,  
+substantially reducing training times.  
+
+**It is recommended to run this code on a machine equipped with a GPU  
+to fully benefit from these optimizations and accelerate the training process.**
+
+```bash
+python CNN_main.py \
+  --image_folder "/path/to/nifti_folder" \
+  --atlas_path  "/path/to/original_atlas.nii.gz" \
+  --metadata "/path/to/metadata.csv" \
+  --epochs <number_of_epochs> \
+  --batchsize <batch_size>
+```
+
+## 2. CNN inference Mode
+
+Uses a pre-trained CNN model to classify new independent NIfTI images.
+
+```bash
+python CNN_main.py \
+  --atlas_path  "/path/to/original_atlas.nii.gz" \
+  --nifti_image_path "/path/to/nifti_image" \
+  --use_trained_model \
+  --trained_model_path "/path/to/trained_model.h5"
+```
+
+#### CNN Notes
+
+- Ensure that the atlas file aligns with the resolution of the NIfTI images used for both training and inference.
+- In Training Mode, the `--metadata` file must include all necessary labels for proper model training.
+- The script supports dynamic batch sizes and epochs; experiment with these parameters to optimize training performance.
+- Pre-trained models must match the input data format and preprocessing pipeline to avoid compatibility issues during inference.
+- Inference Mode allows classification of a single image at a time; batch processing requires script modification.
+- If using a custom atlas, ensure it is preprocessed and compatible with the input data structure.
+
+#### 🧾 CNN Command-Line Parameters Overview
+
+| Parameter              | Description                                    | Required in    |
+| ---------------------- | ---------------------------------------------- | -------------- |
+| `--image_folder`       | Directory containing NIfTI images              | Training only  |
+| `--atlas_path`         | Path to the NIfTI atlas file                   | Both Modes     |
+| `--metadata`           | Path to a CSV file with metadata and labels    | Training only  |
+| `--epochs`             | Number of training epochs                      | Training only  |
+| `--batchsize`          | Batch size for model training                  | Training only  |
+| `--use_trained_model`  | Enables Inference Mode using a saved model     | Inference only |
+| `--trained_model_path` | Path to a `.h5` file for the trained model     | Inference only |
+| `--nifti_image_path`   | Path to a NIfTI image for classification       | Inference only |
 ---
 ## ⚖️ Conclusions: Comparing Machine Learning and Deep Learning Approaches
 
