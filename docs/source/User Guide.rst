@@ -3,7 +3,7 @@ User Guide
 
 This project offers two main scripts to run your analyses:
 
-1. **main.py**  
+1. **ML_main.py**  
    Use this script to run the traditional machine learning classifiers.
 
 2. **CNN_main.py**  
@@ -18,7 +18,7 @@ How to Run
 
   .. code-block:: bash
 
-      python main.py
+      python ML_main.py
 
 - To work with the CNN model, launch:
 
@@ -30,7 +30,7 @@ For both scripts, you can get a list of available options and required inputs by
 
 .. code-block:: bash
 
-    python main.py --help
+    python ML_main.py --help
 
 or
 
@@ -48,7 +48,7 @@ Both scripts support two modes:
 - **Training mode:** train a new model using your dataset.
 - **Classification mode:** use an already trained model to classify new images.
 
-When running `main.py`, you can specify which machine learning classifier to use and choose the desired mode directly from the command line.
+When running `ML_main.py`, you can specify which machine learning classifier to use and choose the desired mode directly from the command line.
 
 Similarly, `CNN_main.py` allows you to switch between training and classification modes via command-line arguments.
 
