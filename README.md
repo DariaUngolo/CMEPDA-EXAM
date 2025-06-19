@@ -139,7 +139,6 @@ The processed images are saved as **3D NumPy arrays** with a single intensity ch
 
 Voxel intensities are **not normalized between 0 and 1 by default**, but a built-in normalization function is available for users who wish to apply it.
 
----
 
 ### Data Augmentation Strategy for CNN
 
@@ -168,6 +167,10 @@ The binary classification task is tackled using two complementary approaches:
    - **Support Vector Machine (SVM)** with customizable kernels (e.g., linear, RBF)
 
 2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes.
+
+### Advanced ROI-based Analysis (ML)
+
+The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
 
 ### Evaluation Methodology 
 
@@ -203,10 +206,6 @@ Throughout training, the model logs per-epoch values of these metrics on the **t
 
 - Accuracy and loss curves for training and validation  
 - ROC curves for validation and test datasets
-
-### Advanced ROI-based Analysis (ML)
-
-The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
 
 
 ### Execution Modes: Training vs. Inference
@@ -349,8 +348,8 @@ python ML_main.py \
   --metadata_csv "/path/to/metadata.csv" \
   --matlab_path "/path/to/MATLAB_folder" \
   --classifier {rf, svm} \
-  --n_iter N_ITER \
-  --cv CV \
+  --n_iter <number_of_combinations> \
+  --cv <number_of_folds> \
   --kernel {linear, rbf}
 ```
 
@@ -412,7 +411,7 @@ This mode trains a CNN model using the provided dataset and saves the resulting 
 ```bash
 python CNN_main.py \
   --image_folder "/path/to/nifti_folder" \
-  --atlas_path "/lpba40.spm5.avg152T1.gm.label.nii.gz" \
+  --atlas_path  "/path/to/original_atlas.nii.gz" \
   --metadata "/path/to/metadata.csv" \
   --epochs <number_of_epochs> \
   --batchsize <batch_size>
@@ -424,7 +423,7 @@ Uses a pre-trained CNN model to classify new independent NIfTI images.
 
 ```bash
 python CNN_main.py \
-  --atlas_path "/lpba40.spm5.avg152T1.gm.label.nii.gz" \
+  --atlas_path  "/path/to/original_atlas.nii.gz" \
   --nifti_image_path "/path/to/nifti_image" \
   --use_trained_model \
   --trained_model_path "/path/to/trained_model.h5"
@@ -449,7 +448,7 @@ python CNN_main.py \
 | `--epochs`             | Number of training epochs                      | Training only  |
 | `--batchsize`          | Batch size for model training                  | Training only  |
 | `--use_trained_model`  | Enables Inference Mode using a saved model     | Inference only |
-| `--trained_model_path` | Path to a `.h5` file for the trained model | Inference only |
+| `--trained_model_path` | Path to a `.h5` file for the trained model     | Inference only |
 | `--nifti_image_path`   | Path to a NIfTI image for classification       | Inference only |
 
 
@@ -559,13 +558,13 @@ After the script completes execution, the following outputs are generated:
 
 ![ROC curve and AUC example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/ROC_rf_RFE_100_15_mean%2Bstd_BN.png)
 
-  3. **Performance Bar Chart**  
+  2. **Performance Bar Chart**  
      A bar plot comparing mean values (with error bars for confidence intervals) of each metric such as Accuracy, Precsion, Recall, F1 Score, Sensitivity and AUC.
      
 ![Bar chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/metrics_rf_RFE_100_15_mean%2Bstd_BN.png)
 
 
-  5. **Feature Importance Plot**  
+  3. **Feature Importance Plot**  
      (Only available if using Random Forest with RFECV)  
      Visualizes the most relevant features selected by the Recursive Feature Elimination process, ranked by importance.
      
@@ -601,7 +600,6 @@ The output allows for both binary classification and an assessment of prediction
 
 This project is structured around a modular **6-step pipeline** that includes preprocessing, augmentation, model training, and interactive classification of brain MRI data.
 
----
 
 ### 1. 🔍 GPU Configuration
 
@@ -612,7 +610,6 @@ Before any processing begins, the script detects available GPUs and configures m
   - `tf.config.list_physical_devices('GPU')`
   - GPU memory growth setup.
 
----
 
 ### 2. 🧪 Preprocessing
 
@@ -629,7 +626,6 @@ The preprocessing step processes NIfTI images and prepares them for CNN input. K
 - `preprocessed_images_group(...)`  
 - `normalize_images_uniformly(...)`
 
----
 
 ### 3. 🎨 Data Augmentation
 
@@ -643,7 +639,6 @@ Augments the dataset to improve model generalization and prevent overfitting. Te
 **Implemented by**:
 - `augment_images_with_labels_4d(...)`
 
----
 
 ### 4. 📂 Data Splitting
 
@@ -696,8 +691,6 @@ Trains a Convolutional Neural Network (CNN) model:
   - `MyCNNModel(input_shape=...)`
   - `model.compile_and_fit(...)`
 
----
-
 ### 6. 🧪 Interactive Classification
 
 After training, the user can optionally classify new NIfTI images using the trained model. Key steps:
@@ -714,7 +707,7 @@ After training, the user can optionally classify new NIfTI images using the trai
 - `adjust_image_shape(...)`  
 - `model.predict(...)`  
 
----
+
 
 ### 🛠 Outputs
 
@@ -728,14 +721,10 @@ After executing the pipeline, the following are produced:
 
 | Image          | Prediction | Probability |
 |-----------------|------------|-------------|
-| `patient_01.nii.gz` | 1          | ??       |
-| `patient_02.nii.gz` | 0          | ??       |
+| `patient_01.nii.gz` | 1          | 0.75       |
+| `patient_02.nii.gz` | 0          | 0.88      |
 
----
 
-This pipeline supports both training and inference in a modular and extensible manner, ensuring ease of use and adaptability to different datasets and configurations.
-
---
 - **📈 Visualization Outputs**
 
 1. **📋 Tabulated Metrics Summary**  
