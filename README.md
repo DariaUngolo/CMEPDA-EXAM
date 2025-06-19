@@ -407,6 +407,16 @@ python ML_main.py \
 
 This mode trains a CNN model using the provided dataset and saves the resulting trained model for future inference.
 
+To handle the computational demands of 3D convolutional neural networks for Alzheimer’s classification,  
+we leveraged **GPU** acceleration. GPUs excel at parallel processing,  
+which significantly speeds up both data augmentation and model training.  
+
+By using **TensorFlow**’s GPU capabilities, we optimized the processing of large volumetric medical images,  
+substantially reducing training times.  
+
+**It is recommended to run this code on a machine equipped with a GPU  
+to fully benefit from these optimizations and accelerate the training process.**
+
 ```bash
 python CNN_main.py \
   --image_folder "/path/to/nifti_folder" \

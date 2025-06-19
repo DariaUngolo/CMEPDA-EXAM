@@ -57,7 +57,7 @@ Similarly, `CNN_main.py` allows you to switch between training and classificatio
 Additional Resources
 ------------------------
 
-- Check the API Reference section for detailed descriptions of functions and parameters.
+- Check the 'Complete List of Classification Scripts with Documentation' section for detailed descriptions of functions and parameters.
 
 If you run into any issues, please refer to the Contributing section for reporting guidelines.
 
