@@ -22,19 +22,16 @@ Follow these steps to contribute to **CMEPDA-EXAM**:
 
 2. **Create a Feature Branch**  
    Create a new branch for your feature or bug fix:  
-   .. code-block:: bash
 
       git checkout -b feature-name
 
 3. **Make Your Changes**  
    Implement your changes locally. Commit them with clear and descriptive messages:  
-   .. code-block:: bash
 
       git commit -m "Add feature: feature description"
 
 4. **Push Your Changes**  
    Push your branch to your forked repository:  
-   .. code-block:: bash
 
       git push origin feature-name
 
