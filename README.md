@@ -469,7 +469,7 @@ Splits the dataset into three subsets:
 
 Trains a Convolutional Neural Network (CNN) model:
 
-- **Model Architecture**: Created using the `MyCNNModel` class.  
+- **Model Architecture**: DA CAMBIAREEEEEEEEEEEE Created using the `MyCNNModel` class.  
     This is a 3D CNN designed for volumetric data. It consists of four convolutional blocks followed by a classification head.
 
     **Architecture:**
