@@ -474,21 +474,21 @@ Trains a Convolutional Neural Network (CNN) model:
 
     **Architecture:**
     - **Block 1**  
-      `MaxPooling3D → Conv3D(8) → PReLU → BatchNorm → Dropout(0.1)`
+      ` Conv3D(8) → ReLU → BatchNorm →MaxPooling3D → Dropout(0.1)`
 
     - **Block 2**  
-      `MaxPooling3D → Conv3D(16) → PReLU → BatchNorm → Dropout(0.2)`
+      `Conv3D(16) → ReLU → BatchNorm →MaxPooling3D →  Dropout(0.2)`
 
     - **Block 3**  
-      `Conv3D(32) → PReLU → BatchNorm → MaxPooling3D → Dropout(0.2)`
+      `Conv3D(32) → ReLU  → MaxPooling3D → Dropout(0.2)`
 
     - **Block 4**  
-      `Conv3D(32) → PReLU → BatchNorm → Dropout(0.2)`
+      `Conv3D(32) → ReLU → Dropout(0.2)`
 
     - **Classification Head**  
-      `GlobalAvgPool3D → Dense(32, ReLU) → Dropout(0.3) → Dense(1, Sigmoid)`
+      `Flatten → Dense(32, ReLU) → Dropout(0.3) → Dense(1, Sigmoid)`
 
-      The model uses L2 regularization, PReLU activations, and pooling to reduce dimensionality and prevent overfitting.
+      The model uses L2/L1 regularization, ReLU activations, and pooling to reduce dimensionality and prevent overfitting.
 
     - **Input Shape**: Derived automatically from the preprocessed data.
 
@@ -517,13 +517,6 @@ After executing the pipeline, the following are produced:
 1. **Trained Model**: Saved as `trained_model.h5` for future use.
 2. **Classification Results**: A tabulated summary of predictions during interactive classification.
 3. **Performance Logs**: Detailed logs, including GPU usage and intermediate steps, to assist debugging and performance analysis.
-
-**Example Classification Results**:
-
-| Image          | Prediction | Probability |
-|-----------------|------------|-------------|
-| `patient_01.nii.gz` | 1          | 0.75       |
-| `patient_02.nii.gz` | 0          | 0.88      |
 
 
 - **📈 Visualization Outputs**
