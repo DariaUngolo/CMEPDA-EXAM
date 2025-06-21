@@ -529,14 +529,12 @@ After executing the pipeline, the following are produced:
 | Val_Accuracy      | 0.68     | ± 0.07         |
 | Val_Recall        |  0.60      | ± 0.07      |
 | Val_AUC           |  0.76      | ± 0.07       |
-| Val_ROC           |  0.76      | ±       |
 
 | **Test_Metric**    | **Score** | **± Error** |
 |---------------|-----------|-------------|
 | Test_Accuracy      | 0.72      | ± 0.06         |
 | Test_Recall        |  0.79        | ± 0.06        |
-| Test_AUC           |  0.8        | ± 0.06       |
-| Test_ROC           |  0.8        | ±       |
+| Test_AUC           |  0.80        | ± 0.06       |
 
 2. **Training and Validation Performance (Plot)**  
    This figure shows both **Loss** and **AUC** curves during training and validation.  
