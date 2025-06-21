@@ -529,25 +529,21 @@ After executing the pipeline, the following are produced:
 - **📈 Visualization Outputs**
 
 1. **📋 Tabulated Metrics Summary**  
-  A table summarizing all key metrics for training dtata, validation data and test data:
-
-| **Train_Metric**    | **Score** | **± Error** |
-|---------------|-----------|-------------|
-| Train_Accuracy      | ??      | ± ??         |
-| Train_Recall        |  ??        | ± ??        |
-| Train_AUC           |  ??        | ± ??        |
+  A table summarizing all key metrics for validation data and test data:
 
 | **Val_Metric**    | **Score** | **± Error** |
 |---------------|-----------|-------------|
-| Val_Accuracy      | ??      | ± ??         |
-| Val_Recall        |  ??        | ± ??        |
-| Val_AUC           |  ??        | ± ??        |
+| Val_Accuracy      | 0.68     | ± 0.07         |
+| Val_Recall        |  0.60      | ± 0.07      |
+| Val_AUC           |  0.76      | ± 0.07       |
+| Val_ROC           |  0.76      | ±       |
 
 | **Test_Metric**    | **Score** | **± Error** |
 |---------------|-----------|-------------|
-| Test_Accuracy      | ??      | ± ??         |
-| Test_Recall        |  ??        | ± ??        |
-| Test_AUC           |  ??        | ± ??        |
+| Test_Accuracy      | 0.72      | ± 0.06         |
+| Test_Recall        |  0.79        | ± 0.06        |
+| Test_AUC           |  0.8        | ± 0.06       |
+| Test_ROC           |  0.8        | ±       |
 
 2. **Training and Validation Performance (Plot)**  
    This figure shows both **Loss** and **AUC** curves during training and validation.  
@@ -567,9 +563,22 @@ After executing the pipeline, the following are produced:
 
 ![Test ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_test_roc.png)
 
+- **🧠 Prediction Output**
+
+When applying a trained model to an independent test image (e.g., from an external dataset), the pipeline returns a **prediction table** with the following information for each subject:
+
+- **`Label`**: The predicted class, where:
+  - `0` indicates a healthy subject (control),
+  - `1` indicates a subject classified as having Alzheimer’s disease.
+  - 
+| Subject ID | Label | Probability |
+|------------|-------|-------------|
+| sub-001    | 1     | 0.99        |
+
+
+- In this example:
+  - `sub-001` is predicted as having Alzheimer’s disease with high confidence.
 ---
-
-
 ## 🚀 How to Run
 
 > 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
