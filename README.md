@@ -469,7 +469,7 @@ Splits the dataset into three subsets:
 
 Trains a Convolutional Neural Network (CNN) model:
 
-- **Model Architecture**: DA CAMBIAREEEEEEEEEEEE Created using the `MyCNNModel` class.  
+- **Model Architecture**: Created using the `MyCNNModel` class.  
     This is a 3D CNN designed for volumetric data. It consists of four convolutional blocks followed by a classification head.
 
     **Architecture:**
@@ -542,8 +542,7 @@ After executing the pipeline, the following are produced:
    This figure shows both **Loss** and **AUC** curves during training and validation.  
    The top subplot compares the training and validation AUC across epochs, while the bottom subplot compares the corresponding Loss. This visualization helps identify potential overfitting or underfitting during model training.
 
-![AUC and Loss during training and validation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_auc_loss_train%2Bval.png)
-
+![AUC and Loss during training and validation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/AUC_loss_train%2Bval.png) 
 3. **Validation ROC Curve**  
    Displays the Receiver Operating Characteristic (ROC) curve on the validation set.  
    This curve helps evaluate how well the model distinguishes between classes before final testing.
