@@ -299,7 +299,7 @@ def main():
     atlas_resampling(args.atlas_file, args.atlas_file_resized, target_voxel, order=0)
 
     # === Step 2: Start MATLAB engine for feature extraction ===
-    logger.info("🔧 Starting MATLAB engine...")
+    logger.info(" Starting MATLAB engine...")
     eng = matlab.engine.start_matlab()
     eng.addpath(args.matlab_path, nargout=0)
 
@@ -416,3 +416,4 @@ def main():
 if __name__ == "__main__":
     main()
 
+ 
