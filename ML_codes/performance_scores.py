@@ -46,7 +46,46 @@ def compute_binomial_error(metric_value, n_samples, confidence_level):
     z = norm.ppf((1 + confidence_level) / 2.0)
     return z * np.sqrt((metric_value * (1 - metric_value)) / n_samples)
 
+def bootstrap_confidence_interval(metric_func, y_true, y_pred, n_iterations=1000, confidence_level=0.683, random_state=42):
+    """
+    Estimate confidence interval of a metric via bootstrap resampling.
 
+    Parameters
+    ----------
+    metric_func : callable
+        Function that computes the metric (e.g., f1_score).
+    y_true : array-like
+        True labels.
+    y_pred : array-like
+        Predicted labels.
+    n_iterations : int
+        Number of bootstrap resamples.
+    confidence_level : float
+        Confidence level (e.g., 0.683 = ±1σ).
+    random_state : int
+        Random seed for reproducibility.
+
+    Returns
+    -------
+    float
+        Estimated error margin (half-width of the confidence interval).
+    """
+    rng = np.random.default_rng(random_state)
+    scores = []
+
+    n = len(y_true)
+    for _ in range(n_iterations):
+        indices = rng.integers(0, n, size=n)
+        score = metric_func(np.array(y_true)[indices], np.array(y_pred)[indices])
+        scores.append(score)
+
+    scores = np.sort(scores)
+    lower_idx = int(((1 - confidence_level) / 2) * n_iterations)
+    upper_idx = int((1 + confidence_level) / 2 * n_iterations)
+    lower = scores[lower_idx]
+    upper = scores[upper_idx]
+
+    return (upper - lower) / 2  # half-width of confidence interval
 
 def compute_roc_and_auc(y_true, y_prob):
 
@@ -236,7 +275,6 @@ def evaluate_model_performance(y_true, y_pred, y_prob, confidence_level=0.683):
 
     """
     logger.info("Evaluating model performance...")
-    confidence_level=0.683
 
     # Ensure probabilities are 1D for the positive class
     if y_prob.ndim == 2:
@@ -255,12 +293,15 @@ def evaluate_model_performance(y_true, y_pred, y_prob, confidence_level=0.683):
     logger.info("Computing error margins for classification metrics...")
 
     # Estimate errors using normal approximation
-    n = len(y_true)
-    accuracy_err = compute_binomial_error(accuracy, n, confidence_level)
-    precision_err = compute_binomial_error(precision, n, confidence_level)
-    recall_err = compute_binomial_error(recall, n, confidence_level)
-    f1_err = compute_binomial_error(f1, n, confidence_level)
-    specificity_err = compute_binomial_error(specificity, n, confidence_level)
+  
+    accuracy_err = compute_binomial_error(accuracy, len(y_true), confidence_level)
+    precision_err = compute_binomial_error(precision, tp+fp, confidence_level)
+    recall_err = compute_binomial_error(recall, tp+fn, confidence_level)
+    #f1_err = compute_binomial_error(f1, len(y_true), confidence_level)
+    specificity_err = compute_binomial_error(specificity, tn+fp, confidence_level)
+
+    # Bootstrap error for F1
+    f1_err = bootstrap_confidence_interval(f1_score, y_true, y_pred, confidence_level=confidence_level)
 
     # Compute ROC curve and AUC
     fpr, tpr, roc_auc, auc_err = compute_roc_and_auc(y_true, y_prob)
