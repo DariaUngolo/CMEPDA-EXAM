@@ -802,34 +802,35 @@ This project integrates insights, tools, and techniques from both the neuroimagi
 
 ### 🧠 Neuroimaging and Brain Atlases
 
-1. Retico, Alessandra, et al. (2015). *Predictive Models Based on Support Vector Machines:
+1. Retico A. , et al. (2015). *Predictive Models Based on Support Vector Machines:
 Whole-Brain versus Regional Analysis of Structural MRI
 in the Alzheimer’s Disease*. **J Neuroimaging**, 25:552-563.  
    [DOI: 10.1111/jon.12163]
+2. Hanley J. , McNeil B., (1982). *The Meaning and Use of the Area under a Receiver Operating Characteristic (ROC) curve*. **Radiology**, [DOI: 10.1148/radiology.143.1.7063747]
 
-2. Sarraf, S, et al. (2017). *DeepAD: Alzheimer’s Disease Classification via Deep Convolutional Neural Networks using MRI and fMRI*. **BioRxiv preprint**, 1-32. [DOI: https://doi.org/10.1101/070441]
+3. Sarraf, S, et al. (2017). *DeepAD: Alzheimer’s Disease Classification via Deep Convolutional Neural Networks using MRI and fMRI*. **BioRxiv preprint**, 1-32. [DOI: https://doi.org/10.1101/070441]
 
-3. The **atlases** are: *BN_Atlas_246_2mm.nii.gz* from [https://atlas.brainnetome.org/] & *lpba40_56.nii.gz* from [https://www.loni.usc.edu/research/atlases]
+4. The **atlases** are: *BN_Atlas_246_2mm.nii.gz* from [https://atlas.brainnetome.org/] & *lpba40_56.nii.gz* from [https://www.loni.usc.edu/research/atlases]
 
 
 ### 🤖 Machine Learning and Deep Learning
 
-4. Breiman, L. (2001). *Random Forests*. **Machine Learning**, 45(1), 5–32.  
+5. Breiman, L. (2001). *Random Forests*. **Machine Learning**, 45(1), 5–32.  
    [https://doi.org/10.1023/A:1010933404324](https://doi.org/10.1023/A:1010933404324)
 
-5. Cortes, C., & Vapnik, V. (1995). *Support-vector networks*. **Machine Learning**, 20, 273–297.  
+6. Cortes, C., & Vapnik, V. (1995). *Support-vector networks*. **Machine Learning**, 20, 273–297.  
    [https://doi.org/10.1007/BF00994018](https://doi.org/10.1007/BF00994018)
 
-6. LeCun, Y., Bengio, Y., & Hinton, G. (2015). *Deep learning*. **Nature**, 521(7553), 436–444.  
+7. LeCun, Y., Bengio, Y., & Hinton, G. (2015). *Deep learning*. **Nature**, 521(7553), 436–444.  
    [https://doi.org/10.1038/nature14539](https://doi.org/10.1038/nature14539)
 
 
 ### 🧰 Tools and Frameworks
 
-7. Hunter, J. D. (2007). *Matplotlib: A 2D graphics environment*. **Computing in Science & Engineering**, 9(3), 90–95.  
+8. Hunter, J. D. (2007). *Matplotlib: A 2D graphics environment*. **Computing in Science & Engineering**, 9(3), 90–95.  
    [https://doi.org/10.1109/MCSE.2007.55](https://doi.org/10.1109/MCSE.2007.55)
 
-8. Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. **Journal of Machine Learning Research**, 12, 2825–2830.  
+9. Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. **Journal of Machine Learning Research**, 12, 2825–2830.  
    [http://jmlr.org/papers/v12/pedregosa11a.html](http://jmlr.org/papers/v12/pedregosa11a.html)
 
 
