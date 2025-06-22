@@ -474,21 +474,21 @@ Trains a Convolutional Neural Network (CNN) model:
 
     **Architecture:**
     - **Block 1**  
-      `MaxPooling3D → Conv3D(8) → PReLU → BatchNorm → Dropout(0.1)`
+      ` Conv3D(8) → ReLU → BatchNorm →MaxPooling3D → Dropout(0.1)`
 
     - **Block 2**  
-      `MaxPooling3D → Conv3D(16) → PReLU → BatchNorm → Dropout(0.2)`
+      `Conv3D(16) → ReLU → BatchNorm →MaxPooling3D →  Dropout(0.2)`
 
     - **Block 3**  
-      `Conv3D(32) → PReLU → BatchNorm → MaxPooling3D → Dropout(0.2)`
+      `Conv3D(32) → ReLU  → MaxPooling3D → Dropout(0.2)`
 
     - **Block 4**  
-      `Conv3D(32) → PReLU → BatchNorm → Dropout(0.2)`
+      `Conv3D(32) → ReLU → Dropout(0.2)`
 
     - **Classification Head**  
-      `GlobalAvgPool3D → Dense(32, ReLU) → Dropout(0.3) → Dense(1, Sigmoid)`
+      `Flatten → Dense(32, ReLU) → Dropout(0.3) → Dense(1, Sigmoid)`
 
-      The model uses L2 regularization, PReLU activations, and pooling to reduce dimensionality and prevent overfitting.
+      The model uses L2/L1 regularization, ReLU activations, and pooling to reduce dimensionality and prevent overfitting.
 
     - **Input Shape**: Derived automatically from the preprocessed data.
 
@@ -518,43 +518,29 @@ After executing the pipeline, the following are produced:
 2. **Classification Results**: A tabulated summary of predictions during interactive classification.
 3. **Performance Logs**: Detailed logs, including GPU usage and intermediate steps, to assist debugging and performance analysis.
 
-**Example Classification Results**:
-
-| Image          | Prediction | Probability |
-|-----------------|------------|-------------|
-| `patient_01.nii.gz` | 1          | 0.75       |
-| `patient_02.nii.gz` | 0          | 0.88      |
-
 
 - **📈 Visualization Outputs**
 
 1. **📋 Tabulated Metrics Summary**  
-  A table summarizing all key metrics for training dtata, validation data and test data:
-
-| **Train_Metric**    | **Score** | **± Error** |
-|---------------|-----------|-------------|
-| Train_Accuracy      | ??      | ± ??         |
-| Train_Recall        |  ??        | ± ??        |
-| Train_AUC           |  ??        | ± ??        |
+  A table summarizing all key metrics for validation data and test data:
 
 | **Val_Metric**    | **Score** | **± Error** |
 |---------------|-----------|-------------|
-| Val_Accuracy      | ??      | ± ??         |
-| Val_Recall        |  ??        | ± ??        |
-| Val_AUC           |  ??        | ± ??        |
+| Val_Accuracy      | 0.68     | ± 0.07         |
+| Val_Recall        |  0.60      | ± 0.07      |
+| Val_AUC           |  0.76      | ± 0.07       |
 
 | **Test_Metric**    | **Score** | **± Error** |
 |---------------|-----------|-------------|
-| Test_Accuracy      | ??      | ± ??         |
-| Test_Recall        |  ??        | ± ??        |
-| Test_AUC           |  ??        | ± ??        |
+| Test_Accuracy      | 0.72      | ± 0.06         |
+| Test_Recall        |  0.79        | ± 0.06        |
+| Test_AUC           |  0.80        | ± 0.06       |
 
 2. **Training and Validation Performance (Plot)**  
    This figure shows both **Loss** and **AUC** curves during training and validation.  
    The top subplot compares the training and validation AUC across epochs, while the bottom subplot compares the corresponding Loss. This visualization helps identify potential overfitting or underfitting during model training.
 
-![AUC and Loss during training and validation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_auc_loss_train%2Bval.png)
-
+![AUC and Loss during training and validation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/AUC_loss_train%2Bval.png) 
 3. **Validation ROC Curve**  
    Displays the Receiver Operating Characteristic (ROC) curve on the validation set.  
    This curve helps evaluate how well the model distinguishes between classes before final testing.
@@ -567,9 +553,22 @@ After executing the pipeline, the following are produced:
 
 ![Test ROC Curve](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/CNN_test_roc.png)
 
+- **🧠 Prediction Output**
+
+When applying a trained model to an independent test image (e.g., from an external dataset), the pipeline returns a **prediction table** with the following information for each subject:
+
+- **`Label`**: The predicted class, where:
+  - `0` indicates a healthy subject (control),
+  - `1` indicates a subject classified as having Alzheimer’s disease.
+  - 
+| Subject ID | Label | Probability |
+|------------|-------|-------------|
+| sub-001    | 1     | 0.99        |
+
+
+- In this example:
+  - `sub-001` is predicted as having Alzheimer’s disease with high confidence.
 ---
-
-
 ## 🚀 How to Run
 
 > 🧭 **Important:** You must run the script from the **root directory of the project** using a terminal.
@@ -803,34 +802,35 @@ This project integrates insights, tools, and techniques from both the neuroimagi
 
 ### 🧠 Neuroimaging and Brain Atlases
 
-1. Retico, Alessandra, et al. (2015). *Predictive Models Based on Support Vector Machines:
+1. Retico A. , et al. (2015). *Predictive Models Based on Support Vector Machines:
 Whole-Brain versus Regional Analysis of Structural MRI
 in the Alzheimer’s Disease*. **J Neuroimaging**, 25:552-563.  
    [DOI: 10.1111/jon.12163]
+2. Hanley J. , McNeil B., (1982). *The Meaning and Use of the Area under a Receiver Operating Characteristic (ROC) curve*. **Radiology**, [DOI: 10.1148/radiology.143.1.7063747]
 
-2. Sarraf, S, et al. (2017). *DeepAD: Alzheimer’s Disease Classification via Deep Convolutional Neural Networks using MRI and fMRI*. **BioRxiv preprint**, 1-32. [DOI: https://doi.org/10.1101/070441]
+3. Sarraf, S, et al. (2017). *DeepAD: Alzheimer’s Disease Classification via Deep Convolutional Neural Networks using MRI and fMRI*. **BioRxiv preprint**, 1-32. [DOI: https://doi.org/10.1101/070441]
 
-3. The **atlases** are: *BN_Atlas_246_2mm.nii.gz* from [https://atlas.brainnetome.org/] & *lpba40_56.nii.gz* from [https://www.loni.usc.edu/research/atlases]
+4. The **atlases** are: *BN_Atlas_246_2mm.nii.gz* from [https://atlas.brainnetome.org/] & *lpba40_56.nii.gz* from [https://www.loni.usc.edu/research/atlases]
 
 
 ### 🤖 Machine Learning and Deep Learning
 
-4. Breiman, L. (2001). *Random Forests*. **Machine Learning**, 45(1), 5–32.  
+5. Breiman, L. (2001). *Random Forests*. **Machine Learning**, 45(1), 5–32.  
    [https://doi.org/10.1023/A:1010933404324](https://doi.org/10.1023/A:1010933404324)
 
-5. Cortes, C., & Vapnik, V. (1995). *Support-vector networks*. **Machine Learning**, 20, 273–297.  
+6. Cortes, C., & Vapnik, V. (1995). *Support-vector networks*. **Machine Learning**, 20, 273–297.  
    [https://doi.org/10.1007/BF00994018](https://doi.org/10.1007/BF00994018)
 
-6. LeCun, Y., Bengio, Y., & Hinton, G. (2015). *Deep learning*. **Nature**, 521(7553), 436–444.  
+7. LeCun, Y., Bengio, Y., & Hinton, G. (2015). *Deep learning*. **Nature**, 521(7553), 436–444.  
    [https://doi.org/10.1038/nature14539](https://doi.org/10.1038/nature14539)
 
 
 ### 🧰 Tools and Frameworks
 
-7. Hunter, J. D. (2007). *Matplotlib: A 2D graphics environment*. **Computing in Science & Engineering**, 9(3), 90–95.  
+8. Hunter, J. D. (2007). *Matplotlib: A 2D graphics environment*. **Computing in Science & Engineering**, 9(3), 90–95.  
    [https://doi.org/10.1109/MCSE.2007.55](https://doi.org/10.1109/MCSE.2007.55)
 
-8. Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. **Journal of Machine Learning Research**, 12, 2825–2830.  
+9. Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. **Journal of Machine Learning Research**, 12, 2825–2830.  
    [http://jmlr.org/papers/v12/pedregosa11a.html](http://jmlr.org/papers/v12/pedregosa11a.html)
 
 
