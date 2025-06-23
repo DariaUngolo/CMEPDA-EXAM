@@ -271,7 +271,7 @@ def main():
                 args.atlas_txt,
                 args.matlab_path
             )
-            classification, probability = classify_independent_dataset(df_mean_std_volume, args.trained_model_path)
+            classification, probability = classify_independent_dataset(df_mean_std, args.trained_model_path)
 
             if classification == 1:
                     selected_probability = probability[1]
@@ -416,4 +416,3 @@ def main():
 if __name__ == "__main__":
     main()
 
- 
