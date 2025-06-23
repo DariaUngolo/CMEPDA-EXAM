@@ -424,7 +424,7 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate', labelpad=2, fontweight='semibold')
         plt.ylabel('True Positive Rate', labelpad=2, fontweight='semibold')
-        plt.title(f'{dataset_name}.capitalize() ROC', fontweight='bold', pad=4)
+        plt.title(f'{dataset_name} ROC', fontweight='bold', pad=4)
         plt.legend(loc="lower right", frameon=False)
         plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
         plt.tick_params(axis='both', direction='in', length=2, width=0.3)

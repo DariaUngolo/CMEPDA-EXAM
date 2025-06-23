@@ -419,9 +419,6 @@ This project is structured around a modular **6-step pipeline** that includes pr
 Before any processing begins, the script detects available GPUs and configures memory growth to optimize usage. If no GPU is detected, it defaults to CPU execution.
 
 - **Purpose**: Ensures compatibility with various hardware configurations and leverages GPU acceleration when available.
-- **Implemented by**:
-  - `tf.config.list_physical_devices('GPU')`
-  - GPU memory growth setup.
 
 
 ### 2. 🧪 Preprocessing
