@@ -10,20 +10,22 @@ import scipy
 import tensorflow
 from sklearn.metrics import roc_curve, auc
 from sklearn.utils import class_weight
-from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization,LeakyReLU, Activation, Dropout,PReLU, GlobalAveragePooling3D)
+from keras.layers import (MaxPooling3D, Conv3D, Flatten, Dense,Input, BatchNormalization,LeakyReLU, Activation, Dropout,PReLU, ReLU, GlobalAveragePooling3D)
 from keras.optimizers import SGD
 
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import l2
+from tensorflow.keras.regularizers import l2, l1
 from tensorflow.keras.models import load_model, Model, Sequential
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.initializers import HeNormal
+import random
 
 from keras.losses import BinaryCrossentropy, MeanSquaredError
 import seaborn as sns
 
 
 from loguru import logger
+
 
 # Configure logger: you can customize the format, level, output file, etc.
 logger.remove()  # Remove default logger to customize
@@ -78,49 +80,45 @@ class MyCNNModel(tensorflow.keras.Model):
 
         """
 
-        logger.info("Initializing MyCNNModel with input shape: %s", input_shape)
+        logger.info(f"Initializing MyCNNModel with input shape: {input_shape}")
         super(MyCNNModel, self).__init__()
 
         # Define the model architecture using Keras Sequential API
         self.model = Sequential([
 
             # First block
+            Conv3D(8, kernel_size=3,kernel_initializer=HeNormal(), activation=None, padding='same',kernel_regularizer=l1(0.001)),
+            BatchNormalization(),
+            ReLU(),
             MaxPooling3D(pool_size=(2, 2, 2)),
-            Conv3D(8, kernel_size=3,kernel_initializer=HeNormal(), activation=None, padding='same',kernel_regularizer=l2(0.001)),
-            BatchNormalization(),
-            PReLU(),
-            BatchNormalization(),
-            Dropout(0.1),
+            Dropout(0.3),
 
             # Second block
-            MaxPooling3D(pool_size=(2, 2, 2)),
-            Conv3D(16, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
-            PReLU(),
+            Conv3D(16, kernel_size=3, activation=None, padding='same', kernel_regularizer=l1(0.001)),
             BatchNormalization(),
-            Dropout(0.2),
+            ReLU(),
+            MaxPooling3D(pool_size=(2, 2, 2)),
+            Dropout(0.3),
 
             # Third block
-            Conv3D(32, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
-            PReLU(),
-            BatchNormalization(),
+            Conv3D(32, kernel_size=3, activation=None, padding='same', kernel_regularizer=l1(0.001)),
+            ReLU(),
             MaxPooling3D(pool_size=(2, 2, 2)),
-            Dropout(0.2),
+            Dropout(0.3),
 
             # Fourth block (extra layer)
-            Conv3D(32, kernel_size=3, activation=None, padding='same', kernel_regularizer=l2(0.001)),
-            PReLU(),
-            BatchNormalization(),
-            Dropout(0.2),
+            Conv3D(32, kernel_size=3, activation=None, padding='same', kernel_regularizer=l1(0.001)),
+            ReLU(),
+            Dropout(0.4),
 
-            # Global Average Pooling
-            GlobalAveragePooling3D(),
+            #Flatten
+            Flatten(),
 
             # Fully connected layers
-            Dense(32, activation='relu', kernel_regularizer=l2(0.0001)),
+            Dense(32, activation='relu', kernel_regularizer=l2(0.001)),
             Dropout(0.3),
             Dense(1, activation='sigmoid')  # Binary classification
         ])
-
         logger.info("Model architecture successfully initialized.")
 
     def extract_data_and_labels(self, dataset):
@@ -203,7 +201,7 @@ class MyCNNModel(tensorflow.keras.Model):
         logger.info(f"Starting training with {n_epochs} epochs and batch size {batchsize}")
 
         self.compile(
-            optimizer=Adam(learning_rate=0.0001),
+            optimizer=Adam(learning_rate=0.001),
             loss=BinaryCrossentropy(),
             metrics=['accuracy', tensorflow.keras.metrics.AUC(), tensorflow.keras.metrics.Recall()]
         )
@@ -226,11 +224,11 @@ class MyCNNModel(tensorflow.keras.Model):
         early_stopping = EarlyStopping(
                 monitor="val_loss",
                 min_delta=0,
-                patience=25,
+                patience=30,
                 verbose=1,
                 mode="auto",
                 restore_best_weights=True,
-                start_from_epoch=10
+                start_from_epoch=30
         )
 
 
@@ -240,9 +238,6 @@ class MyCNNModel(tensorflow.keras.Model):
         val_dataset = tensorflow.data.Dataset.from_tensor_slices((x_val, y_val)).batch(batchsize).prefetch(tensorflow.data.AUTOTUNE)
         test_dataset = tensorflow.data.Dataset.from_tensor_slices((x_test, y_test)).batch(batchsize).prefetch(tensorflow.data.AUTOTUNE)
 
-        # Extract all validation and test data batches for ROC calculation
-        x_val, y_val = self.extract_data_and_labels(val_dataset)
-        x_test, y_test = self.extract_data_and_labels(test_dataset)
 
         weights = class_weight.compute_class_weight(class_weight='balanced',
                                                     classes=np.unique(y_train),
@@ -250,19 +245,17 @@ class MyCNNModel(tensorflow.keras.Model):
 
         class_weights = {0: weights[0], 1: weights[1]}
 
-        # Save best model
-        model_checkpoint=ModelCheckpoint("best_modelCNN.keras", save_best_only=True)
 
         # Train the model
         history = self.fit(
                 train_dataset,
                 #batch_size=batchsize,
                 epochs=n_epochs,
-                steps_per_epoch=round(len(x_train) // batchsize),
+                steps_per_epoch=(len(x_train) // batchsize),
                 verbose=2,
                 validation_data=val_dataset,
                 validation_steps=round(len(x_val) // batchsize),
-                callbacks=[reduce_on_plateau,early_stopping, model_checkpoint],
+                callbacks=[reduce_on_plateau,early_stopping],
                 class_weight=class_weights
         )
         logger.info("Model training completed.")
@@ -277,8 +270,8 @@ class MyCNNModel(tensorflow.keras.Model):
 
 
         # Evaluate model performance on validation and test datasets using ROC curve
-        self.validation_roc(x_val, y_val)
-        self.test_roc(x_test, y_test)
+        self.compute_and_plot_roc(x_val, y_val, dataset_name="validation")
+        self.compute_and_plot_roc(x_test, y_test, dataset_name="test")
 
 
 
@@ -359,48 +352,49 @@ class MyCNNModel(tensorflow.keras.Model):
 
         logger.info("AUC and loss plots displayed.")
 
-    def validation_roc(self, x_val, y_val):
+    def compute_and_plot_roc(self, x_data, y_data, dataset_name="validation"):
         """
-        Evaluates the model using ROC on validation data.
+            Evaluates the model using ROC on provided dataset.
 
-        Parameters
-        ----------
-        x_val : np.ndarray
-            Validation feature data.
-        y_val : np.ndarray
-            Validation labels.
+            Parameters
+            ----------
+            x_data : np.ndarray
+                Feature data (e.g., validation or test).
+            y_data : np.ndarray
+                True binary labels.
+            dataset_name : str
+                Name of the dataset for labeling/logging (e.g., "validation", "test").
+            """
 
-        """
-
-        logger.info("Calculating ROC curve for validation data.")
+        logger.info(f"Calculating ROC curve for {dataset_name} data.")
         confidence_int = 0.683  # Confidence interval for accuracy error bars
         z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)
 
         # Evaluate accuracy on validation data
-        val_results = self.evaluate(x_val, y_val, verbose=0)
-        _, val_acc, val_auc, val_recall = val_results
-        accuracy_err = z_score * np.sqrt((val_acc * (1 - val_acc)) / y_val.shape[0])
-        recall_err = z_score * np.sqrt((val_recall * (1 - val_recall)) / y_val.shape[0])
-        logger.info(f"Validation Accuracy: {round(val_acc, 2)} ± {round(accuracy_err, 2)}")
-        logger.info(f"Validation Recall: {round(val_recall, 2)} ± {round(recall_err, 2)}")
+        results = self.evaluate(x_data, y_data, verbose=0)
+        _, acc, auc_value, recall = results
+        accuracy_err = z_score * np.sqrt((acc * (1 - acc)) / y_data.shape[0])
+        recall_err = z_score * np.sqrt((recall * (1 - recall)) / y_data.shape[0])
+        logger.info(f"{dataset_name} Accuracy: {round(acc, 2)} ± {round(accuracy_err, 2)}")
+        logger.info(f"{dataset_name} Recall: {round(recall, 2)} ± {round(recall_err, 2)}")
 
 
 
         # Generate predictions and compute ROC curve
-        preds = self.predict(x_val, verbose=1)
-        fpr, tpr, _ = roc_curve(y_val, preds)
+        preds = self.predict(x_data, verbose=1)
+        fpr, tpr, _ = roc_curve(y_data, preds)
         roc_auc = auc(fpr, tpr)
-        logger.info(f"Validation ROC AUC: {round(roc_auc, 2)}")
+        logger.info(f"{dataset_name} ROC AUC: {round(roc_auc, 2)}")
 
         # Calculate standard error for AUC
-        n1 = np.sum(y_val == 1)
-        n2 = np.sum(y_val == 0)
+        n1 = np.sum(y_data == 1)
+        n2 = np.sum(y_data == 0)
         q1 = roc_auc / (2 - roc_auc)
         q2 = 2 * roc_auc ** 2 / (1 + roc_auc)
         auc_err = z_score * np.sqrt(
             (roc_auc * (1 - roc_auc) + (n1 - 1) * (q1 - roc_auc ** 2) + (n2 - 1) * (q2 - roc_auc ** 2)) / (n1 * n2)
         )
-        logger.info(f"Validation AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
+        logger.info(f"{dataset_name} AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
 
         # Update matplotlib configuration for high-quality, compact plots
         plt.rcParams.update({
@@ -430,7 +424,7 @@ class MyCNNModel(tensorflow.keras.Model):
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate', labelpad=2, fontweight='semibold')
         plt.ylabel('True Positive Rate', labelpad=2, fontweight='semibold')
-        plt.title('Validation ROC', fontweight='bold', pad=4)
+        plt.title(f'{dataset_name}.capitalize() ROC', fontweight='bold', pad=4)
         plt.legend(loc="lower right", frameon=False)
         plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
         plt.tick_params(axis='both', direction='in', length=2, width=0.3)
@@ -439,105 +433,13 @@ class MyCNNModel(tensorflow.keras.Model):
 
         # Save image to current script directory
         base_path = os.path.dirname(os.path.abspath(__file__))
-        save_path = os.path.join(base_path, 'CNN_validation_roc.png')
+        save_path = os.path.join(base_path, f'CNN_{dataset_name}_roc.png')
         plt.savefig(save_path)
 
         plt.show()
-        print("[DEBUG] validation_roc: plot mostrato")
+        print(f"[DEBUG] {dataset_name}_roc: plot saved")
 
 
-    def test_roc(self, x_test, y_test):
-
-        """
-
-        Evaluates the model's performance on test data using ROC analysis.
-
-        This method computes the ROC curve and its corresponding area under the curve (AUC)
-        for the given test dataset. It also calculates the confidence intervals
-        for accuracy and AUC based on the given confidence level.
-
-        Parameters:
-
-        ----------
-
-        x_test : numpy.ndarray
-            Test feature data.
-        y_test : numpy.ndarray
-            Test labels.
-
-        """
-        logger.info("Starting ROC curve computation for test data.")
-        confidence_int = 0.683  # Confidence level
-        z_score = scipy.stats.norm.ppf((1 + confidence_int) / 2.0)
-
-        # Evaluate accuracy on test data
-
-        test_results = self.evaluate(x_test, y_test, verbose=0)
-        _, test_acc, test_auc, test_recall = test_results
-        accuracy_err = z_score * np.sqrt((test_acc * (1 - test_acc)) / y_test.shape[0])
-        recall_err = z_score * np.sqrt((test_recall * (1 - test_recall)) / y_test.shape[0])
-        logger.info(f"Test Accuracy: {round(test_acc, 2)} ± {round(accuracy_err, 2)}")
-        logger.info(f"Test Recall: {round(test_recall, 2)} ± {round(recall_err, 2)}")
-
-
-        # Generate predictions and compute ROC curve
-        preds_test = self.predict(x_test, verbose=1)
-        fpr, tpr, _ = roc_curve(y_test, preds_test)
-        roc_auc = auc(fpr, tpr)
-        logger.info(f"Test ROC AUC: {round(roc_auc, 2)}")
-
-        # Calculate AUC confidence interval
-        n1 = np.sum(y_test == 1)
-        n2 = np.sum(y_test == 0)
-        q1 = roc_auc / (2 - roc_auc)
-        q2 = 2 * roc_auc ** 2 / (1 + roc_auc)
-        auc_err = z_score * np.sqrt(
-            (roc_auc * (1 - roc_auc) + (n1 - 1) * (q1 - roc_auc ** 2) + (n2 - 1) * (q2 - roc_auc ** 2)) / (n1 * n2)
-        )
-        logger.info(f"Test AUC: {round(roc_auc, 2)} ± {round(auc_err, 2)}")
-
-        # Update matplotlib configuration for high-quality, compact plots
-        plt.rcParams.update({
-            'font.size': 6,
-            'font.family': 'serif',
-            'axes.labelsize': 5,
-            'axes.titlesize': 6,
-            'legend.fontsize': 4,
-            'xtick.labelsize': 4,
-            'ytick.labelsize': 4,
-            'axes.grid': True,
-            'grid.alpha': 0.2,
-            'grid.linestyle': '--',
-            'lines.linewidth': 0.8,
-            'figure.dpi': 600,
-            'savefig.dpi': 600
-        })
-
-        # Use colorblind-safe palette
-        sns.set_palette("colorblind")
-
-        # Plot ROC curve
-        plt.figure(figsize=(2, 1.4))
-        plt.plot(fpr, tpr, color='tab:blue', lw=0.8, label=f'ROC curve (area = {roc_auc:.2f} ± {auc_err:.2f})')
-        plt.plot([0, 1], [0, 1], linestyle='--', color='gray', linewidth=0.6)
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel('False Positive Rate', labelpad=2, fontweight='semibold')
-        plt.ylabel('True Positive Rate', labelpad=2, fontweight='semibold')
-        plt.title('Test ROC', fontweight='bold', pad=4)
-        plt.legend(loc="lower right", frameon=False)
-        plt.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
-        plt.tick_params(axis='both', direction='in', length=2, width=0.3)
-        sns.despine(trim=True)
-        plt.tight_layout()
-
-        #save image
-        base_path = os.path.dirname(os.path.abspath(__file__))
-        save_path = os.path.join(base_path, 'CNN_test_roc.png')
-        plt.savefig(save_path)
-        print(f"[DEBUG] test_roc: plot salvato in {save_path}")
-
-        plt.show()
 
 
     def save_model(self, path):

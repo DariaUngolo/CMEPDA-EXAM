@@ -9,15 +9,12 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 from keras import Sequential
 from keras.layers import RandomRotation, RandomZoom, RandomCrop, RandomContrast
-import numpy as np
 from scipy.ndimage import rotate, zoom
-from skimage import exposure
+
 import tensorflow as tf
-
-
-
-
+import random
 import re
+
 
 # Configure loguru logger
 logger.remove()  # Remove default handler
@@ -50,6 +47,7 @@ def sorting_key(filename):
     if match:
         group, number = match.groups()
         return (group, int(number))
+    logger.warning(f"File {filename} does not match expected pattern.")
     return ("", float('inf'))
 
 def pad_images(images):
@@ -171,7 +169,7 @@ def random_zoom_and_crop_tf(volume, target_shape, zoom_range=(0.99, 1.01)):
     volume = tf.numpy_function(zoom_crop_fn, [volume], tf.float32)
     return volume
 
-def add_noise_tf(volume, noise_factor=0.0001):
+def add_noise_tf(volume, noise_factor=0.001):
     """
 
     Adds random Gaussian noise to a 3D volume.
@@ -261,20 +259,24 @@ def augment_images_with_labels_4d(images, labels, target_shape):
     augmented_labels : np.ndarray
         Corresponding labels.
     """
+    # Initialize lists to hold the augmented images and their corresponding labels
     augmented_images = []
     augmented_labels = []
 
+    # Loop through each image and its label in the dataset
     for img, label in zip(images, labels):
-        # Aggiungo l'immagine originale così com'è
+
         augmented_images.append(img)
         augmented_labels.append(label)
 
-        # Rimuovo la dimensione canale per le trasformazioni
+        # Convert the first channel of the image to a TensorFlow tensor
         img_tensor = tf.convert_to_tensor(img[..., 0])
         transformed_imgs = apply_all_transforms(img_tensor, target_shape)
 
         for transformed_img in transformed_imgs:
             transformed_img = tf.expand_dims(transformed_img, axis=-1)
+
+            # Append the transformed image and the original label to the augmented lists
             augmented_images.append(transformed_img.numpy())
             augmented_labels.append(label)
 
@@ -309,8 +311,13 @@ def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
     """
 
     # Load atlas and get its data
-    atlas = nib.load(atlas_path)
-    atlas_data = atlas.get_fdata()
+    try:
+        atlas = nib.load(atlas_path)
+        atlas_data = atlas.get_fdata()
+        logger.info("Atlas successfully loaded.")
+    except Exception as e:
+        logger.error(f"Failed to load atlas: {e}")
+        raise
 
     # Determine the Z slice indices that include the specified ROIs
     z_indices = []
@@ -323,10 +330,10 @@ def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
     preprocessed_images = []
 
 
-    # Elenco file nella cartella
+
     file_list = [f for f in os.listdir(image_folder) if f.endswith(".nii") or f.endswith(".nii.gz")]
 
-    # Ordina i file usando la funzione `sorting_key`
+
     sorted_file_list = sorted(file_list, key=sorting_key)
 
     # Iterate over NIFTI files in the folder
@@ -354,7 +361,7 @@ def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
     # Pad all images to the maximum shape
     images_padded = pad_images(preprocessed_images)
     images = np.array(images_padded, dtype='float64')
-
+    logger.info("All images preprocessed and padded.")
     images = images[..., np.newaxis]
 
 
@@ -362,6 +369,7 @@ def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
 
 def preprocessed_images_group(image_folder, atlas_path, metadata, roi_ids=(165, 166)):
 
+    logger.info("Starting image preprocessing.")
     # Get preprocessed images
     images = preprocessed_images(image_folder, atlas_path, roi_ids)
 
@@ -374,6 +382,7 @@ def preprocessed_images_group(image_folder, atlas_path, metadata, roi_ids=(165, 
 
     file_list = [f for f in os.listdir(image_folder) if f.endswith(".nii") or f.endswith(".nii.gz")]
 
+    logger.debug(f"Preprocessed image dimensions: {images.shape}")
     return images, group
 
 
@@ -410,6 +419,8 @@ def normalize_images_uniformly(images, global_min=None, global_max=None, min_val
         Global minimum and maximum values used for normalization.
 
     """
+    logger.info(f"Normalized intensity of voxel")
+
     # Compute global min and max if not provided
     if global_min is None:
         global_min = np.min(images)
@@ -455,6 +466,8 @@ def split_data(images, group):
         Test images and labels.
 
     """
+    logger.info("Splitting the dataset into train, validation, and test sets (70-15-15).")
+
     # Split dataset into train+val and test (85% train+val, 15% test)
     x_temp, x_test, y_temp, y_test = train_test_split(
         images, group, test_size=0.15,random_state=10

@@ -3,18 +3,23 @@ from pathlib import Path
 import os
 
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+
+import random
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import argparse
 import nibabel as nib
 
-from CNN_class import MyCNNModel
-from utilities import ( preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape )
+from CNN_codes.CNN_class import MyCNNModel
+from CNN_codes.utilities import ( preprocessed_images, preprocessed_images_group, split_data, augment_images_with_labels_4d, normalize_images_uniformly, adjust_image_shape )
 
 import numpy
 from tensorflow.python.client import device_lib
 
 import tensorflow as tf
+
 
 from loguru import logger
 # Configure loguru logger
@@ -218,17 +223,28 @@ def main(args):
         # Load and preprocess the image
         nifti_img_preprocessed = preprocessed_images(args.nifti_image_path, args.atlas_path, tuple(roi_ids))
         nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  target_shape )
-        #images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
+        images_normalized = normalize_images_uniformly(nifti_img_preprocessed,)
 
 
-        prediction = trained_model.predict(nifti_img_preprocessed)
-        logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
-        logger.info(f"Predicted probability for class 0: {1 - prediction[0][0]}")
-
+        prediction = trained_model.predict(images_normalized)
         threshold = 0.5
-        predicted_class = 1 if prediction[0][0] >= threshold else 0
-        logger.info(f"Predicted class: {predicted_class}")
+        classification = 1 if prediction[0][0] >= threshold else 0
 
+
+        if classification == 1:
+            selected_probability = prediction[0][0]
+        else:
+            selected_probability = 1- prediction[0][0]
+
+        results.append({
+        "Image": os.path.basename(nifti_image_path),
+        "Prediction": classification,
+        "Probability": f"{selected_probability:.2f}"
+        })
+
+        # Display results in a table
+        print("\nClassification Results:")
+        print(tabulate(results, headers="keys", tablefmt="fancy_grid"))
 
         return
 
@@ -236,30 +252,17 @@ def main(args):
 
 
     # Preprocessing images and labels
-    logger.info("Starting image preprocessing.")
     images, labels = preprocessed_images_group(args.image_folder, args.atlas_path, args.metadata, tuple(roi_ids))
-    logger.debug(f"Preprocessed image dimensions: {images.shape}")
-    logger.debug(f"Preprocessed label dimensions: {labels.shape}")
-
-
 
     target_shape = images.shape[1:4]
     input_shape = images.shape[1:]
 
-    logger.info(f"Using target shape for augmentation derived from training data: {target_shape}")
-    logger.info(f"Using input shape for the CNN model: {input_shape}")
-
     # Normalize intensities before augmentation
-    logger.info(f"Normalized intensity of voxel")
-    #images_normalized = normalize_images_uniformly(images)
+    images_normalized = normalize_images_uniformly(images)
 
     # Split dataset into train/val/test
-    logger.info("Splitting the dataset into train, validation, and test sets (70-15-15).")
-    x_train, y_train, x_val, y_val, x_test, y_test = split_data(images, labels )
+    x_train, y_train, x_val, y_val, x_test, y_test = split_data(images_normalized, labels )
 
-    logger.debug(f"x_train shape before data-augumentation: {x_train.shape}, y_train shape: {y_train.shape}")
-    logger.debug(f"x_val shape: {x_val.shape}, y_val shape: {y_val.shape}")
-    logger.debug(f"x_test shape: {x_test.shape}, y_test shape: {y_test.shape}")
 
     # Perform data augmentation
     logger.info("Starting image augmentation on training data only.")
@@ -269,16 +272,13 @@ def main(args):
         target_shape
     )
 
-
     # Model creation
-    logger.info(f"Creating the model with input shape: {tuple(input_shape)}.")
     model = MyCNNModel(input_shape=input_shape)
 
 
 
 
     # Compile and train the model
-    logger.info("Starting model training.")
     model.compile_and_fit(
             x_train_augmented, y_train_augmented, x_val, y_val, x_test, y_test,
             n_epochs=args.epochs,
@@ -306,10 +306,10 @@ def main(args):
                 nifti_img_preprocessed = preprocessed_images(nifti_image_path, args.atlas_path, tuple(roi_ids))
 
                 nifti_img_preprocessed = adjust_image_shape(nifti_img_preprocessed,  model_shape )
-                #images_normalized = normalize_images_uniformly(nifti_img_preprocessed)
+                images_normalized = normalize_images_uniformly(nifti_img_preprocessed)
 
                 # Perform prediction.
-                prediction = model.predict(nifti_img_preprocessed)
+                prediction = model.predict(images_normalized)
                 logger.info(f"Predicted probability for class 1: {prediction[0][0]}")
 
                 threshold = 0.5
