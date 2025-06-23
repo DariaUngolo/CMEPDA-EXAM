@@ -474,16 +474,16 @@ Trains a Convolutional Neural Network (CNN) model:
 
     **Architecture:**
     - **Block 1**  
-      ` Conv3D(8) → ReLU → BatchNorm →MaxPooling3D → Dropout(0.1)`
+      ` Conv3D(8) → ReLU → BatchNorm → MaxPooling3D → Dropout(0.3)`
 
     - **Block 2**  
-      `Conv3D(16) → ReLU → BatchNorm →MaxPooling3D →  Dropout(0.2)`
+      `Conv3D(16) → ReLU → BatchNorm → MaxPooling3D →  Dropout(0.3)`
 
     - **Block 3**  
-      `Conv3D(32) → ReLU  → MaxPooling3D → Dropout(0.2)`
+      `Conv3D(32) → ReLU  → MaxPooling3D → Dropout(0.3)`
 
     - **Block 4**  
-      `Conv3D(32) → ReLU → Dropout(0.2)`
+      `Conv3D(32) → ReLU → Dropout(0.4)`
 
     - **Classification Head**  
       `Flatten → Dense(32, ReLU) → Dropout(0.3) → Dense(1, Sigmoid)`
