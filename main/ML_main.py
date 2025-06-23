@@ -299,7 +299,7 @@ def main():
     atlas_resampling(args.atlas_file, args.atlas_file_resized, target_voxel, order=0)
 
     # === Step 2: Start MATLAB engine for feature extraction ===
-    logger.info("🔧 Starting MATLAB engine...")
+    logger.info(" Starting MATLAB engine...")
     eng = matlab.engine.start_matlab()
     eng.addpath(args.matlab_path, nargout=0)
 
@@ -330,21 +330,21 @@ def main():
 
         if use_pca:
             logger.info(" Applying Random Forest with PCA...")
-            model = RFPipeline_PCA(df_mean_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
+            model = RFPipeline_PCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
 
         else:
             use_rfe = ask_yes_no_prompt("Recursive Feature Elimination (RFE)? Y or N:", default="N")
 
             if use_rfe:
                 logger.info(" Applying Random Forest with RFECV...")
-                model = RFPipeline_RFECV(df_mean_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
+                model = RFPipeline_RFECV(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
             else:
                 logger.info(" Applying Random Forest without PCA or RFE...")
-                model = RFPipeline_noPCA(df_mean_std_volume, diagnostic_group_labels, args.n_iter, args.cv)
+                model = RFPipeline_noPCA(df_mean_std, diagnostic_group_labels, args.n_iter, args.cv)
 
     elif args.classifier == "svm":
         logger.info(" Applying Support Vector Machine...")
-        model = SVM_simple(df_mean_std_volume, diagnostic_group_labels, ker=args.kernel, cv=args.cv)
+        model = SVM_simple(df_mean_std, diagnostic_group_labels, ker=args.kernel, cv=args.cv)
 
     # === Step 5: Save the trained model ===
 
@@ -416,3 +416,4 @@ def main():
 if __name__ == "__main__":
     main()
 
+ 

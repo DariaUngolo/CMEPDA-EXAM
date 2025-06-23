@@ -119,15 +119,20 @@ class TestMyCNNModel(unittest.TestCase):
         checks that predictions on test data have the correct shape.
         """
         logger.info("Testing model training pipeline on synthetic data.")
+               # Flatten y labels to 1D (required for compute_class_weight)
+        y_train_flat = self.y_train.flatten()
+        y_val_flat = self.y_val.flatten()
+        y_test_flat = self.y_test.flatten()
+
         self.model.compile_and_fit(
             x_train=self.x_train,
-            y_train=self.y_train,
+            y_train=y_train_flat,
             x_val=self.x_val,
-            y_val=self.y_val,
+            y_val=y_val_flat,
             x_test=self.x_test,
-            y_test=self.y_test,
-            n_epochs=2,            # Few epochs for speed
-            batchsize=2            # Small batch size
+            y_test=y_test_flat,
+            n_epochs=2,
+            batchsize=2
         )
         preds = self.model(self.x_test)
         self.assertEqual(preds.shape[0], self.x_test.shape[0])

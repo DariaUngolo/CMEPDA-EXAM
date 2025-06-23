@@ -1,20 +1,17 @@
 Installation
 =============
 
-Follow these steps to set up the CMEPDA-EXAM project on your system:
+Follow these steps to set up the Alzheimer-Classifier project on your system:
 
 1. Clone the repository:
-   .. code-block:: bash
 
-       git clone https://github.com/DariaUngolo/CMEPDA-EXAM.git
+       git clone https://github.com/DariaUngolo/Alzheimer-Classifier.git
 
 2. Navigate to the project directory:
-   .. code-block:: bash
 
-       cd CMEPDA-EXAM
+       cd Alzheimer-Classifier
 
 3. Install the required dependencies:
-   .. code-block:: bash
 
        pip install -r requirements.txt
 

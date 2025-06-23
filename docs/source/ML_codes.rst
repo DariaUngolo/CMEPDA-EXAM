@@ -41,13 +41,7 @@ atlas\_resampling
    :undoc-members:
    :show-inheritance:
 
-apply\_trained\_model
------------------------------------------
 
-.. automodule:: ML_codes.apply_trained_model
-   :members:
-   :undoc-members:
-   :show-inheritance
 
 
 

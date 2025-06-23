@@ -1,9 +1,9 @@
 
 function [Means, Stds, Volumes] = feature_extractor(folder_path, atlas_file, atlas_txt)
-    % FEATURE_EXTRACTOR Extracts mean and standard deviation (std) for each ROI from NIfTI images.
+    % FEATURE_EXTRACTOR Extracts mean, standard deviation (std) and volume for each ROI from NIfTI images.
     %
     % Description:
-    %   This function extracts the mean and standard deviation of voxel intensities
+    %   This function extracts the mean, the standard deviation and the volume of voxel intensities
     %   for each region of interest (ROI) in the brain as defined in an atlas.
     %   The image files should be in NIfTI format (.nii/.nii.gz) and should be located
     %   in the specified folder. The function uses an atlas file (.nii) to segment the
@@ -13,8 +13,6 @@ function [Means, Stds, Volumes] = feature_extractor(folder_path, atlas_file, atl
     %   - folder_path : string. Path to the folder containing NIfTI image files.
     %   - atlas_file  : string. Path to the atlas NIfTI file used for segmentation.
     %   - atlas_txt   : string. Path to a text file with ROI IDs and names (format: ID<TAB>Name).
-    %   - output_csv_prefix (optional) : string. Prefix for the output CSV files.
-    %                                      Example: 'results_AD'.
     %
     % Outputs:
     %   - A CSV file for each ROI, containing the mean and standard deviation values.

@@ -49,7 +49,9 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
     """
 
     # Step 1: Load the original NIfTI image
+
     logger.info(f"Loading NIfTI image from: {input_path}")
+
     img = nib.load(input_path)
     data = img.get_fdata()
     affine = img.affine
@@ -61,11 +63,13 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
 
 
     # Step 3: Check if the voxel size is already correct
+
     if np.allclose(original_voxel_size, target_voxel_size, atol=1e-6):
         logger.info(" Original voxel size matches target voxel size. No resampling needed.")
         # Optionally save the original image to the output path if required
         nib.save(img, output_path)
         logger.success(f"Original image saved to: {output_path}")
+
         return
 
     # Step 4: Compute scaling factors for resampling
@@ -89,4 +93,7 @@ def atlas_resampling(input_path, output_path, target_voxel_size, order=0):
 
     # Step 8: Save the new image
     nib.save(new_img, output_path)
+
     logger.success(f"Resampled image saved successfully to: {output_path}")
+
+

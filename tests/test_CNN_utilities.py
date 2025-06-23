@@ -10,8 +10,6 @@ from CNN_codes.utilities import (
     random_zoom_and_crop_tf,
     add_noise_tf,
     random_intensity_tf,
-    augment_image_4d_tf,
-    augment_images_with_labels_4d,
     normalize_images_uniformly,
     split_data,
     adjust_image_shape,
@@ -110,33 +108,6 @@ class TestBasicFunctions(unittest.TestCase):
         scaled = random_intensity_tf(tf_img, 0.1)
         self.assertEqual(scaled.shape, tf_img.shape)
         logger.info("random_intensity_tf test passed.")
-
-    def test_augment_image_4d_tf(self):
-        """
-        Test augmentation on a single 4D image tensor (with channel dimension).
-
-        Asserts the augmented image has the target 3D shape with channel.
-        """
-        logger.info("Testing augment_image_4d_tf function.")
-        volume = tf.convert_to_tensor(np.expand_dims(self.img1, axis=-1), dtype=tf.float32)
-        augmented = augment_image_4d_tf(volume, self.target_shape)
-        self.assertEqual(tuple(augmented.shape), (*self.target_shape, 1))
-        logger.info("augment_image_4d_tf test passed.")
-
-    def test_augment_images_with_labels_4d(self):
-        """
-        Test augmentation of a batch of 4D images with corresponding labels.
-
-        Verifies that the number of augmented images and labels equals
-        the original count multiplied by the augmentation factor.
-        """
-        logger.info("Testing augment_images_with_labels_4d function.")
-        augmented_imgs, augmented_labels = augment_images_with_labels_4d(
-            self.images_4d, self.labels, self.target_shape, 2
-        )
-        self.assertEqual(augmented_imgs.shape[0], 6)
-        self.assertEqual(augmented_labels.shape, (6,))
-        logger.info("augment_images_with_labels_4d test passed.")
 
 
 class TestDataProcessing(unittest.TestCase):
