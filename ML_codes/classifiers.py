@@ -195,7 +195,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     
 
     mean_fpr = np.linspace(0, 1, 100) 
-    logger = MetricsLogger(mean_fpr)
+    metrics_logger = MetricsLogger(mean_fpr)
 
     for iteration in range(10):
         
@@ -233,14 +233,14 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
         model = pipeline_random_forest_simple.named_steps['hyper_opt'].best_estimator_
 
         
-        logger.append_metrics(metrics_scores, y_tst, y_prob, model)
+        metrics_logger.append_metrics(metrics_scores, y_tst, y_prob, model)
         
         
 
         
 
     # Calculate mean ROC curve and AUC with confidence intervals
-    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
+    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(metrics_logger.tpr_list, metrics_logger.auc_list)
     
     # Plot mean ROC curve
     plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    #PROBLEMA
@@ -257,18 +257,18 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
         err_rec,    # Standard error for recall
         err_f1,     # Standard error for F1-score
         err_spec    # Standard error for specificity
-    ) = compute_mean_std_metric(logger.accuracy_list, logger.precision_list, logger.recall_list, logger.f1_list, logger.specificity_list)
+    ) = compute_mean_std_metric(metrics_logger.accuracy_list, metrics_logger.precision_list, metrics_logger.recall_list, metrics_logger.f1_list, metrics_logger.specificity_list)
         
         
     plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
 
     # Sort models by AUC and return the one with median AUC
-    logger.model_auc_pairs.sort(key=lambda x: x[1])
-    pipeline_medianAUC_random_forest_simple = logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][0]
+    metrics_logger.model_auc_pairs.sort(key=lambda x: x[1])
+    pipeline_medianAUC_random_forest_simple = metrics_logger.model_auc_pairs[len(metrics_logger.model_auc_pairs) // 2][0]
 
     # Log information about the selected model
     logging.info(
-        f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
+        f"The model with the median AUC (value: {metrics_logger.model_auc_pairs[len(metrics_logger.model_auc_pairs) // 2][1]:.3f}) "
         "has been selected and saved for further use."
     )
 
@@ -336,7 +336,7 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
 
     
     mean_fpr = np.linspace(0, 1, 100) 
-    logger = MetricsLogger(mean_fpr)
+    metrics_logger = MetricsLogger(mean_fpr)
 
     for iteration in range(10):
         
@@ -371,14 +371,14 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
         model = pipeline_random_forest_PCA.named_steps['hyper_opt'].best_estimator_
 
         
-        logger.append_metrics(metrics_scores, y_tst, y_prob, model)
+        metrics_logger.append_metrics(metrics_scores, y_tst, y_prob, model)
         
         
 
 
 
     # Calculate mean ROC curve and AUC with confidence intervals
-    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
+    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(metrics_logger.tpr_list, metrics_logger.auc_list)
     
     # Plot mean ROC curve
     plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    
@@ -395,19 +395,19 @@ def RFPipeline_PCA(df1, df2, n_iter, cv):
         err_rec,    # Standard error for recall
         err_f1,     # Standard error for F1-score
         err_spec    # Standard error for specificity
-    ) = compute_mean_std_metric(logger.accuracy_list, logger.precision_list, logger.recall_list, logger.f1_list, logger.specificity_list)
+    ) = compute_mean_std_metric(metrics_logger.accuracy_list, metrics_logger.precision_list, metrics_logger.recall_list, metrics_logger.f1_list, metrics_logger.specificity_list)
         
         
     plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
 
     # Sort models by AUC and return the one with median AUC
-    logger.model_auc_pairs.sort(key=lambda x: x[1])
+    metrics_logger.model_auc_pairs.sort(key=lambda x: x[1])
     
-    pipeline_medianAUC_random_forest_PCA = logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][0]
+    pipeline_medianAUC_random_forest_PCA = metrics_logger.model_auc_pairs[len(metrics_logger.model_auc_pairs) // 2][0]
 
     # Log information about the selected model
     logging.info(
-        f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
+        f"The model with the median AUC (value: {metrics_logger.model_auc_pairs[len(metrics_logger.model_auc_pairs) // 2][1]:.3f}) "
         "has been selected and saved for further use."
     )
 
@@ -486,7 +486,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
 
 
     mean_fpr = np.linspace(0, 1, 100) 
-    logger = MetricsLogger(mean_fpr)
+    metrics_logger = MetricsLogger(mean_fpr)
 
 
     for iteration in range(10):  
@@ -540,12 +540,12 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         ("classifier", rf_selected_features.best_estimator_)
         ])
 
-        logger.append_metrics(metrics_scores, y_tst, y_prob, pipeline_rfecv, selected_rois=selected_ROIs)
+        metrics_logger.append_metrics(metrics_scores, y_tst, y_prob, pipeline_rfecv, selected_rois=selected_ROIs)
 
 
 
     # Calculate mean ROC curve and AUC with confidence intervals
-    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
+    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(metrics_logger.tpr_list, metrics_logger.auc_list)
     
     # Plot mean ROC curve
     plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    
@@ -562,17 +562,17 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
         err_rec,    # Standard error for recall
         err_f1,     # Standard error for F1-score
         err_spec    # Standard error for specificity
-    ) = compute_mean_std_metric(logger.accuracy_list, logger.precision_list, logger.recall_list, logger.f1_list, logger.specificity_list)
+    ) = compute_mean_std_metric(metrics_logger.accuracy_list, metrics_logger.precision_list, metrics_logger.recall_list, metrics_logger.f1_list, metrics_logger.specificity_list)
         
         
     plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
 
     # Sort models by AUC and select the one with the median value
-    logger.model_auc_pairs.sort(key=lambda x: x[1])
+    metrics_logger.model_auc_pairs.sort(key=lambda x: x[1])
 
     # Get index of model with median AUC
-    median_index = len(logger.model_auc_pairs) // 2
-    pipeline_rfecv_medianAUC = logger.model_auc_pairs[median_index][0]
+    median_index = len(metrics_logger.model_auc_pairs) // 2
+    pipeline_rfecv_medianAUC = metrics_logger.model_auc_pairs[median_index][0]
     selector = pipeline_rfecv_medianAUC.named_steps['selector']
     selected_ROIs_median = roi_names[selector.get_support()]
     selected_ROIs_median = np.array(selected_ROIs_median)
@@ -602,7 +602,7 @@ def RFPipeline_RFECV(df1, df2, n_iter, cv):
     plt.show()
 
     logging.info(
-        f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
+        f"The model with the median AUC (value: {metrics_logger.model_auc_pairs[len(metrics_logger.model_auc_pairs) // 2][1]:.3f}) "
         "has been selected and saved for further use."
     )
 
@@ -698,7 +698,7 @@ def SVM_simple(df1, df2, ker: str, cv: int):
     # Initialize metrics storage
 
     mean_fpr = np.linspace(0, 1, 100)
-    logger = MetricsLogger(mean_fpr) 
+    metrics_logger = MetricsLogger(mean_fpr) 
 
     for iteration in range(10):
         logging.info(f"Iteration {iteration + 1}: splitting data into train/test sets.")
@@ -727,11 +727,11 @@ def SVM_simple(df1, df2, ker: str, cv: int):
         # Evaluate model performance 
         metrics_scores = evaluate_model_performance(y_tst, y_pred, y_prob)
         
-        logger.append_metrics(metrics_scores, y_tst, y_prob, pipeline_SVM_grid_optimazed.best_estimator_)
+        metrics_logger.append_metrics(metrics_scores, y_tst, y_prob, pipeline_SVM_grid_optimazed.best_estimator_)
         
 
     # Calculate mean ROC curve and AUC with confidence intervals
-    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(logger.tpr_list, logger.auc_list)
+    mean_tpr, mean_auc, mean_auc_err = compute_average_auc(metrics_logger.tpr_list, metrics_logger.auc_list)
     
     # Plot mean ROC curve
     plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    
@@ -748,19 +748,19 @@ def SVM_simple(df1, df2, ker: str, cv: int):
         err_rec,    # Standard error for recall
         err_f1,     # Standard error for F1-score
         err_spec    # Standard error for specificity
-    ) = compute_mean_std_metric(logger.accuracy_list, logger.precision_list, logger.recall_list, logger.f1_list, logger.specificity_list)
+    ) = compute_mean_std_metric(metrics_logger.accuracy_list, metrics_logger.precision_list, metrics_logger.recall_list, metrics_logger.f1_list, metrics_logger.specificity_list)
         
         
     plot_performance_bar_chart(mean_acc, mean_prec, mean_rec, mean_f1, mean_spec, mean_auc, err_acc, err_prec,err_rec, err_f1, err_spec, mean_auc_err)
 
     # Sort models by AUC and return the one with median AUC
-    logger.model_auc_pairs.sort(key=lambda x: x[1])
+    metrics_logger.model_auc_pairs.sort(key=lambda x: x[1])
     
-    pipeline_SVM_medianAUC = logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][0]
+    pipeline_SVM_medianAUC = metrics_logger.model_auc_pairs[len(metrics_logger.model_auc_pairs) // 2][0]
 
     # Log information about the selected model
     logging.info(
-        f"The model with the median AUC (value: {logger.model_auc_pairs[len(logger.model_auc_pairs) // 2][1]:.3f}) "
+        f"The model with the median AUC (value: {metrics_logger.model_auc_pairs[len(metrics_logger.model_auc_pairs) // 2][1]:.3f}) "
         "has been selected and saved for further use."
     )
 
