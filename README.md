@@ -402,7 +402,7 @@ The output allows for both binary classification and an assessment of prediction
 
 | Subject ID | Label | Probability |
 |------------|-------|-------------|
-| sub-001    | 1     | 0.87        |
+| sub-001    | 1     | 0.78        |
 
 
 - In this example:
