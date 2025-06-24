@@ -53,7 +53,7 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 
 The MRI scans used in this project are stored in the **NIfTI format** (`.nii` or `.nii.gz`), which is a widely adopted standard for medical imaging. This format preserves 3D anatomical structure and supports spatial metadata (e.g., voxel dimensions, orientation, and affine transforms), making it ideal for neuroimaging analysis.
 
-The images have been **preprocessed and segmented** using the **SMWC1** method, which stands for:
+The images had already been **preprocessed and segmented** using the **SMWC1** method, which stands for:
 
 > **Segmented, Modulated, and warped Gray Matter Class 1**
 
