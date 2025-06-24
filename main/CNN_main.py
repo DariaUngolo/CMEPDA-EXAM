@@ -20,6 +20,10 @@ from tensorflow.python.client import device_lib
 
 import tensorflow as tf
 
+seed = 4
+random.seed(seed)
+numpy.random.seed(seed)
+tf.random.set_seed(seed)
 
 from loguru import logger
 # Configure loguru logger

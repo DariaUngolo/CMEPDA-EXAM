@@ -15,6 +15,10 @@ import tensorflow as tf
 import random
 import re
 
+seed = 4
+random.seed(seed)
+np.random.seed(seed)
+tf.random.set_seed(seed)
 
 # Configure loguru logger
 logger.remove()  # Remove default handler
@@ -305,8 +309,6 @@ def preprocessed_images(image_folder, atlas_path, roi_ids=(165, 166)):
     --------
     images : np.ndarray
         4D numpy array of preprocessed and padded 3D images ready for CNN input.
-    group : np.ndarray
-        Array of corresponding group labels loaded from metadata.
 
     """
 
