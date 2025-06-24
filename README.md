@@ -369,6 +369,7 @@ After the script completes execution, the following outputs are generated:
 - **📈 Visualization Outputs**
 
 These results come from averaging over 10 iterations, where the central value is the **arithmetic mean** and its associated error the **standard deviation**.
+
   1. **ROC Curve**  
      Displays the trade-off between true positive rate and false positive rate for all classification thresholds. Useful for visual inspection of model discrimination power.
 
@@ -382,7 +383,7 @@ These results come from averaging over 10 iterations, where the central value is
 
   3. **Feature Importance Plot**  
      (Only available if using Random Forest with RFECV)  
-     Visualizes the most relevant features selected by the Recursive Feature Elimination process, ranked by importance.
+     Visualizes the most relevant features selected by the Recursive Feature Elimination process, ranked by **importance**.
      
 ![Pie chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/piechart_rf_RFE_100_15_mean%2Bstd_BN.png)
 
@@ -410,7 +411,7 @@ The output allows for both binary classification and an assessment of prediction
 - In this example:
   - `sub-001` is predicted as having Alzheimer’s disease with high confidence.
  
-### Advanced ROI-based Analysis (ML)
+### Advanced ROI-based Analysis 
 
 The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
 
@@ -434,17 +435,28 @@ Since convolutional neural networks (CNNs) require input images to have consiste
 
 The processed images are saved as **3D NumPy arrays** with a single intensity channel, making them directly compatible with CNN architectures.
 
-Voxel intensities are **not normalized between 0 and 1 by default**, but a built-in normalization function is available for users who wish to apply it.
+Voxel intensities are **normalized between 0 and 1 by default**.
 
 **Output**: A 4D numpy array of preprocessed images and corresponding labels.
 
-### 3. 🎨 Data Augmentation
+### 3. 📂 Data Splitting
 
-Given the limited size of our dataset, we implement a **data augmentation strategy** to improve the model's generalization and reduce overfitting.
+Splits the dataset into three subsets:
+
+- **Training Set**: Used to train the CNN (70%).
+- **Validation Set**: Monitors performance during training (15%).
+- **Test Set**: Independently evaluates the model after training (15%).
+
+**Output**: Training, validation, and test datasets.
+
+### 4. 🎨 Data Augmentation
+
+Given the limited size of our dataset, we implement a **data augmentation strategy on the training dataset** to improve the model's generalization and reduce overfitting.
 
 The following augmentations are applied randomly to the training set:
 - **Random intensity variation**
-- **Random crop-and-zoom**
+- **Random crop-or-zoom**
+Other augmentation functions are available to the users, such as **gaussian random noise** and **random rotation**
 
 As a result, the training dataset is **tripled**, consisting of:
 1. Original cropped and padded images
@@ -454,17 +466,6 @@ As a result, the training dataset is **tripled**, consisting of:
 This process enriches the diversity of the training data and strengthens the performance of the CNN on unseen samples.
 
 **Output**: Augmented training data with enhanced diversity.
-
-
-### 4. 📂 Data Splitting
-
-Splits the dataset into three subsets:
-
-- **Training Set**: Used to train the CNN.
-- **Validation Set**: Monitors performance during training.
-- **Test Set**: Independently evaluates the model after training.
-
-**Output**: Training, validation, and test datasets.
 
 
 ### 5. 🤖 CNN Training
@@ -511,6 +512,10 @@ After training, the user can optionally classify new NIfTI images using the trai
 **Output**: A tabulated summary of predictions with probabilities for each classified image.
 
 
+| Subject ID | Label | Probability |
+|------------|-------|-------------|
+| sub-001    | 1     | 0.80        |
+
 
 ### 🛠 Outputs
 
@@ -540,7 +545,7 @@ After executing the pipeline, the following are produced:
 
 2. **Training and Validation Performance (Plot)**  
    This figure shows both **Loss** and **AUC** curves during training and validation.  
-   The top subplot compares the training and validation AUC across epochs, while the bottom subplot compares the corresponding Loss. This visualization helps identify potential overfitting or underfitting during model training.
+   The left subplot compares the training and validation AUC across epochs, while the right subplot compares the corresponding Loss. This visualization helps identify potential overfitting or underfitting during model training.
 
 ![AUC and Loss during training and validation](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/AUC_loss_train%2Bval.png) 
 3. **Validation ROC Curve**  
@@ -562,7 +567,8 @@ When applying a trained model to an independent test image (e.g., from an extern
 - **`Label`**: The predicted class, where:
   - `0` indicates a healthy subject (control),
   - `1` indicates a subject classified as having Alzheimer’s disease.
-  - 
+
+
 | Subject ID | Label | Probability |
 |------------|-------|-------------|
 | sub-001    | 1     | 0.78        |
@@ -592,7 +598,7 @@ python ML_main.py \
   --metadata_csv "/path/to/metadata.csv" \
   --matlab_path "/path/to/MATLAB_folder" \
   --classifier {rf, svm} \
-  --n_iter <number_of_combinations> \
+  --n_iter <number_of_combinations> \  #number of random combination of rf hyperparameters
   --cv <number_of_folds> \
   --kernel {linear, rbf}
 ```
@@ -609,17 +615,17 @@ python ML_main.py \
   --trained_model_path "/path/to/trained_model.joblib" \
   --nifti_image_path "/path/to/independent_nifti_images"
 ```
-> ⚠️ **Warning:** The following models have been trained using the **mean_std** feature set derived from the  **LPBA40**.  
-> To ensure compatibility and accurate predictions, you **must use the LPBA40** during feature extraction.  
+> ⚠️ **Warning:** The following saved and ready-to-use models have been trained using the **mean_std** feature set derived from the  **different atlases**.  
+> To ensure compatibility and accurate predictions, you **must use the appropriate** during feature extraction.  
 > Using a different atlas may lead to incorrect results.
 
-| Model Name                        | Description                     |
-|----------------------------------|---------------------------------|
-| `trained_model_rf.joblib`        | Random Forest                   |
-| `trained_model_rf_pca.joblib`    | Random Forest + PCA             |
-| `trained_model_rf_rfecv.joblib`  | Random Forest + RFECV           |
-| `trained_model_svm_linear.joblib`| SVM with Linear Kernel          |
-| `trained_model_svm_rbf.joblib`   | SVM with RBF Kernel             |
+| Model Name                             | Description               | 
+|--------------------------------------  |---------------------------|
+| `trained_model_rf.joblib`  (BN)        | Random Forest             |
+| `trained_model_rf_pca.joblib` (LPBA40) | Random Forest + PCA       |
+| `trained_model_rf_rfecv.joblib`(LPBA40)| Random Forest + RFECV     |
+| `trained_model_svm_linear.joblib` (BN) | SVM with Linear Kernel    |
+| `trained_model_svm_rbf.joblib`  (BN)   | SVM with RBF Kernel       |
 
 
 
