@@ -377,7 +377,7 @@ These results come from averaging over 10 iterations, where the central value is
   2. **Performance Bar Chart**  
      A bar plot comparing mean values (with error bars for confidence intervals) of each metric such as Accuracy, Precsion, Recall, F1 Score, Sensitivity and AUC.
      
-![Bar chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/metrics_rf_RFE_100_15_mean%2Bstd_BN.png)
+![Bar chart example](https://github.com/DariaUngolo/CMEPDA-EXAM/blob/main/plots%20and%20images/metrics_svm_LINEAR_100_15_mean%2Bstd_BN.png)
 
 
   3. **Feature Importance Plot**  
