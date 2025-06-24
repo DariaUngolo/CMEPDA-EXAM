@@ -115,8 +115,8 @@ The resampled atlas is saved in the output directory and reused in subsequent ru
 
 Feature extraction is performed using **MATLAB**, an essential step in the machine learning approach, which processes the MRI scans and atlas-based segmentations to compute region-level statistics for each ROI. Specifically, the extraction pipeline calculates:
 
-- **Mean intensity**
-- **Standard deviation**
+- **Mean of the intensity**
+- **Standard deviation of the intensity**
 - **Region volume** (i.e., number of voxels)
 
 These features serve as the input to the classification pipeline implemented in **Python**.
