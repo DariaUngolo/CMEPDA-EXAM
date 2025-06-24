@@ -140,8 +140,7 @@ Results are visualized through:
 
 - **ROC curves** summarizing classifier discrimination ability
 - **Bar charts** illustrating mean performance metrics along with their confidence intervals
-
-In the case of the **RFE-based Random Forest**, an additional **pie chart** is generated to display the **top 8 most relevant ROIs** contributing to the classification decision, along with their relative feature importances.
+- In the case of the **RFE-based Random Forest**, an additional **pie chart** is generated to display the **top 8 most relevant ROIs** contributing to the classification decision, along with their relative feature importances.
 
 
 For the **deep learning (CNN) approach**, the model is trained for **150 epochs** with a **batch size of 32** and an initial **learning rate of 0.001**. Two callbacks are used during training:
