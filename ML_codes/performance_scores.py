@@ -504,8 +504,22 @@ def plot_performance_bar_chart(accuracy, precision, recall, f1, specificity, roc
     ax.grid(axis='both', linestyle='--', linewidth=0.3, alpha=0.2)
 
     # Add value labels on top of bars
-    ax.bar_label(bars, fmt="%.2f", padding=3, fontsize=4, fontweight='semibold')
+    #ax.bar_label(bars, fmt="%.2f", padding=3, fontsize=4, fontweight='semibold')
 
+
+    # Add value ± error labels above the error bars
+    for bar, value, error in zip(bars, values, errors):
+        top = value + error
+        label = f"{value:.2f} ± {error:.2f}"
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            top + 0.05,  # piccolo margine sopra l'errore
+            label,
+            ha='center', va='bottom',
+            fontsize=3, fontweight='semibold'
+        )
+
+    
     # Tick formatting
     ax.tick_params(axis='x', labelrotation=0)
     ax.tick_params(axis='both', direction='in', length=3, width=0.5)

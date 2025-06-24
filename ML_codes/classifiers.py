@@ -243,7 +243,7 @@ def RFPipeline_noPCA(df1, df2, n_iter, cv):
     mean_tpr, mean_auc, mean_auc_err = compute_average_auc(metrics_logger.tpr_list, metrics_logger.auc_list)
     
     # Plot mean ROC curve
-    plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    #PROBLEMA
+    plot_roc_curve(mean_fpr, mean_tpr, mean_auc, mean_auc_err)    
 
     # Calculate mean and standard deviation for each metric's list 
     (
