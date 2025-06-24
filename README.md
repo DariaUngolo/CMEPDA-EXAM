@@ -18,6 +18,7 @@ Each brain atlas is also accompanied by a **look-up table (LUT)** that lists the
 │   ├── test_subject_2/
 │   │   └── subject2.nii.gz
 │   ├── lpba40_atlas.nii.gz
+│   ├── rlpba40_atlas.nii.gz
 │   ├── BN_atlas.nii.gz
 │   ├── lpba40_LUT.txt
 │   ├── BN_LUT.txt
