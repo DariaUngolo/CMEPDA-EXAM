@@ -523,15 +523,15 @@ After executing the pipeline, the following are produced:
 
 | **Val_Metric**    | **Score** | **± Error** |
 |---------------|-----------|-------------|
-| Val_Accuracy      | 0.68     | ± 0.07         |
-| Val_Recall        |  0.60      | ± 0.07      |
-| Val_AUC           |  0.76      | ± 0.07       |
+| Val_Accuracy      | 0.70     | ± 0.07         |
+| Val_Recall        |  0.70      | ± 0.07      |
+
 
 | **Test_Metric**    | **Score** | **± Error** |
 |---------------|-----------|-------------|
-| Test_Accuracy      | 0.72      | ± 0.06         |
-| Test_Recall        |  0.79        | ± 0.06        |
-| Test_AUC           |  0.80        | ± 0.06       |
+| Test_Accuracy      | 0.74      | ± 0.06         |
+| Test_Recall        |  0.83        | ± 0.05        |
+
 
 2. **Training and Validation Performance (Plot)**  
    This figure shows both **Loss** and **AUC** curves during training and validation.  
@@ -560,7 +560,7 @@ When applying a trained model to an independent test image (e.g., from an extern
   - 
 | Subject ID | Label | Probability |
 |------------|-------|-------------|
-| sub-001    | 1     | 0.99        |
+| sub-001    | 1     | 0.78        |
 
 
 - In this example:
