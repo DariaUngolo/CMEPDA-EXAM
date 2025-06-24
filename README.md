@@ -681,6 +681,13 @@ substantially reducing training times.
 **It is recommended to run this code on a machine equipped with a GPU  
 to fully benefit from these optimizations and accelerate the training process.**
 
+> ⚠️ **Important Note on Atlas Selection**
+>
+> This CNN model has been specifically designed using the **LPBA40 atlas**. In particular, the ROI selection step relies on indices **164 and 165**, which correspond to the **left and right hippocampus** in the LPBA40 labeling convention.
+>
+> If you wish to use a different atlas, **you must update the ROI indices accordingly** to ensure the correct brain regions are extracted and analyzed. Failure to do so will result in incorrect feature extraction and potentially invalid model input.
+
+
 ```bash
 python CNN_main.py \
   --image_folder "/path/to/nifti_folder" \
