@@ -342,7 +342,9 @@ Each performance metric is reported along with a 95% confidence interval to prov
 
   - **Binomial-based intervals** are used for metrics derived from count-based proportions (e.g., accuracy, precision, recall, specificity). These intervals are computed assuming a binomial distribution, and reflect the uncertainty due to the finite sample size.
 
-  - **Bootstrap-based intervals** are applied to metrics that are not simple proportions—such as AUC and F1 score—by repeatedly resampling the data with replacement and recalculating the metric. The resulting distribution allows for a non-parametric estimation of the confidence interval, making it more flexible and robust when analytical solutions are not available.
+  - **Bootstrap-based intervals** are applied to metrics that are not simple proportions—such as F1 score—by repeatedly resampling the data with replacement and recalculating the metric. The resulting distribution allows for a non-parametric estimation of the confidence interval, making it more flexible and robust when analytical solutions are not available.
+    
+  - **Hanley and McNeil method** is applied to assess the uncertainty on the AUC
 
 These intervals help assess the stability and generalizability of the model's performance, rather than relying solely on point estimates.
 
@@ -366,6 +368,7 @@ After the script completes execution, the following outputs are generated:
 
 - **📈 Visualization Outputs**
 
+These results come from averaging over 10 iterations, where the central value is the **arithmetic mean** and its associated error the **standard deviation**.
   1. **ROC Curve**  
      Displays the trade-off between true positive rate and false positive rate for all classification thresholds. Useful for visual inspection of model discrimination power.
 
