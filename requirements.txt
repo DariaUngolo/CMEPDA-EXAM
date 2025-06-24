@@ -18,3 +18,4 @@ tensorflow
 scikit-image
 tabulate
 seaborn
+logging
