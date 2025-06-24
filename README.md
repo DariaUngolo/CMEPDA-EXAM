@@ -111,16 +111,6 @@ If the atlas resolution does not match the input image (e.g., different voxel si
 
 The resampled atlas is saved in the output directory and reused in subsequent runs to avoid redundant computation.
 
-### Feature Extraction (ML)
-
-Feature extraction is performed using **MATLAB**, an essential step in the machine learning approach, which processes the MRI scans and atlas-based segmentations to compute region-level statistics for each ROI. Specifically, the extraction pipeline calculates:
-
-- **Mean of the intensity**
-- **Standard deviation of the intensity**
-- **Region volume** (i.e., number of voxels)
-
-These features serve as the input to the classification pipeline implemented in **Python**.
-
 ### Classification Approaches
 
 The binary classification task is tackled using two complementary approaches:
