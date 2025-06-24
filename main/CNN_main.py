@@ -234,14 +234,14 @@ def main(args):
         threshold = 0.5
         classification = 1 if prediction[0][0] >= threshold else 0
 
-
+        results=[]
         if classification == 1:
             selected_probability = prediction[0][0]
         else:
             selected_probability = 1- prediction[0][0]
 
         results.append({
-        "Image": os.path.basename(nifti_image_path),
+        "Image": os.path.basename(args.nifti_image_path),
         "Prediction": classification,
         "Probability": f"{selected_probability:.2f}"
         })
