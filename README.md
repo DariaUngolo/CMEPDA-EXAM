@@ -143,21 +143,21 @@ Results are visualized through:
 - In the case of the **RFE-based Random Forest**, an additional **pie chart** is generated to display the **top 8 most relevant ROIs** contributing to the classification decision, along with their relative feature importances.
 
 
-For the **deep learning (CNN) approach**, the model is trained for **150 epochs** with a **batch size of 32** and an initial **learning rate of 0.001**. Two callbacks are used during training:
+For the **deep learning (CNN) approach**, the model is trained for **300 epochs** with a **batch size of 32** and an initial **learning rate of 0.001**. Two callbacks are used during training:
 
 - **EarlyStopping** to halt training when performance stops improving  
 - **ReduceLROnPlateau** to lower the learning rate when validation performance plateaus
 
 Evaluation of the CNN is based on:
 
-- Accuracy  
-- Recall  
-- AUC
+- *Accuracy*  
+- *Recall*  
+- *AUC*
 
 Throughout training, the model logs per-epoch values of these metrics on the **training**, **validation**, and **test** sets. After training, the following outputs are generated automatically:
 
-- Accuracy and loss curves for training and validation  
-- ROC curves for validation and test datasets
+- **Accuracy and loss curves** for training and validation  
+- **ROC curves** for validation and test datasets
 
 ### 🧪 Unit Testing
 
@@ -250,7 +250,7 @@ This project is structured around a modular **4-step pipeline**, combining featu
 
 ### 1. 🧪 Feature Extraction (via MATLAB)
 
-The core of the feature extraction process is implemented in MATLAB using the script `feature_extractor.m`. This script operates on brain images in **NIfTI format** (`.nii`, `.nii.gz`) and requires a compatible brain atlas that partitions the brain into **Regions of Interest (ROIs)**.
+The core of the feature extraction process is implemented in **MATLAB** using the script `feature_extractor.m`. This script operates on brain images in **NIfTI format** (`.nii`, `.nii.gz`) and requires a compatible brain atlas that partitions the brain into **Regions of Interest (ROIs)**.
 
 For each subject and for each ROI defined in the atlas, the script computes the following statistical features:
 
@@ -258,7 +258,7 @@ For each subject and for each ROI defined in the atlas, the script computes the 
 - **Standard Deviation**: variability of the intensity values within the region.
 - **Region Volume**: number of voxels (i.e., size) comprising the ROI.
 
-- ⚠️ Mean and Standard Deviation are set as "default figures of merit" but one can switch to every other possible combination according to their preferences
+- ⚠️ Mean and Standard Deviation are set as "default figures of merit" but one can switch to every other possible combination according to their preferences. We remark that results in the dedicated folder come from the two combinations mean+std and mean+std+volume
 
 The atlas is overlaid on the input MRI as a **binary mask**, and statistics are computed **only within voxels labeled as part of each ROI**. To reduce the impact of background noise or interpolation artifacts, a small intensity **threshold of 10⁻⁶** is applied: any voxel with an intensity value below this threshold is ignored during feature computation.
 
@@ -276,6 +276,16 @@ The Python component handles all tasks related to machine learning. After readin
 Supported classifiers:
 
 #### ✅ Random Forest (`--classifier rf`)
+Training is conducted with a randomized search of 100 possible combination of the chosen hyperparameters using `RandomizedSearchCV` and a 15-fold cross-validation on a 90/10 train-test splits.
+
+**Hyperparameters**:
+• trees depth
+• number of trees
+• minimum samples for splitting a node
+• minimum samples in a leaf
+• maximum features analyzed for splitting
+• bootstrap
+
 - **Standard Random Forest**: no dimensionality reduction or feature selection.
 - **PCA variant**: applies **Principal Component Analysis** before classification to reduce feature dimensionality.
 - **RFE variant**: uses **Recursive Feature Elimination with Cross-Validation (RFECV)** to identify the most informative ROIs automatically.
@@ -283,10 +293,12 @@ Supported classifiers:
 > ℹ️ If Random Forest is selected, the user is interactively prompted in the terminal to choose whether to apply PCA or RFE.
 
 #### ✅ Support Vector Machine (SVM) (`--classifier svm`)
-- Uses the `scikit-learn` implementation.
-- Supports custom kernel selection (e.g., `--kernel rbf` or `--kernel linear`).
-- Works directly with the full feature set.
+The SVM is trained using a 15-fold cross-validation `GridSearchCV` to optimize hyperparameters with repeated random 90/10 train-test splits over 10 iterations.
 
+**Hyperparameters**:
+• regularization parameter C
+• class weights (balanced vs unbalanced)
+• γ for Gaussian kernel
 
 ### 📊 3. Performance Metrics
 
