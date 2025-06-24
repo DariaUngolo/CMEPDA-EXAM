@@ -124,9 +124,6 @@ The binary classification task is tackled using two complementary approaches:
 
 2. **Deep Learning**, implemented through a **3D Convolutional Neural Network (CNN)**, which learns hierarchical features directly from the MRI volumes.
 
-### Advanced ROI-based Analysis (ML)
-
-The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
 
 ### Evaluation Methodology 
 
@@ -398,7 +395,10 @@ The output allows for both binary classification and an assessment of prediction
 
 - In this example:
   - `sub-001` is predicted as having Alzheimer’s disease with high confidence.
+ 
+### Advanced ROI-based Analysis (ML)
 
+The ROIs identified as most informative by RFE are used in the second phase of the project to refine image processing. Specifically, these top-ranked ROIs define a **bounding box** around the brain, which is then used to **crop the MRI volumes** to focus on the most diagnostically relevant areas. This localized cropping facilitates further analysis and potentially improves the deep learning model’s ability to focus on pathological patterns linked to Alzheimer’s Disease.
 
 ---
 ## 🧠 CNN Pipeline Guide
